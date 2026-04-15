@@ -45,6 +45,8 @@ class Population
    list <bool> listeValiditeTemps ;
    // list tracking if recent individuals were valid in terms of time windows
    list <bool> listeValiditeTW ;
+   // list tracking if recent individuals were valid in terms of inventory
+   list <bool> listeValiditeInventory ;
    // auxiliary data structure to apply the local search
    Individu * trainer;
 
@@ -62,7 +64,8 @@ class Population
 
    // calcule le fitness etendu des elements de la sous-population
    void evalExtFit(SousPop * pop);
-
+   // Print detailed solution to console (routing, inventory, delivery)
+   void PrintDetailedSolution();
    // ajoute un individu � la population
    // la population se d�brouille pour le placer o� il lui semble bon
    // updateNbValides est mis � true si on veut mettre� jour la proportion de valides aussi 
@@ -133,6 +136,9 @@ class Population
 
    // retourne la fraction d'individus valides en terme de time windows
    double fractionValidesTW () ;
+
+   // retourne la fraction d'individus valides en terme d'inventaire
+   double fractionValidesInventory () ;
 
    // diversite de la population
    double getDiversity(SousPop * pop);

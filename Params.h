@@ -219,6 +219,9 @@ class Params {
   // Time window penalty coefficient
   double penalityTimeWindow;
 
+  // Inventory violation penalty coefficient
+  double penalityInventory;
+
   // Speed in km/h for converting hours to km-equivalent (type 39)
   double speedKmh;
 

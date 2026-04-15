@@ -128,6 +128,7 @@ void Genetic::gererPenalites()
 	double fractionCharge = population->fractionValidesCharge();
 	double fractionTemps = population->fractionValidesTemps();
 	double fractionTW = population->fractionValidesTW();
+	double fractionInv = population->fractionValidesInventory();
 
 	if (fractionCharge < params->minValides && params->penalityCapa < 1000)
 		params->penalityCapa = params->penalityCapa * 1.2;
@@ -143,6 +144,11 @@ void Genetic::gererPenalites()
 		params->penalityTimeWindow = params->penalityTimeWindow * 1.2;
 	else if (fractionTW > params->maxValides && params->penalityTimeWindow > 0.01)
 		params->penalityTimeWindow = params->penalityTimeWindow * 0.85;
+
+	if (fractionInv < params->minValides && params->penalityInventory < 10000)
+		params->penalityInventory = params->penalityInventory * 1.2;
+	else if (fractionInv > params->maxValides && params->penalityInventory > 0.01)
+		params->penalityInventory = params->penalityInventory * 0.85;
 
 	population->validatePen();
 }

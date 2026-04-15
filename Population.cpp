@@ -47,6 +47,7 @@ Population::Population(Params *params) : params(params)
 		listeValiditeCharge.push_back(true);
 		listeValiditeTemps.push_back(true);
 		listeValiditeTW.push_back(true);
+		listeValiditeInventory.push_back(true);
 	}
 
 	params->penalityCapa = temp;
@@ -252,7 +253,7 @@ void Population::validatePen()
 	Individu *indiv;
 	// on met � jour les evaluations
 	for (int i = 0; i < invalides->nbIndiv; i++)
-		invalides->individus[i]->coutSol.evaluation = invalides->individus[i]->coutSol.fitness + params->penalityCapa * invalides->individus[i]->coutSol.capacityViol + params->penalityLength * invalides->individus[i]->coutSol.lengthViol + params->penalityTimeWindow * invalides->individus[i]->coutSol.timeWindowViol;
+		invalides->individus[i]->coutSol.evaluation = invalides->individus[i]->coutSol.fitness + params->penalityCapa * invalides->individus[i]->coutSol.capacityViol + params->penalityLength * invalides->individus[i]->coutSol.lengthViol + params->penalityTimeWindow * invalides->individus[i]->coutSol.timeWindowViol + params->penalityInventory * invalides->individus[i]->coutSol.inventoryViol;
 
 	for (int i = 0; i < invalides->nbIndiv; i++)
 		for (int j = 0; j < invalides->nbIndiv - i - 1; j++)
@@ -493,6 +494,31 @@ void Population::ExportPop(string nomFichier,bool add)
 	}
 }
 
+void Population::PrintDetailedSolution()
+{
+	Individu *bestValide = getIndividuBestValide();
+	if (bestValide != NULL)
+	{
+		double temp = params->penalityCapa;
+		double temp2 = params->penalityLength;
+		params->penalityCapa = 10000;
+		params->penalityLength = 10000;
+		education(bestValide);
+		LocalSearch *loc = trainer->localSearch;
+		params->penalityCapa = temp;
+		params->penalityLength = temp2;
+
+		cout << endl << "========== DETAILED SOLUTION OUTPUT ==========" << endl;
+		loc->printInventoryLevels(cout, false);
+		cout << "Reformulated objective: " << trainer->coutSol.evaluation << endl;
+		cout << "===============================================" << endl;
+	}
+	else
+	{
+		cout << "No feasible solution found." << endl;
+	}
+}
+
 void Population::ExportBKS(string nomFichier)
 {
 	double fit,tim,pri;
@@ -566,6 +592,16 @@ double Population::fractionValidesTW()
 {
 	int count = 0;
 	for (list<bool>::iterator it = listeValiditeTW.begin(); it != listeValiditeTW.end(); ++it)
+		if (*it == true)
+			count++;
+
+	return double(count) / (double)(100);
+}
+
+double Population::fractionValidesInventory()
+{
+	int count = 0;
+	for (list<bool>::iterator it = listeValiditeInventory.begin(); it != listeValiditeInventory.end(); ++it)
 		if (*it == true)
 			count++;
 
@@ -661,6 +697,8 @@ void Population::updateNbValides(Individu *indiv)
 	listeValiditeTemps.pop_front();
 	listeValiditeTW.push_back(indiv->coutSol.timeWindowViol < 0.0001);
 	listeValiditeTW.pop_front();
+	listeValiditeInventory.push_back(indiv->coutSol.inventoryViol < 0.0001);
+	listeValiditeInventory.pop_front();
 }
 
 void Population::afficheEtat(int nbIter)
@@ -683,6 +721,6 @@ void Population::afficheEtat(int nbIter)
 
 	cout << " | Moy " << getMoyenneValides() << " " << getMoyenneInvalides()
 		 << " | Div " << getDiversity(valides) << " " << getDiversity(invalides)
-		 << " | Val " << fractionValidesCharge() << " " << fractionValidesTemps() << " " << fractionValidesTW()
-		 << " | Pen " << params->penalityCapa << " " << params->penalityLength << " " << params->penalityTimeWindow << " | Pop " << valides->nbIndiv << " " << invalides->nbIndiv << endl;
+		 << " | Val " << fractionValidesCharge() << " " << fractionValidesTemps() << " " << fractionValidesTW() << " " << fractionValidesInventory()
+		 << " | Pen " << params->penalityCapa << " " << params->penalityLength << " " << params->penalityTimeWindow << " " << params->penalityInventory << " | Pop " << valides->nbIndiv << " " << invalides->nbIndiv << endl;
 }

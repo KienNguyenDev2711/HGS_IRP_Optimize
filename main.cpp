@@ -50,6 +50,9 @@ int mainIRP(int argc, char *argv[])
     population->ExportPop(c.get_path_to_solution(),true);
     
     population->ExportBKS(c.get_path_to_BKS());
+
+    // Print detailed solution to console
+    population->PrintDetailedSolution();
   
     // on desalloue la memoire
     delete mesParametres;

@@ -669,7 +669,8 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
         inventoryClient -= params->cli[i].dailyDemand[k];
         if(!add) file << "," << inventoryClient << "] ";
 
-        inventoryClientCosts += inventoryClient * params->cli[i].inventoryCost;
+        // Only count positive inventory for holding cost (negative = stockout, not negative holding)
+        inventoryClientCosts += std::max<double>(0, inventoryClient) * params->cli[i].inventoryCost;
       }
       if(!add) file  << endl;
     }
@@ -711,13 +712,36 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
   }
 
   file  << "ROUTE: " << routeCosts << endl;
-  file << "LOAD: " << loadCosts << "SUPPLY: " << inventorySupplyCosts << endl;
+  file << "LOAD: " << loadCosts << " SUPPLY: " << inventorySupplyCosts << endl;
   file << "CLIENT INVENTORY: " << inventoryClientCosts << endl;
   file << "CLIENT STOCKOUT: " << stockClientCosts<<endl;
   file << "CLIENT STOCKOUT Amount: " << stockClientAmount<<endl;
   file  << "COST SUMMARY : OVERALL "
        << routeCosts + loadCosts + inventorySupplyCosts + inventoryClientCosts+stockClientCosts
        << endl;
+
+  // Print delivery quantity per retailer per depot
+  if(!add && params->multiDepot) {
+    file << endl << "=== DELIVERY QUANTITY PER RETAILER PER DEPOT ===" << endl;
+    for (int d = 0; d < params->nbDepots; d++) {
+      file << "DEPOT " << d << ":" << endl;
+      for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++) {
+        double totalDel = 0;
+        file << "  Customer " << i << ": ";
+        for (int k = 1; k <= params->nbDays; k++) {
+          Noeud *cNode = clients[k][i];
+          if (cNode->estPresent && cNode->route && cNode->route->depot && cNode->route->depot->cour == d) {
+            file << "day" << k << "=" << demandPerDay[k][i] << " ";
+            totalDel += demandPerDay[k][i];
+          }
+        }
+        if (totalDel > 0)
+          file << "(total=" << totalDel << ")" << endl;
+        else
+          file << "(none)" << endl;
+      }
+    }
+  }
 }
 
 // supprime le noeud

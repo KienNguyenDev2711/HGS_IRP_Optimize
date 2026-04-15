@@ -225,6 +225,9 @@ void Params::setMethodParams()
 	if (!hasTimeWindows)
 		penalityTimeWindow = 0;
 
+	// Default inventory penalty (for IRP)
+	penalityInventory = 100;
+
 	// Type 39 uses Haversine distances - no integer rounding
 	if (type == 39)
 	{

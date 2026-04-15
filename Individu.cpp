@@ -522,12 +522,12 @@ void Individu::measureSol()
 		}
 	}
 
-	if (coutSol.capacityViol < 0.0001 && coutSol.lengthViol < 0.0001 && coutSol.timeWindowViol < 0.0001)
+	if (coutSol.capacityViol < 0.0001 && coutSol.lengthViol < 0.0001 && coutSol.timeWindowViol < 0.0001 && coutSol.inventoryViol < 0.0001)
 		estValide = true;
 	else
 		estValide = false;
 
-	coutSol.evaluation = params->penalityCapa * coutSol.capacityViol + params->penalityLength * coutSol.lengthViol + params->penalityTimeWindow * coutSol.timeWindowViol + coutSol.fitness;
+	coutSol.evaluation = params->penalityCapa * coutSol.capacityViol + params->penalityLength * coutSol.lengthViol + params->penalityTimeWindow * coutSol.timeWindowViol + params->penalityInventory * coutSol.inventoryViol + coutSol.fitness;
 }
 
 // initialisation du vecteur potentiels
