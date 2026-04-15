@@ -1,0 +1,55 @@
+
+
+day[1] route[0] depot[0]: travel time = 0 load = 0 TW_viol = 0
+ depot[0] -> depot[0]
+day[1] route[1] depot[0]: travel time = 0 load = 0 TW_viol = 0
+ depot[0] -> depot[0]
+day[1] route[2] depot[1]: travel time = 0 load = 0 TW_viol = 0
+ depot[1] -> depot[1]
+day[1] route[3] depot[1]: travel time = 232.337 load = 4 TW_viol = 0
+ depot[1] -> c7(del=3,arr=49.4) -> c5(del=1.0,arr=120.0) -> depot[1]
+day[2] route[0] depot[0]: travel time = 0 load = 0 TW_viol = 0
+ depot[0] -> depot[0]
+day[2] route[1] depot[0]: travel time = 184.97 load = 23 TW_viol = 0
+ depot[0] -> c10(del=8,arr=20.4) -> c8(del=7.0,arr=80.0) -> c11(del=8.0,arr=119.3) -> depot[0]
+day[2] route[2] depot[1]: travel time = 0 load = 0 TW_viol = 0
+ depot[1] -> depot[1]
+day[2] route[3] depot[1]: travel time = 304.266 load = 50 TW_viol = 0
+ depot[1] -> c3(del=16,arr=15.6) -> c5(del=11.0,arr=80.0) -> c7(del=4.0,arr=117.7) -> c6(del=9.0,arr=152.6) -> c4(del=10.0,arr=174.4) -> depot[1]
+day[3] route[0] depot[0]: travel time = 208.837 load = 37 TW_viol = 0
+ depot[0] -> c8(del=14,arr=28.7) -> c10(del=18.0,arr=80.0) -> c2(del=5.0,arr=136.2) -> depot[0]
+day[3] route[1] depot[0]: travel time = 200.643 load = 47 TW_viol = 0
+ depot[0] -> c3(del=19,arr=18.2) -> c9(del=9.0,arr=80.0) -> c11(del=19.0,arr=116.4) -> depot[0]
+day[3] route[2] depot[1]: travel time = 0 load = 0 TW_viol = 0
+ depot[1] -> depot[1]
+day[3] route[3] depot[1]: travel time = 249.006 load = 50 TW_viol = 0
+ depot[1] -> c4(del=18,arr=47.2) -> c6(del=14.0,arr=80.0) -> c7(del=7.0,arr=114.9) -> c5(del=11.0,arr=152.6) -> depot[1]
+CUSTOMER 2 bounds (0,100) [19,19,11] [11,11,3] [3,8,0] 
+CUSTOMER 3 bounds (0,100) [22,22,3] [3,19,0] [0,19,0] 
+CUSTOMER 4 bounds (0,100) [26,26,8] [8,18,0] [0,18,0] 
+CUSTOMER 5 bounds (0,100) [10,11,0] [0,11,0] [0,11,0] 
+CUSTOMER 6 bounds (0,100) [19,19,5] [5,14,0] [0,14,0] 
+CUSTOMER 7 bounds (0,100) [10,13,5] [5,9,1] [1,8,0] 
+CUSTOMER 8 bounds (0,100) [21,21,7] [7,14,0] [0,14,0] 
+CUSTOMER 9 bounds (0,100) [18,18,9] [9,9,0] [0,9,0] 
+CUSTOMER 10 bounds (0,100) [28,28,10] [10,18,0] [0,18,0] 
+CUSTOMER 11 bounds (0,100) [30,30,11] [11,19,0] [0,19,0] 
+DEPOT 0    [150,150] [200,177] [227,143] 
+DEPOT 1    [150,146] [196,146] [196,146] 
+ROUTE: 1380.06
+LOAD: 0SUPPLY: 454
+CLIENT INVENTORY: 350
+CLIENT STOCKOUT: 0
+CLIENT STOCKOUT Amount: 0
+COST SUMMARY : OVERALL 2184.06
+1443.65
+6
+Total Time: 0
+PITime: 0
+Best Solution Time: 0
+ 1 1 1 232.337 4  4 1 7 5 1
+ 0 2 1 184.97 23  5 0 10 8 11 0
+ 1 2 1 304.266 50  7 1 3 5 7 6 4 1
+ 0 3 1 208.837 37  5 0 8 10 2 0
+ 0 3 1 200.643 47  5 0 3 9 11 0
+ 1 3 1 249.006 50  6 1 4 6 7 5 1
