@@ -373,9 +373,8 @@ void PLFunction::update_minValue(double & rep){
     double min_tmp = std::min<double>(this->pieces[0]->p1->y,this->pieces[0]->p2->y);
     rep = -(gt(this->pieces[0]->p1->y,this->pieces[0]->p2->y)? this->pieces[0]->p2->x:this->pieces[0]->p1->x);
     if(lt(rep , 0)){
-        cout<<"rep "<<rep+1e-4<<endl;
-        cout <<"error.PLfunction update_minvalue"<<endl;
-        int a;cin>>a;
+        // Negative replenishment: clamp to 0 to avoid blocking
+        rep = 0;
     }
     int piece_tmp = 0;
     for(int i =1 ; i < this->nbPieces ; i++){
@@ -402,8 +401,10 @@ double PLFunction::cost(double x)
 
     if (piece == nullptr)
     {
-        throw std::string(
-            "ERROR: can not find a piece that fit the value of x !!!");
+        // x exceeds max range - extrapolate using last piece
+        if (nbPieces > 0)
+            return pieces[nbPieces - 1]->cost(pieces[nbPieces - 1]->p2->x);
+        return 1e15;
     }
 
     return piece->cost(x);

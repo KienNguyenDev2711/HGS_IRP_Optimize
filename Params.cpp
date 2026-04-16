@@ -16,6 +16,7 @@ Params::Params(string nomInstance, string nomSolution, int type, int nbVeh, stri
 	pathToBKS = nomBKS;
 
 	debut = clock();
+	ticks = 0; // will be set by main before Genetic::evolve
 	//PItime = 0;
 	nbVehiculesPerDep = nbVeh;
 
@@ -64,6 +65,7 @@ Params::Params(string nomInstance, string nomSolution, int type, int nbVeh, stri
 	pathToBKS = nomBKS;
 
 	debut = clock();
+	ticks = 0;
 	nbVehiculesPerDep = nbVeh;
 
 	// ouverture du fichier en lecture

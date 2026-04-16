@@ -5,6 +5,7 @@
 #include "LinearPiece.h"
 #include <algorithm>
 #include <iomanip>
+#include <cmath>
 LinearPiece::LinearPiece()
 {
     p1 = make_shared<Point>();
@@ -62,13 +63,15 @@ void LinearPiece::updateLinearPiece(double left_x, double left_y, double right_x
 double LinearPiece::cost(double x)
 {
     
+    if(std::isnan(x) || std::isinf(x)){
+        return 1e15;
+    }
     if(eq(p1->x,p2->x)){
         if(eq(x,p1->x)){
             return p1->y;
         }
         else{
-            cout <<"x = "<<x<<" p1->x "<<p1->x<<" p2->x " <<p2->x<<"error linear piece cost function(line65) "<<endl;
-            int a;cin>>a;
+            return 1e15;
         }
     }
     slope = (p2->y-p1->y)/(p2->x-p1->x);
@@ -77,6 +80,8 @@ double LinearPiece::cost(double x)
 
 double LinearPiece::invertCost(double y)
 {
+    if(eq(slope, 0.0))
+        return p2->x;
     return p2->x + (y - p2->y) / slope;
 }
 
@@ -219,7 +224,10 @@ void LinearPiece::update(double left_x, double left_y, double right_x, double ri
     p1->y = left_y;
     p2->x = right_x;
     p2->y = right_y;
-    slope = (right_y - left_y) / (right_x - left_x);
+    if(eq(right_x, left_x))
+        slope = 0;
+    else
+        slope = (right_y - left_y) / (right_x - left_x);
 }
 std::shared_ptr<LinearPiece> LinearPiece::getInpiece(double start, double end) const {
     if (lt(p2->x, start) || gt(p1->x, end)) return nullptr;

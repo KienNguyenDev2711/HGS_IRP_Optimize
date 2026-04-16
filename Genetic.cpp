@@ -16,7 +16,7 @@ void Genetic::evolve(int maxIter, int maxIterNonProd, int nbRec)
 	
 	while (nbIter < maxIter && nbIterNonProd < maxIterNonProd && clock() - params->debut <= ticks)
 	{
-		// on demande deux individus � la population
+		// on demande deux individus à la population
 		population->recopieIndividu(rejeton, population->getIndividuBinT(rangRelatif));
 		population->recopieIndividu(rejeton2, population->getIndividuBinT(rangRelatif));
 		// on choisit le crossover en fonction du probleme
@@ -59,15 +59,15 @@ void Genetic::evolve(int maxIter, int maxIterNonProd, int nbRec)
 	
 		// MANAGEMENT OF PARAMETERS
 		if (nbIter % 100 == 0)
+		{
 			gererPenalites();
+		}
 	
 		// TRACES
 		if (traces && nbIter % 500 == 0)
 			population->afficheEtat(nbIter);
 		
 		nbIter++;
-
-	
 	}
 	
 	// fin de l'algorithme , diverses informations affich�es
@@ -155,6 +155,8 @@ void Genetic::gererPenalites()
 
 Genetic::Genetic(Params *params, Population *population, clock_t ticks, bool traces, bool writeProgress) : params(params), population(population), ticks(ticks), traces(traces), writeProgress(writeProgress)
 {
+	// Store ticks in Params so LocalSearch can check time limit
+	params->ticks = ticks;
 	
 	vector<int> tempVect;
 	vector<vector<int>> chromTRand;
@@ -291,13 +293,13 @@ int Genetic::crossPOX2()
 		else // on recopie tout
 		{
 			tableauFin.push_back(0);
+			garder.clear();
 			for (int j = 0; j < (int)rejeton->chromT[day].size(); j++)
 			{
 				int ii = rejeton->chromT[day][j]; // getting the index to be inherited
 				garder.push_back(ii);
 				rejeton->chromL[day][ii] = chromLParent1[day][ii];
 				hasBeenInserted[day][ii] = true;
-				j = (j + 1) % rejeton->chromT[day].size();
 			}
 		}
 	}

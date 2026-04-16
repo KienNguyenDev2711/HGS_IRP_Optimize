@@ -34,6 +34,7 @@ Population::Population(Params *params) : params(params)
 		randomIndiv = new Individu(params, 1.0);  
 
 		education(randomIndiv);
+
 		if (compter)
 			updateNbValides(randomIndiv);
 		addIndividu(randomIndiv);

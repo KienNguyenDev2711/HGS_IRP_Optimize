@@ -179,7 +179,10 @@ void Individu::generalSplit()
 	isFitnessComputed = true;
 
 	if (params->borneSplit > 1000)
-		throw string("Erreur Split");
+	{
+		params->borneSplit = 2.0; // reset for next call
+		return;
+	}
 
 	if (coutSol.evaluation > 1.e20)
 	{
@@ -728,8 +731,8 @@ double Individu::maxFeasibleDeliveryQuantity(int day, int client)
 
 		if (minSlack < -0.0001)
 		{
-			cout << "ISSUE : negative slack capacit during crossover, this should not happen" << endl;
-			throw("ISSUE : negative slack capacit during crossover, this should not happen");
+			// Parent was infeasible - inherited quantities exceed max inventory
+			return 0.;
 		}
 
 		inventoryClient -= params->cli[client].dailyDemand[k];

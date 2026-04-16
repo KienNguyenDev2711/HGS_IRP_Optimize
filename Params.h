@@ -75,6 +75,7 @@ class Params {
 
   // debut de l'algo
   clock_t debut;
+  clock_t ticks; // time limit in clock ticks
 
   // PARAMETRES DE L'ALGORITHME GENETIQUE //
 

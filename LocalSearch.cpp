@@ -20,6 +20,10 @@ void LocalSearch::runSearchTotal(bool isRepPhase)
   for (int day = 1; day <= params->nbDays; day++)
     mutationSameDay(day);
 
+  // Time-limit check: skip expensive lot-sizing if time is almost up
+  if (clock() - params->debut > params->ticks * 0.95)
+    return;
+
   mutationDifferentDay();
   updateMoves();
   for (int day = 1; day <= params->nbDays; day++)
@@ -94,6 +98,9 @@ int LocalSearch::mutationSameDay(int day)
   {
     rechercheTerminee = true;
     moveEffectue = 0;
+    // Time-limit check in same-day mutations
+    if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
+      return nbMoves;
     for (int posU = 0; posU < size; posU++)
     {
       posU -= moveEffectue; // on retourne sur le dernier noeud si on a modifi�
@@ -226,6 +233,9 @@ int LocalSearch::mutationDifferentDay()
     rechercheTerminee = true;
     
     for (int posU = 0; posU < params->nbClients; posU++){
+      // Time-limit check inside lot-sizing loop
+      if (clock() - params->debut > params->ticks * 0.90)
+        return nbMoves;
       nbMoves += mutation11(ordreParcours[0][posU]);
     }
   }

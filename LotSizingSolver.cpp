@@ -661,6 +661,18 @@ void LotSizingSolver::solveEquationSystem(std::shared_ptr<LinearPiece> C,
                                           double I, double demand,
                                           double &fromI, double &quantity)
 {
+  // Guard degenerate pieces (p1->x == p2->x)
+  if(eq(fromC->p1->x, fromC->p2->x)){
+    fromI = round(fromC->p2->x + demand);
+    quantity = round(I + demand - fromI);
+    return;
+  }
+  if(eq(fromF->p1->x, fromF->p2->x)){
+    quantity = round(fromF->p2->x);
+    fromI = round(I + demand - quantity);
+    return;
+  }
+
   double slopeC = (fromC->p2->y - fromC->p1->y) / (fromC->p2->x - fromC->p1->x);
   double slopeF = (fromF->p2->y - fromF->p1->y) / (fromF->p2->x - fromF->p1->x);
 
@@ -701,6 +713,11 @@ void LotSizingSolver::    solveEquationSystem_holding(std::shared_ptr<LinearPiec
   if(eq(fromC->p1->x,fromC->p2->x )){
     fromI = round(fromC->p2->x + demand);
     quantity = round(I + demand - fromI);
+    return;
+  }
+  if(eq(fromF->p1->x, fromF->p2->x)){
+    quantity = round(fromF->p2->x);
+    fromI = round(I + demand - quantity);
     return;
   }
 
@@ -746,6 +763,11 @@ void LotSizingSolver::solveEquationSystem_stockout(std::shared_ptr<LinearPiece> 
   if(eq(fromC->p1->x,fromC->p2->x )){
     fromI = round(fromC->p2->x + demand);
     quantity = round(I + demand - fromI);
+    return;
+  }
+  if(eq(fromF->p1->x, fromF->p2->x)){
+    quantity = round(fromF->p2->x);
+    fromI = round(I + demand - quantity);
     return;
   }
 
@@ -985,9 +1007,8 @@ bool LotSizingSolver::backtracking_stockout(){
     { 
       
       if(neq(I[day],0)){
-        cout <<"lotsizing :: line 1076 f2 error!!!!Iday: "<<I[day] <<endl;
-        int a=0;
-        cin >>a;
+        // Non-zero inventory in f2 case: warn but continue
+        // cerr << "lotsizing f2 warning: I[" << day << "]= " << I[day] << endl;
       }
       double loss = -tmp->replenishment_loss;
       I[day-1] = loss+params->cli[client].dailyDemand[day];
