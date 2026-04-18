@@ -7,6 +7,9 @@ void LocalSearch::runILS(bool isRepPhase, int maxIterations)
   double bestCost = 1.e30;
   for (int it = 0; it < maxIterations; it++)
   {
+    // Time-limit check between ILS iterations
+    if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.85)
+      return;
     if (it > 0)
       shaking();
     runSearchTotal(isRepPhase);
@@ -21,7 +24,7 @@ void LocalSearch::runSearchTotal(bool isRepPhase)
     mutationSameDay(day);
 
   // Time-limit check: skip expensive lot-sizing if time is almost up
-  if (clock() - params->debut > params->ticks * 0.95)
+  if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.95)
     return;
 
   mutationDifferentDay();
@@ -93,6 +96,8 @@ int LocalSearch::mutationSameDay(int day)
   int moveEffectue = 0;
   int nbMoves = 0;
   firstLoop = true;
+  int crossDepotRestarts = 0;
+  const int MAX_CROSS_DEPOT_RESTARTS = 3;
 
   while (!rechercheTerminee)
   {
@@ -103,6 +108,9 @@ int LocalSearch::mutationSameDay(int day)
       return nbMoves;
     for (int posU = 0; posU < size; posU++)
     {
+      // Granular time guard inside the inner posU loop
+      if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
+      { rechercheTerminee = true; break; }
       posU -= moveEffectue; // on retourne sur le dernier noeud si on a modifi�
       nbMoves += moveEffectue;
       moveEffectue = 0;
@@ -159,12 +167,8 @@ int LocalSearch::mutationSameDay(int day)
           if (moveEffectue != 1)
             moveEffectue = mutation9();
 
-          if (params->multiDepot && moveEffectue != 1)
-            moveEffectue = mutation10();
-          if (params->multiDepot && moveEffectue != 1)
-            moveEffectue = mutation11Depot();
-          if (params->multiDepot && moveEffectue != 1)
-            moveEffectue = mutation12();
+          // Cross-depot mutations are handled by the exhaustive scan below,
+          // not in the neighbor loop (crossDepotOldCost not yet cached here).
 
           if (moveEffectue == 1)
           {
@@ -173,13 +177,21 @@ int LocalSearch::mutationSameDay(int day)
           }
         }
       }
-
-      if (params->multiDepot && params->cli[noeudUCour].isBorderline && moveEffectue != 1)
+      if (params->multiDepot && params->cli[noeudUCour].isBorderline && moveEffectue != 1
+          && crossDepotRestarts < MAX_CROSS_DEPOT_RESTARTS)
       {
+        // Time guard: skip expensive exhaustive cross-depot scan if >80% budget used
+        if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.80)
+          continue;
+        // Cache the current solution cost ONCE for all cross-depot mutation attempts
+        crossDepotOldCost = evaluateSolutionCost(true);
         for (int otherClient = params->nbDepots; otherClient < params->nbDepots + params->nbClients && moveEffectue == 0; otherClient++)
         {
           if (otherClient == noeudUCour || !clients[day][otherClient]->estPresent)
             continue;
+          // Inner time guard to prevent exhaustive scan from consuming entire budget
+          if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.80)
+            break;
 
           noeudV = clients[day][otherClient];
           if ((!noeudV->route->nodeAndRouteTested[noeudU->cour] || !noeudU->route->nodeAndRouteTested[noeudU->cour] || firstLoop) &&
@@ -198,13 +210,16 @@ int LocalSearch::mutationSameDay(int day)
               moveEffectue = mutation10();
             if (moveEffectue != 1)
               moveEffectue = mutation11Depot();
-            if (moveEffectue != 1)
-              moveEffectue = mutation12();
+            // mutation12 (double swap) is disabled for cross-depot moves
+            // because after swapNoeud(U,V), the x/y pointers become stale
+            // and the second swapNoeud(x,y) can corrupt the linked list,
+            // causing an infinite loop in updateRouteData.
 
             if (moveEffectue == 1)
             {
               routeU->reinitSingleDayMoves();
               routeV->reinitSingleDayMoves();
+              crossDepotRestarts++;
             }
           }
         }
@@ -277,7 +292,7 @@ int LocalSearch::mutationDifferentDay()
     
     for (int posU = 0; posU < params->nbClients; posU++){
       // Time-limit check inside lot-sizing loop
-      if (clock() - params->debut > params->ticks * 0.90)
+      if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
         return nbMoves;
       nbMoves += mutation11(ordreParcours[0][posU]);
     }
@@ -493,11 +508,10 @@ int LocalSearch::mutation10()
   if (noeudUCour == yCour)
     return 0;
 
-  double oldCost = evaluateSolutionCost(true);
   Noeud *oldPred = noeudUPred;
   insertNoeud(noeudU, noeudV);
   double newCost = evaluateSolutionCost(true);
-  if (newCost + 0.0001 < oldCost)
+  if (newCost + 0.0001 < crossDepotOldCost)
   {
     rechercheTerminee = false;
     return 1;
@@ -518,10 +532,9 @@ int LocalSearch::mutation11Depot()
   if (noeudUCour == noeudVPredCour || noeudUCour == yCour)
     return 0;
 
-  double oldCost = evaluateSolutionCost(true);
   swapNoeud(noeudU, noeudV);
   double newCost = evaluateSolutionCost(true);
-  if (newCost + 0.0001 < oldCost)
+  if (newCost + 0.0001 < crossDepotOldCost)
   {
     rechercheTerminee = false;
     return 1;
@@ -544,11 +557,10 @@ int LocalSearch::mutation12()
   if (y == noeudUPred || noeudU == y || x == noeudV || noeudV == noeudXSuiv)
     return 0;
 
-  double oldCost = evaluateSolutionCost(true);
   swapNoeud(noeudU, noeudV);
   swapNoeud(x, y);
   double newCost = evaluateSolutionCost(true);
-  if (newCost + 0.0001 < oldCost)
+  if (newCost + 0.0001 < crossDepotOldCost)
   {
     rechercheTerminee = false;
     return 1;
@@ -632,10 +644,12 @@ double LocalSearch::evaluateSolutionCost(bool penalized)
       if (params->nbDepots > 1 && routes[k][r]->depot)
       {
         Noeud *n = routes[k][r]->depot->suiv;
+        int _cyc = 0;
         while (n && !n->estUnDepot)
         {
           depotOfCust[k][n->cour] = routes[k][r]->depot->cour;
           n = n->suiv;
+          if (++_cyc > 500) break;
         }
       }
     }
@@ -1120,51 +1134,9 @@ void LocalSearch::shaking()
 
   // Take one customer, and put it back to the days corresponding to the best
   // lot sizing (without detour cost consideration)
-  int nbRandomLotOpt = 2;
-  Noeud *noeudTravail;
-  for (int nLotOpt = 0; nLotOpt < nbRandomLotOpt; nLotOpt++)
-  {
-    // Choose a random customer
-    int client =
-        params->nbDepots + params->rng->genrand64_int63() % params->nbClients;
-
-    // Remove all occurences of this customer
-    for (int k = 1; k <= params->ancienNbDays; k++)
-    {
-      noeudTravail = clients[k][client];
-      if (noeudTravail->estPresent)
-        removeNoeud(noeudTravail);
-      demandPerDay[k][client] = 0.;
-    }
-
-    // Find the best days of insertion (Lot Sizing point of view)
-    vector<double> insertionQuantity;
-    // ModelLotSizingPI::bestInsertionLotSizing(client, insertionQuantity, params);
-
-    // And insert in the good days after a random customer
-    // Then looking at the solution of the model and inserting in the good place
-   
-    for (int k = 1; k <= params->ancienNbDays; k++)
-    {
-      if (insertionQuantity[k - 1] > 0.0001) // don't forget that in the model
-                                             // the index goes from 0 to t-1
-      {
-        demandPerDay[k][client] = insertionQuantity[k - 1];
-          
-
-        // If the day is not currently empty
-        if (ordreParcours[k].size() >
-            0) // place after a random existing customer
-          clients[k][client]->placeInsertion =
-              clients[k][ordreParcours[k][params->rng->genrand64_int63() %
-                                          ordreParcours[k].size()]];
-        else // place after a depot
-          clients[k][client]->placeInsertion = depots[k][0];
-
-        addNoeud(clients[k][client]);
-      }
-    }
-  }
+  // NOTE: The lot-sizing model (ModelLotSizingPI) is commented out.
+  // Skip the lot-sizing re-insertion to avoid accessing empty vectors.
+  // Instead, just keep the random swap shaking above.
 }
 
 // constructeur

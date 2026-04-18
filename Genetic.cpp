@@ -348,7 +348,22 @@ int Genetic::crossPOX2()
 	
 	
 	for (int k = 1; k <= params->nbDays; k++)
+	{
+		// Occasionally randomize depot assignments for borderline customers in offspring
+		if (params->multiDepot && params->nbDepots > 1)
+		{
+			for (int client : rejeton->chromT[k])
+			{
+				if (params->cli[client].isBorderline && params->cli[client].candidateDepots.size() > 1
+					&& params->rng->genrand64_real1() < 0.15)
+				{
+					rejeton->chromD[k][client] = params->cli[client].candidateDepots[
+						params->rng->genrand64_int63() % params->cli[client].candidateDepots.size()];
+				}
+			}
+		}
 		rejeton->reorderByAssignedDepot(k, params->hasTimeWindows);
+	}
 
 	// TW-aware: sort chromT by earliest time within each day when depot grouping is not used
 	if (params->hasTimeWindows && !params->multiDepot)

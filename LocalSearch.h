@@ -179,6 +179,9 @@ public:
   int mutation11Depot();
   int mutation12();
 
+  // Cached cost for cross-depot mutations (avoids redundant evaluateSolutionCost calls)
+  double crossDepotOldCost;
+
   // Prints some useful information on the current solution
   void printInventoryLevels(std::ostream& file,bool add);
 

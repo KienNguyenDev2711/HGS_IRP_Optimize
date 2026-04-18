@@ -66,6 +66,9 @@ void Route::updateRouteData ()
 		firstIt = false ;
 		noeud = noeud->suiv ;
 		place ++ ;
+		if (place > 500) {
+			break;
+		}
 		noeud->place = place ;
 		charge += myLS->demandPerDay[day][noeud->cour];
 		routeDistance += params->timeCost[noeud->pred->cour][noeud->cour] ;

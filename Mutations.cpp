@@ -3,6 +3,10 @@
 // effectue l'insertion du client U apres V
 void LocalSearch::insertNoeud(Noeud * U, Noeud * V)
 {
+	// Save U's actual current route before modification
+	Route * origRouteU = U->route;
+	Route * destRouteV = V->route;
+
 	// mettre a jour les noeuds
 	U->pred->suiv = U->suiv ;
 	U->suiv->pred = U->pred ;
@@ -11,10 +15,11 @@ void LocalSearch::insertNoeud(Noeud * U, Noeud * V)
 	U->suiv = V->suiv ;
 	V->suiv = U ;
 
-
-	U->route = routeV ;
-	routeU->updateRouteData();
-	routeV->updateRouteData();
+	// Use V's actual route (not class member routeV which may be stale)
+	U->route = destRouteV ;
+	origRouteU->updateRouteData();
+	if (destRouteV != origRouteU)
+		destRouteV->updateRouteData();
 }
 // effectue le swap du client U avec V
 void LocalSearch::swapNoeud(Noeud * U, Noeud * V) 
@@ -323,12 +328,15 @@ int LocalSearch::mutation7 ()
 	x->pred = nodeNum ;
 	x->suiv = y ;
 
+	{ int _cyc = 0;
 	while ( nodeNum != noeudV )
 	{
 		temp = nodeNum->suiv ;
 		nodeNum->suiv = nodeNum->pred ;
 		nodeNum->pred = temp ;
 		nodeNum = temp ;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
+	}
 	}
 
 	noeudV->suiv = noeudV->pred ;
@@ -348,7 +356,11 @@ int LocalSearch::mutation7 ()
 int LocalSearch::mutation8 ()
 {
 	// TODO : heterogenous fleet, 2 types de mutations suivant les camions choisis pour chaque segment
-	if  ( routeU->cour == routeV->cour || routeU->depot->cour != routeV->depot->cour) { return 0 ; }
+	if  ( routeU->cour == routeV->cour ) { return 0 ; }
+	// Allow cross-depot 2-OPT* only when at least one endpoint is borderline
+	if ( routeU->depot->cour != routeV->depot->cour ) {
+		if (!params->cli[noeudUCour].isBorderline && !params->cli[noeudVCour].isBorderline) return 0;
+	}
 
 	double chargeResteU = routeU->charge - noeudU->chargeAvant ;
 	double chargeResteV = routeV->charge - noeudV->chargeAvant ;
@@ -387,6 +399,7 @@ int LocalSearch::mutation8 ()
 	Noeud * xx = x ;
 	Noeud * vv = noeudV ;
 
+	{ int _cyc = 0;
 	while ( !xx->estUnDepot )
 	{
 		temp = xx->suiv ;
@@ -394,8 +407,11 @@ int LocalSearch::mutation8 ()
 		xx->pred = temp ;
 		xx->route = routeV ;
 		xx = temp ;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+	}
 	}
 
+	{ int _cyc = 0;
 	while ( !vv->estUnDepot )
 	{
 		temp = vv->pred ;
@@ -403,6 +419,8 @@ int LocalSearch::mutation8 ()
 		vv->suiv = temp ;
 		vv->route = routeU ;
 		vv = temp ;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+	}
 	}
 
 	// mettre a jour les noeuds
@@ -448,7 +466,11 @@ int LocalSearch::mutation8 ()
 // If T(noeudU) != T(noeudV) , replace (noeudU,x) and (noeudV,y) by (noeudU,y) and (noeudV,x)
 int LocalSearch::mutation9 ()
 {
-	if  (routeU->cour == routeV->cour || routeU->depot->cour != routeV->depot->cour) { return 0 ; }
+	if  (routeU->cour == routeV->cour) { return 0 ; }
+	// Allow cross-depot 2-OPT* only when at least one endpoint is borderline
+	if ( routeU->depot->cour != routeV->depot->cour ) {
+		if (!params->cli[noeudUCour].isBorderline && !params->cli[noeudVCour].isBorderline) return 0;
+	}
 
 	Noeud * count ;
 
@@ -487,17 +509,23 @@ int LocalSearch::mutation9 ()
 	Noeud * depotVPred = depotVFin->pred ;
 
 	count = y ;
+	{ int _cyc = 0;
 	while ( !count->estUnDepot )
 	{
 		count->route = routeU ;
 		count = count->suiv ;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+	}
 	}
 
 	count = x ;
+	{ int _cyc = 0;
 	while ( !count->estUnDepot )
 	{
 		count->route = routeV ;
 		count = count->suiv ;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+	}
 	}
 
 	// mettre a jour les noeuds

@@ -274,7 +274,7 @@ void Params::setMethodParams()
 	maxValides = 0.25;	// Target range for the number of feasible solutions // **
 	distMin = 0.01;		// Distance in terms of objective function under which the solutions are considered to be the same // o
 	borneSplit = 2.0;	// Split parameter (how far to search beyond the capacity limit) // o
-	borderlineFactor = 0.15;
+	borderlineFactor = 0.35;
 
 	// necessary adjustments for the CVRP (cf. OR2012)
 	if (!isInventoryRouting)
