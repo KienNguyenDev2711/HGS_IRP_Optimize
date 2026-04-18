@@ -43,12 +43,9 @@ Population::Population(Params *params) : params(params)
 			params->penalityInventory *= 50;
 			compter = false;
 		}
-		std::cerr << "POP " << i << " create" << std::endl;
 		randomIndiv = new Individu(params, 1.0);  
 
-		std::cerr << "POP " << i << " edu" << std::endl;
 		education(randomIndiv);
-		std::cerr << "POP " << i << " done" << std::endl;
 
 		if (compter)
 			updateNbValides(randomIndiv);

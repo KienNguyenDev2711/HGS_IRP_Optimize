@@ -6,55 +6,55 @@ day[1] route[1] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_
  depot[0](depart=0.000h) -> depot[0]
 day[1] route[2] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[1](depart=0.000h) -> depot[1]
-day[1] route[3] depot[1]: distance = 109.281 duration = 154.641 depart = 0.634h load = 1 TW_viol = 0
- depot[1](depart=0.634h) -> c5(del=1.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> depot[1]
-day[2] route[0] depot[0]: distance = 59.1747 duration = 150.458 depart = 1.282h load = 15 TW_viol = 0
- depot[0](depart=1.282h) -> c8(del=7.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c10(del=8.000,arr=2.752h,start=2.752h,dep=3.252h,tw=[2.000,12.000]) -> depot[0]
-day[2] route[1] depot[0]: distance = 135.587 duration = 300.024 depart = 1.611h load = 44 TW_viol = 0
- depot[0](depart=1.611h) -> c11(del=8.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c5(del=11.000,arr=3.214h,start=3.214h,dep=3.714h,tw=[2.000,12.000]) -> c7(del=6.000,arr=4.156h,start=4.156h,dep=4.656h,tw=[3.000,14.000]) -> c4(del=10.000,arr=5.009h,start=5.009h,dep=5.509h,tw=[2.000,12.000]) -> c6(del=9.000,arr=5.554h,start=5.554h,dep=6.054h,tw=[2.000,12.000]) -> depot[0]
+day[1] route[3] depot[1]: distance = 121.762 duration = 232.337 depart = 1.764h load = 4 TW_viol = 0
+ depot[1](depart=1.764h) -> c7(del=3.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c5(del=1.000,arr=3.942h,start=3.942h,dep=4.442h,tw=[2.000,12.000]) -> depot[1]
+day[2] route[0] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
+ depot[0](depart=0.000h) -> depot[0]
+day[2] route[1] depot[0]: distance = 65.351 duration = 189.789 depart = 1.611h load = 23 TW_viol = 0
+ depot[0](depart=1.611h) -> c11(del=8.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c8(del=7.000,arr=2.983h,start=2.983h,dep=3.483h,tw=[2.000,12.000]) -> c10(del=8.000,arr=3.735h,start=3.735h,dep=4.235h,tw=[2.000,12.000]) -> depot[0]
 day[2] route[2] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[1](depart=0.000h) -> depot[1]
-day[2] route[3] depot[1]: distance = 31.2108 duration = 115.605 depart = 1.610h load = 16 TW_viol = 0
- depot[1](depart=1.610h) -> c3(del=16.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,14.000]) -> depot[1]
-day[3] route[0] depot[0]: distance = 113.746 duration = 238.184 depart = 1.611h load = 44 TW_viol = 0
- depot[0](depart=1.611h) -> c11(del=19.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c8(del=14.000,arr=2.983h,start=2.983h,dep=3.483h,tw=[2.000,12.000]) -> c5(del=11.000,arr=4.374h,start=4.374h,dep=4.874h,tw=[2.000,12.000]) -> depot[0]
-day[3] route[1] depot[0]: distance = 179.11 duration = 316.537 depart = 1.436h load = 50 TW_viol = 0
- depot[0](depart=1.436h) -> c2(del=5.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c10(del=18.000,arr=3.405h,start=3.405h,dep=3.905h,tw=[2.000,12.000]) -> c9(del=9.000,arr=4.690h,start=4.690h,dep=5.190h,tw=[2.000,12.000]) -> c4(del=18.000,arr=6.010h,start=6.010h,dep=6.510h,tw=[2.000,12.000]) -> depot[0]
+day[2] route[3] depot[1]: distance = 139.871 duration = 272.635 depart = 0.819h load = 50 TW_viol = 0
+ depot[1](depart=0.819h) -> c4(del=10.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c6(del=9.000,arr=2.544h,start=2.544h,dep=3.044h,tw=[2.000,12.000]) -> c7(del=4.000,arr=3.417h,start=3.417h,dep=3.917h,tw=[3.000,14.000]) -> c5(del=11.000,arr=4.359h,start=4.359h,dep=4.859h,tw=[2.000,12.000]) -> c3(del=16.000,arr=5.926h,start=5.926h,dep=6.426h,tw=[2.000,14.000]) -> depot[1]
+day[3] route[0] depot[0]: distance = 97.5539 duration = 214.981 depart = 1.436h load = 37 TW_viol = 0
+ depot[0](depart=1.436h) -> c2(del=5.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c10(del=18.000,arr=3.405h,start=3.405h,dep=3.905h,tw=[2.000,12.000]) -> c8(del=14.000,arr=4.157h,start=4.157h,dep=4.657h,tw=[2.000,12.000]) -> depot[0]
+day[3] route[1] depot[0]: distance = 78.8736 duration = 203.311 depart = 1.611h load = 47 TW_viol = 0
+ depot[0](depart=1.611h) -> c11(del=19.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c9(del=9.000,arr=2.909h,start=2.909h,dep=3.409h,tw=[2.000,12.000]) -> c3(del=19.000,arr=4.127h,start=4.127h,dep=4.627h,tw=[2.000,14.000]) -> depot[0]
 day[3] route[2] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[1](depart=0.000h) -> depot[1]
-day[3] route[3] depot[1]: distance = 125.982 duration = 250.376 depart = 1.610h load = 41 TW_viol = 0
- depot[1](depart=1.610h) -> c3(del=19.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,14.000]) -> c6(del=14.000,arr=3.651h,start=3.651h,dep=4.151h,tw=[2.000,12.000]) -> c7(del=8.000,arr=4.524h,start=4.524h,dep=5.024h,tw=[3.000,14.000]) -> depot[1]
+day[3] route[3] depot[1]: distance = 136.243 duration = 243.906 depart = 0.634h load = 50 TW_viol = 0
+ depot[1](depart=0.634h) -> c5(del=11.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c7(del=7.000,arr=2.942h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c6(del=14.000,arr=3.873h,start=3.873h,dep=4.373h,tw=[2.000,12.000]) -> c4(del=18.000,arr=4.417h,start=4.417h,dep=4.917h,tw=[2.000,12.000]) -> depot[1]
 CUSTOMER 2 bounds (0,100) [19,19,11] [11,11,3] [3,8,0] 
 CUSTOMER 3 bounds (0,100) [22,22,3] [3,19,0] [0,19,0] 
 CUSTOMER 4 bounds (0,100) [26,26,8] [8,18,0] [0,18,0] 
 CUSTOMER 5 bounds (0,100) [10,11,0] [0,11,0] [0,11,0] 
 CUSTOMER 6 bounds (0,100) [19,19,5] [5,14,0] [0,14,0] 
-CUSTOMER 7 bounds (0,100) [10,10,2] [2,8,0] [0,8,0] 
+CUSTOMER 7 bounds (0,100) [10,13,5] [5,9,1] [1,8,0] 
 CUSTOMER 8 bounds (0,100) [21,21,7] [7,14,0] [0,14,0] 
 CUSTOMER 9 bounds (0,100) [18,18,9] [9,9,0] [0,9,0] 
 CUSTOMER 10 bounds (0,100) [28,28,10] [10,18,0] [0,18,0] 
 CUSTOMER 11 bounds (0,100) [30,30,11] [11,19,0] [0,19,0] 
-DEPOT 0    [150,150] [200,141] [191,97] 
-DEPOT 1    [150,149] [199,183] [233,192] 
-ROUTING COST: 754.091
-ROUTE DURATION: 1525.83
+DEPOT 0    [150,150] [200,177] [227,143] 
+DEPOT 1    [150,146] [196,146] [196,146] 
+ROUTING COST: 639.654
+ROUTE DURATION: 1356.96
 CAPACITY PENALTY: 0
 ROUTE LENGTH PENALTY: 0
 TIME WINDOW PENALTY: 0
-DEPOT HOLDING: 456
-RETAILER HOLDING: 330
+DEPOT HOLDING: 454
+RETAILER HOLDING: 350
 CLIENT STOCKOUT: 0
 CLIENT STOCKOUT Amount: 0
-COST SUMMARY : OVERALL 1540.09
-REFORMULATED COST : 1540.09
+COST SUMMARY : OVERALL 1443.65
+REFORMULATED COST : 1443.65
 
 === CUSTOMER DEPOT ASSIGNMENT BY DAY ===
 Customer 2: day3->D0 
-Customer 3: day2->D1 day3->D1 
-Customer 4: day2->D0 day3->D0 
-Customer 5: day1->D1 day2->D0 day3->D0 
-Customer 6: day2->D0 day3->D1 
-Customer 7: day2->D0 day3->D1 [borderline]
+Customer 3: day2->D1 day3->D0 
+Customer 4: day2->D1 day3->D1 
+Customer 5: day1->D1 day2->D1 day3->D1 
+Customer 6: day2->D1 day3->D1 
+Customer 7: day1->D1 day2->D1 day3->D1 [borderline]
 Customer 8: day2->D0 day3->D0 
 Customer 9: day3->D0 
 Customer 10: day2->D0 day3->D0 
@@ -63,35 +63,34 @@ Customer 11: day2->D0 day3->D0
 === DELIVERY QUANTITY PER RETAILER PER DEPOT ===
 DEPOT 0:
   Customer 2: day3=5 (total=5)
-  Customer 3: (none)
-  Customer 4: day2=10 day3=18 (total=28)
-  Customer 5: day2=11 day3=11 (total=22)
-  Customer 6: day2=9 (total=9)
-  Customer 7: day2=6 (total=6)
+  Customer 3: day3=19 (total=19)
+  Customer 4: (none)
+  Customer 5: (none)
+  Customer 6: (none)
+  Customer 7: (none)
   Customer 8: day2=7 day3=14 (total=21)
   Customer 9: day3=9 (total=9)
   Customer 10: day2=8 day3=18 (total=26)
   Customer 11: day2=8 day3=19 (total=27)
 DEPOT 1:
   Customer 2: (none)
-  Customer 3: day2=16 day3=19 (total=35)
-  Customer 4: (none)
-  Customer 5: day1=1 (total=1)
-  Customer 6: day3=14 (total=14)
-  Customer 7: day3=8 (total=8)
+  Customer 3: day2=16 (total=16)
+  Customer 4: day2=10 day3=18 (total=28)
+  Customer 5: day1=1 day2=11 day3=11 (total=23)
+  Customer 6: day2=9 day3=14 (total=23)
+  Customer 7: day1=3 day2=4 day3=7 (total=14)
   Customer 8: (none)
   Customer 9: (none)
   Customer 10: (none)
   Customer 11: (none)
-1540.09
-7
-Total Time: 29.475
+1443.65
+6
+Total Time: 28.901
 PITime: 0.000
-Best Solution Time: 29.474
- 1 1 1 154.641 1.000  3 1 5 1
- 0 2 1 150.458 15.000  4 0 8 10 0
- 0 2 1 300.024 44.000  7 0 11 5 7 4 6 0
- 1 2 1 115.605 16.000  3 1 3 1
- 0 3 1 238.184 44.000  5 0 11 8 5 0
- 0 3 1 316.537 50.000  6 0 2 10 9 4 0
- 1 3 1 250.376 41.000  5 1 3 6 7 1
+Best Solution Time: 28.899
+ 1 1 1 232.337 4.000  4 1 7 5 1
+ 0 2 1 189.789 23.000  5 0 11 8 10 0
+ 1 2 1 272.635 50.000  7 1 4 6 7 5 3 1
+ 0 3 1 214.981 37.000  5 0 2 10 8 0
+ 0 3 1 203.311 47.000  5 0 11 9 3 0
+ 1 3 1 243.906 50.000  6 1 5 7 6 4 1
