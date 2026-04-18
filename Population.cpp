@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include <iomanip>
 #include <sstream>
 // constructeur
 Population::Population(Params *params) : params(params)
@@ -11,8 +12,14 @@ Population::Population(Params *params) : params(params)
 	delete trainer->localSearch;   	
 	trainer->localSearch = new LocalSearch(params, trainer);
 
+	auto timeLimitReached = [&]() {
+		return params->ticks > 0 && clock() - params->debut >= params->ticks;
+	};
+
 	double temp = params->penalityCapa;
 	double temp2 = params->penalityLength;
+	double temp3 = params->penalityTimeWindow;
+	double temp4 = params->penalityInventory;
 	valides = new SousPop(); 
 	invalides = new SousPop();
 	valides->nbIndiv = 0;
@@ -25,10 +32,15 @@ Population::Population(Params *params) : params(params)
 
 	for (int i = 0; i < params->mu * 2; i++)
 	{
+		if (timeLimitReached())
+			break;
+
 		if (i == params->mu)
 		{
 			params->penalityCapa *= 50;
 			params->penalityLength *= 50;
+			params->penalityTimeWindow *= 50;
+			params->penalityInventory *= 50;
 			compter = false;
 		}
 		randomIndiv = new Individu(params, 1.0);  
@@ -53,6 +65,8 @@ Population::Population(Params *params) : params(params)
 
 	params->penalityCapa = temp;
 	params->penalityLength = temp2;
+	params->penalityTimeWindow = temp3;
+	params->penalityInventory = temp4;
 }
 
 // destructeur
@@ -155,6 +169,8 @@ void Population::diversify()
 	Individu *randomIndiv;
 	double temp = params->penalityCapa;
 	double temp2 = params->penalityLength;
+	double temp3 = params->penalityTimeWindow;
+	double temp4 = params->penalityInventory;
 
 	while (valides->nbIndiv > (int)(params->rho * (double)params->mu))
 	{
@@ -175,6 +191,8 @@ void Population::diversify()
 		{
 			params->penalityCapa *= 50;
 			params->penalityLength *= 50;
+			params->penalityTimeWindow *= 50;
+			params->penalityInventory *= 50;
 		}
 		randomIndiv = new Individu(params, 1.0);
 		education(randomIndiv);
@@ -184,6 +202,8 @@ void Population::diversify()
 
 	params->penalityCapa = temp;
 	params->penalityLength = temp2;
+	params->penalityTimeWindow = temp3;
+	params->penalityInventory = temp4;
 }
 
 int Population::placeIndividu(SousPop *pop, Individu *indiv)
@@ -373,6 +393,7 @@ void Population::recopieIndividu(Individu *destination, Individu *source)
 {
 	destination->chromT = source->chromT;
 	destination->chromL = source->chromL;
+	destination->chromD = source->chromD;
 	destination->chromR = source->chromR;
 	destination->coutSol = source->coutSol;
 	destination->isFitnessComputed = source->isFitnessComputed;
@@ -393,7 +414,6 @@ void Population::ExportPop(string nomFichier,bool add)
 	ofstream myfile;
 	double cost;
 	double temp, temp2;
-	char *myBuff;
 	Individu *bestValide = getIndividuBestValide();
 
 	if (bestValide != NULL)
@@ -404,17 +424,22 @@ void Population::ExportPop(string nomFichier,bool add)
 		// so that the splitting does not produce a from the best valid solution
 		temp = params->penalityCapa;
 		temp2 = params->penalityLength;
+		double temp3 = params->penalityTimeWindow;
+		double temp4 = params->penalityInventory;
 		params->penalityCapa = 10000;
 		params->penalityLength = 10000;
+		params->penalityTimeWindow = 10000;
+		params->penalityInventory = 10000;
 		education(bestValide);
 		// le trainer a gard� les infos des routes de bestValide
 		loc = trainer->localSearch;
 		params->penalityCapa = temp;
 		params->penalityLength = temp2;
+		params->penalityTimeWindow = temp3;
+		params->penalityInventory = temp4;
 
 		myfile.precision(10);
 		cout.precision(10);
-		ofstream myfile;
 		if (add) myfile.open(nomFichier.data(), std::ios::app);//add on previous
 		else myfile.open(nomFichier.data()); 
 		
@@ -432,18 +457,9 @@ void Population::ExportPop(string nomFichier,bool add)
 		myfile << compteur << endl;
 
 		// exporting the total CPU time (ms)
-		myBuff = new char[100];
-		myfile <<"Total Time: ";sprintf(myBuff, "%d", (int)(clock() / 1000000));
-		myfile << myBuff << endl;
-
-		myBuff = new char[100];
-		myfile <<"PITime: ";sprintf(myBuff, "%d", (int)(params->debut / 1000000));
-		myfile << myBuff << endl;
-
-		// exporting the time to best solution
-		myBuff = new char[100];
-		myfile <<"Best Solution Time: ";sprintf(myBuff, "%d", (int)(timeBest / 1000000));
-		myfile << myBuff << endl;
+		myfile << "Total Time: " << std::fixed << std::setprecision(3) << (double)(clock() - params->debut) / CLOCKS_PER_SEC << endl;
+		myfile << "PITime: " << 0.0 << endl;
+		myfile << "Best Solution Time: " << std::fixed << std::setprecision(3) << (double)(timeBest - params->debut) / CLOCKS_PER_SEC << endl;
 
 		for (int k = 1; k <= params->nbDays; k++)
 		{
@@ -502,15 +518,22 @@ void Population::PrintDetailedSolution()
 	{
 		double temp = params->penalityCapa;
 		double temp2 = params->penalityLength;
+		double temp3 = params->penalityTimeWindow;
+		double temp4 = params->penalityInventory;
 		params->penalityCapa = 10000;
 		params->penalityLength = 10000;
+		params->penalityTimeWindow = 10000;
+		params->penalityInventory = 10000;
 		education(bestValide);
 		LocalSearch *loc = trainer->localSearch;
 		params->penalityCapa = temp;
 		params->penalityLength = temp2;
+		params->penalityTimeWindow = temp3;
+		params->penalityInventory = temp4;
 
 		cout << endl << "========== DETAILED SOLUTION OUTPUT ==========" << endl;
 		loc->printInventoryLevels(cout, false);
+		cout << "Operational objective: " << loc->evaluateSolutionCost(false) << endl;
 		cout << "Reformulated objective: " << trainer->coutSol.evaluation << endl;
 		cout << "===============================================" << endl;
 	}
@@ -522,7 +545,7 @@ void Population::PrintDetailedSolution()
 
 void Population::ExportBKS(string nomFichier)
 {
-	double fit,tim,pri;
+	double fit = 1.e30, tim = 1.e30, pri;
 	ifstream fichier;
     std::string line;
 	fichier.open(nomFichier.c_str());
@@ -537,27 +560,34 @@ void Population::ExportBKS(string nomFichier)
                 ss >> temp >> temp>> temp >> temp>>fit;
                
             }
-			found = line.find("Total Time:");
+			found = line.find("Best Solution Time:");
             if (found != std::string::npos) {
                 std::stringstream ss(line.substr(found));
-                std::string temp;
+					std::string temp1;
+					std::string temp2;
+					std::string temp3;
 			
-                ss >> temp >> temp>>tim;
+					ss >> temp1 >> temp2 >> temp3 >> tim;
                 break; 
             }
         }
 		fichier.close();
 		timeBest = clock();
-		if (getIndividuBestValide() != NULL && getIndividuBestValide()->coutSol.evaluation < fit - 0.01)
+		if (getIndividuBestValide() != NULL)
 		{
-			cout << "!!! new BKS !!! : " << getIndividuBestValide()->coutSol.evaluation << endl;
-			ExportPop(nomFichier,false);
-		}
-		else if (getIndividuBestValide() != NULL && std::fabs(getIndividuBestValide()->coutSol.evaluation - fit) < 0.01 &&  tim > (int)(timeBest / 1000000))
-		{
-			cout << "!!! new time !!! : " << getIndividuBestValide()->coutSol.evaluation << endl;
-			
-			ExportPop(nomFichier,false);
+			education(getIndividuBestValide());
+			double currentOperationalCost = trainer->localSearch->evaluateSolutionCost(false);
+			double currentBestTime = (double)(timeBest - params->debut) / CLOCKS_PER_SEC;
+			if (currentOperationalCost < fit - 0.01)
+			{
+				cout << "!!! new BKS !!! : " << currentOperationalCost << endl;
+				ExportPop(nomFichier,false);
+			}
+			else if (std::fabs(currentOperationalCost - fit) < 0.01 && currentBestTime < tim)
+			{
+				cout << "!!! new time !!! : " << currentOperationalCost << endl;
+				ExportPop(nomFichier,false);
+			}
 		}
 		
 	}
@@ -680,8 +710,16 @@ int Population::selectCompromis(SousPop *souspop)
 
 void Population::education(Individu *indiv)
 {
+	if (params->ticks > 0 && clock() - params->debut >= params->ticks)
+		return;
+
 	recopieIndividu(trainer, indiv);
 	trainer->generalSplit();
+	if (params->ticks > 0 && clock() - params->debut >= params->ticks)
+	{
+		recopieIndividu(indiv, trainer);
+		return;
+	}
 	trainer->updateLS();
 	trainer->localSearch->runSearchTotal(false);
 	trainer->updateIndiv();

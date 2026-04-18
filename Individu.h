@@ -82,6 +82,10 @@ class Individu
   // chromL [i][j] -> The load to be delivered to each customer [j] on day [i]
   vector < vector<double> > chromL ;
 
+  // Explicit depot assignment for each delivered customer on each day.
+  // chromD [i][j] -> assigned depot of customer j on day i, -1 if not served.
+  vector < vector<int> > chromD ;
+
   // Keeps the indices of the beginning of the routes, when they have been computed
   // chromT [i][j] -> jour i, route j , donne la position du premier client de cette route
   vector < vector<int> > chromR ;
@@ -121,6 +125,12 @@ class Individu
 
   // distance measure
   double distance(Individu * indiv2);
+
+  void computeDepotAssignments(vector<vector<int>> & depotAssignments) const;
+  int getAssignedDepot(int day, int client) const;
+  void setAssignedDepot(int day, int client, int depot);
+  void reorderByAssignedDepot(int day, bool sortWithinDepotByTimeWindow);
+  void refreshDepotAssignmentsFromSplit();
 
   // individus class�s par proximit� dans la population, pour les politiques de remplacement
   list <proxData> plusProches;

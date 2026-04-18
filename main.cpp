@@ -34,6 +34,9 @@ int mainIRP(int argc, char *argv[])
     Params *mesParametres = new Params(
         c.get_path_to_instance(), c.get_path_to_solution(), c.get_type(),
         c.get_nbVeh(), c.get_path_to_BKS(), c.get_seed(),c.get_rou(), c.get_stockout());
+
+    // Apply the global CPU budget before any startup heuristics are launched.
+    mesParametres->ticks = nb_ticks_allowed;
         
     // initial population 
     Population *population = new Population(mesParametres);

@@ -80,7 +80,7 @@ Two files are written to `<data_directory>/diff/`:
 #### Route detail block (per day, per vehicle)
 ```
 day[k] route[r] depot[d]: travel time = T  load = L  TW_viol = V
- depot[d] -> c<id>(del=Q, arr=A) -> ... -> depot[d]
+ depot[d](depart=Hh) -> c<id>(del=Q, arr=Ah, start=Sh, dep=Dh, tw=[a,b]) -> ... -> depot[d]
 ```
 
 | Field | Meaning |
@@ -88,11 +88,16 @@ day[k] route[r] depot[d]: travel time = T  load = L  TW_viol = V
 | `day[k]` | Planning day (1-indexed) |
 | `route[r]` | Vehicle/route index |
 | `depot[d]` | Depot node serving this route |
-| `travel time` | Total route travel time (km-equiv) |
+| `distance` | Total routing distance used in the operational objective |
+| `duration` | Total route duration including travel, waiting, and service |
+| `depart=Hh` | Vehicle departure time from depot in hours |
 | `load` | Total delivery quantity on this route |
 | `TW_viol` | Time window violation amount (0 = feasible) |
 | `del=Q` | Delivery quantity to this customer |
-| `arr=A` | Arrival time at this customer (km-equiv)¹ |
+| `arr=Ah` | Raw arrival time at this customer in hours |
+| `start=Sh` | Service start time after waiting for the time window opening |
+| `dep=Dh` | Departure time after service |
+| `tw=[a,b]` | Customer time window in hours |
 
 ¹ To convert arrival time to hours: divide by speed (40 km/h).  
   Example: `arr=80.0` = 80/40 = 2.0 hours.
@@ -118,15 +123,22 @@ For each day:
 
 #### Cost summary
 ```
-ROUTE: <totalRoutingCost>
-LOAD: <capacityViolationPenalty>
-SUPPLY: <depotInventoryHoldingCost>
-CLIENT INVENTORY: <customerInventoryHoldingCost>
-COST SUMMARY : OVERALL <routeCost + loadPenalty + supplyCost + clientInvCost>
+ROUTING COST: <totalRoutingDistance>
+ROUTE DURATION: <totalRouteDuration>
+CAPACITY PENALTY: <capacityViolationPenalty>
+ROUTE LENGTH PENALTY: <routeLengthPenalty>
+TIME WINDOW PENALTY: <timeWindowPenalty>
+DEPOT HOLDING: <depotInventoryHoldingCost>
+RETAILER HOLDING: <customerInventoryHoldingCost>
+CLIENT STOCKOUT: <customerStockoutCost>
+COST SUMMARY : OVERALL <routingCost + depotHolding + retailerHolding + stockout>
+REFORMULATED COST : <operational cost + penalties>
 ```
 
-- **LOAD** is the capacity violation penalty (0 when all routes are within capacity — this is NOT the total delivery amount).
-- **COST SUMMARY** is the original-space objective value (routing + inventory holding).
+- **ROUTING COST** is now the pure travel distance, not the route duration.
+- **ROUTE DURATION** is reported separately for time-window analysis.
+- **COST SUMMARY** is the original-space operational objective value.
+- **REFORMULATED COST** is the penalized objective used by the metaheuristic.
 
 #### Route export lines
 ```

@@ -159,10 +159,53 @@ int LocalSearch::mutationSameDay(int day)
           if (moveEffectue != 1)
             moveEffectue = mutation9();
 
+          if (params->multiDepot && moveEffectue != 1)
+            moveEffectue = mutation10();
+          if (params->multiDepot && moveEffectue != 1)
+            moveEffectue = mutation11Depot();
+          if (params->multiDepot && moveEffectue != 1)
+            moveEffectue = mutation12();
+
           if (moveEffectue == 1)
           {
             routeU->reinitSingleDayMoves();
             routeV->reinitSingleDayMoves();
+          }
+        }
+      }
+
+      if (params->multiDepot && params->cli[noeudUCour].isBorderline && moveEffectue != 1)
+      {
+        for (int otherClient = params->nbDepots; otherClient < params->nbDepots + params->nbClients && moveEffectue == 0; otherClient++)
+        {
+          if (otherClient == noeudUCour || !clients[day][otherClient]->estPresent)
+            continue;
+
+          noeudV = clients[day][otherClient];
+          if ((!noeudV->route->nodeAndRouteTested[noeudU->cour] || !noeudU->route->nodeAndRouteTested[noeudU->cour] || firstLoop) &&
+            noeudV->route->depot->cour != routeU->depot->cour)
+          {
+            noeudVPred = noeudV->pred;
+            y = noeudV->suiv;
+            noeudYSuiv = y->suiv;
+            ySuivCour = y->suiv->cour;
+            routeV = noeudV->route;
+            noeudVCour = noeudV->cour;
+            noeudVPredCour = noeudVPred->cour;
+            yCour = y->cour;
+
+            if (moveEffectue != 1)
+              moveEffectue = mutation10();
+            if (moveEffectue != 1)
+              moveEffectue = mutation11Depot();
+            if (moveEffectue != 1)
+              moveEffectue = mutation12();
+
+            if (moveEffectue == 1)
+            {
+              routeU->reinitSingleDayMoves();
+              routeV->reinitSingleDayMoves();
+            }
           }
         }
       }
@@ -439,6 +482,83 @@ int LocalSearch::mutation11(int client)
     return 0;
 }
 
+int LocalSearch::mutation10()
+{
+  if (!params->cli[noeudUCour].isBorderline)
+    return 0;
+  if (routeU->cour == routeV->cour || routeU->depot->cour == routeV->depot->cour)
+    return 0;
+  if (std::find(params->cli[noeudUCour].candidateDepots.begin(), params->cli[noeudUCour].candidateDepots.end(), routeV->depot->cour) == params->cli[noeudUCour].candidateDepots.end())
+    return 0;
+  if (noeudUCour == yCour)
+    return 0;
+
+  double oldCost = evaluateSolutionCost(true);
+  Noeud *oldPred = noeudUPred;
+  insertNoeud(noeudU, noeudV);
+  double newCost = evaluateSolutionCost(true);
+  if (newCost + 0.0001 < oldCost)
+  {
+    rechercheTerminee = false;
+    return 1;
+  }
+
+  insertNoeud(noeudU, oldPred);
+  return 0;
+}
+
+int LocalSearch::mutation11Depot()
+{
+  if (!params->cli[noeudUCour].isBorderline)
+    return 0;
+  if (routeU->cour == routeV->cour || routeU->depot->cour == routeV->depot->cour)
+    return 0;
+  if (std::find(params->cli[noeudUCour].candidateDepots.begin(), params->cli[noeudUCour].candidateDepots.end(), routeV->depot->cour) == params->cli[noeudUCour].candidateDepots.end())
+    return 0;
+  if (noeudUCour == noeudVPredCour || noeudUCour == yCour)
+    return 0;
+
+  double oldCost = evaluateSolutionCost(true);
+  swapNoeud(noeudU, noeudV);
+  double newCost = evaluateSolutionCost(true);
+  if (newCost + 0.0001 < oldCost)
+  {
+    rechercheTerminee = false;
+    return 1;
+  }
+
+  swapNoeud(noeudU, noeudV);
+  return 0;
+}
+
+int LocalSearch::mutation12()
+{
+  if (!params->cli[noeudUCour].isBorderline)
+    return 0;
+  if (routeU->cour == routeV->cour || routeU->depot->cour == routeV->depot->cour)
+    return 0;
+  if (std::find(params->cli[noeudUCour].candidateDepots.begin(), params->cli[noeudUCour].candidateDepots.end(), routeV->depot->cour) == params->cli[noeudUCour].candidateDepots.end())
+    return 0;
+  if (x->estUnDepot || y->estUnDepot)
+    return 0;
+  if (y == noeudUPred || noeudU == y || x == noeudV || noeudV == noeudXSuiv)
+    return 0;
+
+  double oldCost = evaluateSolutionCost(true);
+  swapNoeud(noeudU, noeudV);
+  swapNoeud(x, y);
+  double newCost = evaluateSolutionCost(true);
+  if (newCost + 0.0001 < oldCost)
+  {
+    rechercheTerminee = false;
+    return 1;
+  }
+
+  swapNoeud(x, y);
+  swapNoeud(noeudU, noeudV);
+  return 0;
+}
+
 double LocalSearch::evaluateCurrentCost(int client)
 {
   
@@ -482,100 +602,101 @@ double LocalSearch::evaluateCurrentCost(int client)
 
 
 // Evaluates the current objective function of the whole solution
-double LocalSearch::evaluateSolutionCost()
+double LocalSearch::evaluateSolutionCost(bool penalized)
 {
   double myCost = 0.;
-  if (params ->isstockout == true){
-    // Build depot assignment: which depot serves each customer on each day
-    vector<vector<int>> depotOfCust(params->ancienNbDays + 1, vector<int>(params->nbDepots + params->nbClients, 0));
-    for (int k = 1; k <= params->ancienNbDays; k++){
-      for (int r = 0; r < params->nombreVehicules[k]; r++){
-        myCost += routes[k][r]->temps;
-        myCost += params->penalityCapa * std::max<double>(
-                      routes[k][r]->charge - routes[k][r]->vehicleCapacity, 0.);
-        myCost += params->penalityTimeWindow * routes[k][r]->timeWindowViolation;
-        // Track depot assignments
-        if (params->nbDepots > 1 && routes[k][r]->depot) {
-          Noeud *n = routes[k][r]->depot->suiv;
-          while (n && !n->estUnDepot) {
-            depotOfCust[k][n->cour] = routes[k][r]->depot->cour;
-            n = n->suiv;
-          }
+  double capacityCosts = 0.;
+  double lengthCosts = 0.;
+  double timeWindowCosts = 0.;
+  double inventoryViolationCosts = 0.;
+  vector<vector<int>> depotOfCust(params->ancienNbDays + 1, vector<int>(params->nbDepots + params->nbClients, -1));
+
+  auto depotInventoryCost = [&](int day, int customer) {
+    int depotIdx = depotOfCust[day][customer];
+    if (depotIdx < 0)
+      depotIdx = params->cli[customer].preferredDepot;
+    if (params->nbDepots > 1 && depotIdx >= 0 && depotIdx < (int)params->inventoryCostPerDepot.size())
+      return params->inventoryCostPerDepot[depotIdx];
+    return params->inventoryCostSupplier;
+  };
+
+  for (int k = 1; k <= params->ancienNbDays; k++)
+  {
+    for (int r = 0; r < params->nombreVehicules[k]; r++)
+    {
+      myCost += routes[k][r]->distance;
+      capacityCosts += params->penalityCapa * std::max<double>(routes[k][r]->charge - routes[k][r]->vehicleCapacity, 0.);
+      lengthCosts += params->penalityLength * std::max<double>(routes[k][r]->temps - routes[k][r]->maxRouteTime, 0.);
+      timeWindowCosts += params->penalityTimeWindow * routes[k][r]->timeWindowViolation;
+
+      if (params->nbDepots > 1 && routes[k][r]->depot)
+      {
+        Noeud *n = routes[k][r]->depot->suiv;
+        while (n && !n->estUnDepot)
+        {
+          depotOfCust[k][n->cour] = routes[k][r]->depot->cour;
+          n = n->suiv;
         }
       }
     }
-     // And the necessary constants (inventory cost on depot only )
+  }
+
+  if (params->isstockout)
+  {
+    vector<double> inventory(params->nbDepots + params->nbClients, 0.);
+    for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
+      inventory[i] = params->cli[i].startingInventory;
+
     myCost += params->objectiveConstant_stockout;
-        
-    vector  <double> I(params->nbDepots + params->nbClients);
-    for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++) {
-      I[i] = params->cli[i].startingInventory;
-    }
-      
-    // Adding inventory cost
     for (int k = 1; k <= params->ancienNbDays; k++)
-      for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++) // all the customers
+      for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
       {
-        //inventory cost at customer i 
-        myCost += std::max<double>(0, I[i] + demandPerDay[k][i]- params->cli[i].dailyDemand[k]) 
-                  * params->cli[i].inventoryCost;
-        
-        // minus depot holding cost from constant value (per-depot if available)
-        double depotInvCostS = params->inventoryCostSupplier;
-        if (params->nbDepots > 1 && depotOfCust[k][i] < (int)params->inventoryCostPerDepot.size())
-          depotInvCostS = params->inventoryCostPerDepot[depotOfCust[k][i]];
-        myCost -= demandPerDay[k][i] * (params->ancienNbDays + 1 - k) 
-                  * depotInvCostS;
-        
-        //stock-out penalty
-        myCost += std::max<double> (0,  params->cli[i].dailyDemand[k]-demandPerDay[k][i]-I[i]) 
-                  * params->cli[i].stockoutCost;    
-        I[i] = std::max<double>(0, I[i] + demandPerDay[k][i]- params->cli[i].dailyDemand[k]);
+        double endInventory = std::max<double>(0., inventory[i] + demandPerDay[k][i] - params->cli[i].dailyDemand[k]);
+        double stockout = std::max<double>(0., params->cli[i].dailyDemand[k] - demandPerDay[k][i] - inventory[i]);
+        myCost += endInventory * params->cli[i].inventoryCost;
+        myCost += stockout * params->cli[i].stockoutCost;
+        myCost -= demandPerDay[k][i] * (params->ancienNbDays + 1 - k) * depotInventoryCost(k, i);
+        inventory[i] = endInventory;
+
+        if (penalized)
+        {
+          if (inventory[i] < params->cli[i].minInventory)
+            inventoryViolationCosts += params->cli[i].minInventory - inventory[i];
+          if (inventory[i] > params->cli[i].maxInventory)
+            inventoryViolationCosts += inventory[i] - params->cli[i].maxInventory;
+        }
       }
+  }
+  else
+  {
+    for (int k = 1; k <= params->ancienNbDays; k++)
+      for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
+        myCost += demandPerDay[k][i] * (params->ancienNbDays + 1 - k) * (params->cli[i].inventoryCost - depotInventoryCost(k, i));
+
+    myCost += params->objectiveConstant;
+
+    if (penalized)
+    {
+      for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
+      {
+        double inventory = params->cli[i].startingInventory;
+        for (int k = 1; k <= params->nbDays; k++)
+        {
+          inventory += demandPerDay[k][i];
+          inventory -= params->cli[i].dailyDemand[k];
+          if (inventory < params->cli[i].minInventory)
+            inventoryViolationCosts += params->cli[i].minInventory - inventory;
+          if (inventory > params->cli[i].maxInventory)
+            inventoryViolationCosts += inventory - params->cli[i].maxInventory;
+        }
+      }
+    }
+  }
+
+  if (!penalized)
     return myCost;
-  }
-  //******************************************************************************
 
-  else{
-      // Build depot assignment for non-stockout case
-      vector<vector<int>> depotOfCustNS(params->ancienNbDays + 1, vector<int>(params->nbDepots + params->nbClients, 0));
-      // Summing distance and load penalty
-      for (int k = 1; k <= params->ancienNbDays; k++)
-      {
-        for (int r = 0; r < params->nombreVehicules[k]; r++)
-        {
-          myCost += routes[k][r]->temps;
-          myCost += params->penalityCapa *
-                    std::max<double>(
-                        routes[k][r]->charge - routes[k][r]->vehicleCapacity, 0.);
-          myCost += params->penalityTimeWindow * routes[k][r]->timeWindowViolation;
-          // Track depot assignments
-          if (params->nbDepots > 1 && routes[k][r]->depot) {
-            Noeud *n = routes[k][r]->depot->suiv;
-            while (n && !n->estUnDepot) {
-              depotOfCustNS[k][n->cour] = routes[k][r]->depot->cour;
-              n = n->suiv;
-            }
-          }
-        }
-      }
-      // Adding inventory cost
-      for (int k = 1; k <= params->ancienNbDays; k++)
-        for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++) // all the customers
-        {
-          double depotInvCostNS = params->inventoryCostSupplier;
-          if (params->nbDepots > 1 && depotOfCustNS[k][i] < (int)params->inventoryCostPerDepot.size())
-            depotInvCostNS = params->inventoryCostPerDepot[depotOfCustNS[k][i]];
-          myCost += demandPerDay[k][i] * (params->ancienNbDays + 1 - k) *
-                    (params->cli[i].inventoryCost - depotInvCostNS);
-        }
-
-      // And the necessary constants
-      myCost += params->objectiveConstant;
-
-      return myCost;
-  }
-  
+  return myCost + capacityCosts + lengthCosts + timeWindowCosts + params->penalityInventory * inventoryViolationCosts;
 }
 
 
@@ -588,46 +709,84 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
   double stockClientCosts = 0;
   double stockClientAmount=0;
   double routeCosts = 0.;
+  double routeDuration = 0.;
   double loadCosts = 0.;
+  double lengthCosts = 0.;
+  double timeWindowCosts = 0.;
+  vector<vector<int>> depotOfCust(params->nbDays + 1, vector<int>(params->nbDepots + params->nbClients, -1));
+
+  auto timeToHours = [&](double value) {
+    return params->speedKmh > 0.0 ? value / params->speedKmh : value;
+  };
 
   // Summing distance and load penalty
   for (int k = 1; k <= params->ancienNbDays; k++)
   {
     for (int r = 0; r < params->nombreVehicules[k]; r++)
     {
-      routeCosts += routes[k][r]->temps; // temps: total travel time
+      routeCosts += routes[k][r]->distance;
+      routeDuration += routes[k][r]->temps;
+      loadCosts += params->penalityCapa * std::max<double>(routes[k][r]->charge - routes[k][r]->vehicleCapacity, 0.);
+      lengthCosts += params->penalityLength * std::max<double>(routes[k][r]->temps - routes[k][r]->maxRouteTime, 0.);
+      timeWindowCosts += params->penalityTimeWindow * routes[k][r]->timeWindowViolation;
+
+      if (params->nbDepots > 1 && routes[k][r]->depot)
+      {
+        Noeud *assigned = routes[k][r]->depot->suiv;
+        while (assigned && !assigned->estUnDepot)
+        {
+          depotOfCust[k][assigned->cour] = routes[k][r]->depot->cour;
+          assigned = assigned->suiv;
+        }
+      }
       
       if(!add) {
         int depotId = routes[k][r]->depot ? routes[k][r]->depot->cour : -1;
-        file <<"day["<<k<<"] route["<<r<<"] depot["<<depotId<<"]: travel time = "<<routes[k][r]->temps
+        double departureTime = 0.;
+        if (params->hasTimeWindows && routes[k][r]->depot && !routes[k][r]->depot->suiv->estUnDepot)
+        {
+          Noeud *firstCustomer = routes[k][r]->depot->suiv;
+          double travelToFirst = params->timeCost[depotId][firstCustomer->cour];
+          double serviceStartFirst = std::max(travelToFirst, params->cli[firstCustomer->cour].earliestTime);
+          departureTime = std::max(0.0, serviceStartFirst - travelToFirst);
+        }
+
+        file <<"day["<<k<<"] route["<<r<<"] depot["<<depotId<<"]: distance = "<<routes[k][r]->distance
+             <<" duration = "<<routes[k][r]->temps;
+        if (params->hasTimeWindows)
+          file << " depart = " << std::fixed << std::setprecision(3) << timeToHours(departureTime) << "h";
+        file << std::defaultfloat << std::setprecision(6)
              <<" load = "<<routes[k][r]->charge;
         if (params->hasTimeWindows)
           file << " TW_viol = " << routes[k][r]->timeWindowViolation;
         file << endl;
-        // Print route with arrival times
-        Noeud *n = routes[k][r]->depot;
-        bool first = true;
-        double arrT = 0;
-        while (!n->estUnDepot || first) {
-          first = false;
-          if (n->estUnDepot)
-            file << " depot[" << n->cour << "]";
-          else
-            file << " -> c" << n->cour << "(del=" << demandPerDay[k][n->cour]
-                 << ",arr=" << std::fixed << std::setprecision(1) << arrT << ")";
-          arrT += params->cli[n->cour].serviceDuration + params->timeCost[n->cour][n->suiv->cour];
-          if (!n->estUnDepot && params->hasTimeWindows) {
-            double est = params->cli[n->cour].earliestTime;
-            if (arrT < est) arrT = est;
+        if (routes[k][r]->depot)
+        {
+          Noeud *n = routes[k][r]->depot->suiv;
+          int prev = depotId;
+          double currentTime = departureTime;
+          file << " depot[" << depotId << "]";
+          if (params->hasTimeWindows)
+            file << "(depart=" << std::fixed << std::setprecision(3) << timeToHours(departureTime) << "h)";
+          while (n && !n->estUnDepot)
+          {
+            double arrival = currentTime + params->cli[prev].serviceDuration + params->timeCost[prev][n->cour];
+            double serviceStart = params->hasTimeWindows ? std::max(arrival, params->cli[n->cour].earliestTime) : arrival;
+            double departure = serviceStart + params->cli[n->cour].serviceDuration;
+            file << " -> c" << n->cour << "(del=" << demandPerDay[k][n->cour];
+            if (params->hasTimeWindows)
+            {
+              file << ",arr=" << timeToHours(arrival) << "h,start=" << timeToHours(serviceStart) << "h,dep=" << timeToHours(departure)
+                   << "h,tw=[" << timeToHours(params->cli[n->cour].earliestTime) << "," << timeToHours(params->cli[n->cour].latestTime) << "]";
+            }
+            file << ")";
+            currentTime = serviceStart;
+            prev = n->cour;
+            n = n->suiv;
           }
-          n = n->suiv;
+          file << std::defaultfloat << std::setprecision(6) << " -> depot[" << depotId << "]" << endl;
         }
-        file << " -> depot[" << n->cour << "]" << std::defaultfloat << std::setprecision(6) << endl;
       }
-      loadCosts +=
-          params->penalityCapa *
-          std::max<double>(routes[k][r]->charge - routes[k][r]->vehicleCapacity,
-                           0.);
     }
   }
 
@@ -697,9 +856,7 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
         depotInv += params->availableSupplyPerDepot[d][k];
         if(!add) file << "[" << depotInv << ",";
         for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++) {
-          // Check if this depot serves this customer on this day
-          Noeud *cNode = clients[k][i];
-          if (cNode->estPresent && cNode->route && cNode->route->depot && cNode->route->depot->cour == d)
+          if (depotOfCust[k][i] == d)
             depotInv -= demandPerDay[k][i];
         }
         if(!add) file << depotInv << "] ";
@@ -721,17 +878,34 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
     if(!add) file  << endl;
   }
 
-  file  << "ROUTE: " << routeCosts << endl;
-  file << "LOAD: " << loadCosts << " SUPPLY: " << inventorySupplyCosts << endl;
-  file << "CLIENT INVENTORY: " << inventoryClientCosts << endl;
+  file  << "ROUTING COST: " << routeCosts << endl;
+  file  << "ROUTE DURATION: " << routeDuration << endl;
+  file << "CAPACITY PENALTY: " << loadCosts << endl;
+  file << "ROUTE LENGTH PENALTY: " << lengthCosts << endl;
+  file << "TIME WINDOW PENALTY: " << timeWindowCosts << endl;
+  file << "DEPOT HOLDING: " << inventorySupplyCosts << endl;
+  file << "RETAILER HOLDING: " << inventoryClientCosts << endl;
   file << "CLIENT STOCKOUT: " << stockClientCosts<<endl;
   file << "CLIENT STOCKOUT Amount: " << stockClientAmount<<endl;
   file  << "COST SUMMARY : OVERALL "
-       << routeCosts + loadCosts + inventorySupplyCosts + inventoryClientCosts+stockClientCosts
+       << routeCosts + inventorySupplyCosts + inventoryClientCosts + stockClientCosts
        << endl;
+  file  << "REFORMULATED COST : " << evaluateSolutionCost(true) << endl;
 
   // Print delivery quantity per retailer per depot
   if(!add && params->multiDepot) {
+    file << endl << "=== CUSTOMER DEPOT ASSIGNMENT BY DAY ===" << endl;
+    for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++) {
+      file << "Customer " << i << ": ";
+      for (int k = 1; k <= params->nbDays; k++) {
+        if (demandPerDay[k][i] > 0.0001)
+          file << "day" << k << "->D" << depotOfCust[k][i] << " ";
+      }
+      if (params->cli[i].isBorderline)
+        file << "[borderline]";
+      file << endl;
+    }
+
     file << endl << "=== DELIVERY QUANTITY PER RETAILER PER DEPOT ===" << endl;
     for (int d = 0; d < params->nbDepots; d++) {
       file << "DEPOT " << d << ":" << endl;
@@ -739,8 +913,7 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
         double totalDel = 0;
         file << "  Customer " << i << ": ";
         for (int k = 1; k <= params->nbDays; k++) {
-          Noeud *cNode = clients[k][i];
-          if (cNode->estPresent && cNode->route && cNode->route->depot && cNode->route->depot->cour == d) {
+          if (depotOfCust[k][i] == d && demandPerDay[k][i] > 0.0001) {
             file << "day" << k << "=" << demandPerDay[k][i] << " ";
             totalDel += demandPerDay[k][i];
           }
@@ -806,15 +979,45 @@ void LocalSearch::computeCoutInsertion(Noeud *client)
 {
   Route *myRoute;
   client->allInsertions.clear();
+  int currentDepot = (client->estPresent && client->route && client->route->depot) ? client->route->depot->cour : -1;
+  vector<int> allowedDepots;
+
+  if (params->multiDepot && params->nbDepots > 1)
+  {
+    if (params->cli[client->cour].isBorderline && !params->cli[client->cour].candidateDepots.empty())
+      allowedDepots = params->cli[client->cour].candidateDepots;
+    else
+      allowedDepots.push_back(params->cli[client->cour].preferredDepot);
+
+    if (currentDepot >= 0 && std::find(allowedDepots.begin(), allowedDepots.end(), currentDepot) == allowedDepots.end())
+      allowedDepots.push_back(currentDepot);
+  }
+
   // for each route of this day
   for (int r = 0; r < (int)routes[client->jour].size(); r++){
     // later on we can simply retrieve
     // calculate the best insertion point as well as its load
 
     myRoute = routes[client->jour][r];
+	if (!allowedDepots.empty())
+	{
+		int routeDepot = (myRoute->depot != nullptr) ? myRoute->depot->cour : -1;
+		if (std::find(allowedDepots.begin(), allowedDepots.end(), routeDepot) == allowedDepots.end())
+			continue;
+	}
     myRoute->evalInsertClient(client);
     client->allInsertions.push_back(myRoute->bestInsertion[client->cour]);
   }
+
+	if (client->allInsertions.empty())
+	{
+		for (int r = 0; r < (int)routes[client->jour].size(); r++)
+		{
+			myRoute = routes[client->jour][r];
+			myRoute->evalInsertClient(client);
+			client->allInsertions.push_back(myRoute->bestInsertion[client->cour]);
+		}
+	}
 
   // eliminate dominated insertions
   client->removeDominatedInsertions(params->penalityCapa);

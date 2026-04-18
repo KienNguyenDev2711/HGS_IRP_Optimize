@@ -4,7 +4,7 @@
 Route::Route(void){}
 
 Route::Route(int cour, int day, Noeud * depot, double temps, double charge, double maxRouteTime, double vehicleCapacity, Params * params, LocalSearch * myLS) : 
-cour(cour), day(day), depot(depot), temps(temps) , charge(charge), maxRouteTime(maxRouteTime), vehicleCapacity(vehicleCapacity), params(params), myLS(myLS)
+cour(cour), day(day), depot(depot), temps(temps), distance(temps), charge(charge), maxRouteTime(maxRouteTime), vehicleCapacity(vehicleCapacity), params(params), myLS(myLS)
 {
 	timeWindowViolation = 0;
 	bestInsertion = vector <Insertion> (params->nbClients + params->nbDepots);
@@ -53,6 +53,7 @@ void Route::updateRouteData ()
 	double charge = 0 ;
 	double earlT = 0 ;
 	double twViol = 0 ;
+	double routeDistance = 0 ;
 
 	// on parcourt du debut � la fin
 	Noeud * noeud = depot ;
@@ -67,6 +68,7 @@ void Route::updateRouteData ()
 		place ++ ;
 		noeud->place = place ;
 		charge += myLS->demandPerDay[day][noeud->cour];
+		routeDistance += params->timeCost[noeud->pred->cour][noeud->cour] ;
 		earlT += params->cli[noeud->pred->cour].serviceDuration + params->timeCost[noeud->pred->cour][noeud->cour] ;
 		noeud->chargeAvant = charge ;
 		noeud->est = earlT ;
@@ -83,6 +85,7 @@ void Route::updateRouteData ()
 	}
 
 	noeud->route->temps = earlT ;
+	noeud->route->distance = routeDistance ;
 	noeud->route->charge = charge ;
 	noeud->route->timeWindowViolation = twViol ;
 

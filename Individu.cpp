@@ -12,6 +12,7 @@ Individu::Individu(Params *params) : params(params)
 	for (int i = 0; i <= params->nbDays; i++)
 	{
 		chromT.push_back(tempVect);
+		chromD.push_back(vector<int>(params->nbClients + params->nbDepots, -1));
 		chromR.push_back(tempVect);
 		for (int j = 0; j < params->nombreVehicules[i]; j++)
 			chromR[i].push_back(-1);
@@ -47,6 +48,7 @@ Individu::Individu(Params *params, double facteurSurete) : params(params)
 	// Later on we will arrange this construction
 	chromT = vector<vector<int>>(params->nbDays + 1);
 	chromL = vector<vector<double>>(params->nbDays + 1, vector<double>(params->nbClients + params->nbDepots, 0.));
+	chromD = vector<vector<int>>(params->nbDays + 1, vector<int>(params->nbClients + params->nbDepots, -1));
 	chromR = vector<vector<int>>(params->nbDays + 1, vector<int>(params->nombreVehicules[1], -1));
 
 	// OPTION 2 -- JUST IN TIME POLICY //
@@ -74,6 +76,7 @@ Individu::Individu(Params *params, double facteurSurete) : params(params)
 					if (shouldDeliveryForNextDay) {
 						chromL[k][i] = nextDayClientDemand + startInventory - currentDayClientDemand;
 						chromT[k].push_back(i);
+							chromD[k][i] = params->multiDepot ? params->cli[i].preferredDepot : 0;
 					}
 				}
 				startInventory = startInventory + chromL[k][i] - currentDayClientDemand;
@@ -86,6 +89,7 @@ Individu::Individu(Params *params, double facteurSurete) : params(params)
 				startInventory = 0;
 				chromL[k][i] = dailyDemand;
 				chromT[k].push_back(i);
+				chromD[k][i] = params->multiDepot ? params->cli[i].preferredDepot : 0;
 			}
 		}
 	}
@@ -102,13 +106,56 @@ Individu::Individu(Params *params, double facteurSurete) : params(params)
 			chromT[k][j] = temp;
 		}
 
-		// For TW instances, sort customers by earliest time to help split find feasible routes
-		if (params->hasTimeWindows)
+		if (params->multiDepot && params->nbDepots > 1)
+		{
+			vector<vector<int>> grouped(params->nbDepots);
+			vector<int> depotOrder;
+			vector<bool> seenDepot(params->nbDepots, false);
+			for (int vehicleIdx = 0; vehicleIdx < params->nombreVehicules[k]; vehicleIdx++)
+			{
+				int depotIdx = params->ordreVehicules[k][vehicleIdx].depotNumber;
+				if (depotIdx >= 0 && depotIdx < params->nbDepots && !seenDepot[depotIdx])
+				{
+					seenDepot[depotIdx] = true;
+					depotOrder.push_back(depotIdx);
+				}
+			}
+
+			for (int client : chromT[k])
+			{
+				int chosenDepot = params->cli[client].preferredDepot;
+				if (params->cli[client].isBorderline && params->cli[client].candidateDepots.size() > 1 && params->rng->genrand64_real1() < 0.35)
+					chosenDepot = params->cli[client].candidateDepots[1];
+				if (chosenDepot < 0 || chosenDepot >= params->nbDepots)
+					chosenDepot = params->cli[client].preferredDepot;
+				chromD[k][client] = chosenDepot;
+				grouped[chosenDepot].push_back(client);
+			}
+
+			chromT[k].clear();
+			for (int depotIdx : depotOrder)
+			{
+				auto &bucket = grouped[depotIdx];
+				if (params->hasTimeWindows)
+				{
+					std::sort(bucket.begin(), bucket.end(), [&](int a, int b) {
+						return params->cli[a].earliestTime < params->cli[b].earliestTime;
+					});
+				}
+				for (int client : bucket)
+					chromT[k].push_back(client);
+			}
+		}
+		else if (params->hasTimeWindows)
 		{
 			std::sort(chromT[k].begin(), chromT[k].end(), [&](int a, int b) {
 				return params->cli[a].earliestTime < params->cli[b].earliestTime;
 			});
 		}
+
+		if (!params->multiDepot)
+			for (int client : chromT[k])
+				chromD[k][client] = 0;
 	}
 
 	// initialisation of the other structures
@@ -160,6 +207,7 @@ void Individu::generalSplit()
 		{
 			if (params->multiDepot)
 			{
+				reorderByAssignedDepot(k, false);
 				// Multi-depot: always use splitLF which handles per-vehicle depots correctly
 				splitLF(k);
 			}
@@ -176,6 +224,7 @@ void Individu::generalSplit()
 	// After Split
 	// we call a function that fills all other data structures and computes the cost
 	measureSol();
+	refreshDepotAssignmentsFromSplit();
 	isFitnessComputed = true;
 
 	if (params->borneSplit > 1000)
@@ -687,6 +736,7 @@ void Individu::updateIndiv()
 	for (int kk = 1; kk <= params->nbDays; kk++)
 	{
 		ordreRoutesAngle = localSearch->routes[kk];
+		std::fill(chromD[kk].begin(), chromD[kk].end(), -1);
 
 		for (int r = 0; r < (int)ordreRoutesAngle.size(); r++)
 			ordreRoutesAngle[r]->updateCentroidCoord();
@@ -699,10 +749,12 @@ void Individu::updateIndiv()
 		chromT[kk].clear();
 		for (int r = 0; r < (int)ordreRoutesAngle.size(); r++)
 		{
+			int depotIdx = ordreRoutesAngle[r]->depot ? ordreRoutesAngle[r]->depot->cour : 0;
 			node = ordreRoutesAngle[r]->depot->suiv;
 			while (!node->estUnDepot)
 			{
 				chromT[kk].push_back(node->cour);
+				chromD[kk][node->cour] = depotIdx;
 				node = node->suiv;
 			}
 		}
@@ -751,6 +803,13 @@ double Individu::distance(Individu *indiv2)
 {
 	int note = 0;
 	bool isIdentical;
+	vector<vector<int>> depotAssignments;
+	vector<vector<int>> depotAssignmentsOther;
+	if (params->multiDepot)
+	{
+		computeDepotAssignments(depotAssignments);
+		indiv2->computeDepotAssignments(depotAssignmentsOther);
+	}
 
 	// Inventory Routing
 	// distance based on number of customers which have different service days
@@ -759,10 +818,17 @@ double Individu::distance(Individu *indiv2)
 		for (int j = params->nbDepots; j < params->nbClients + params->nbDepots; j++)
 		{
 			isIdentical = true;
+			bool sameDepotAssignment = true;
 			for (int k = 1; k <= params->nbDays; k++)
+			{
 				if ((chromL[k][j] < 0.0001 && indiv2->chromL[k][j] > 0.0001) || (indiv2->chromL[k][j] < 0.0001 && chromL[k][j] > 0.0001))
 					isIdentical = false;
+				if (params->multiDepot && chromL[k][j] > 0.0001 && indiv2->chromL[k][j] > 0.0001 && depotAssignments[k][j] != depotAssignmentsOther[k][j])
+					sameDepotAssignment = false;
+			}
 			if (isIdentical == false)
+				note++;
+			else if (params->multiDepot && !sameDepotAssignment)
 				note++;
 		}
 	}
@@ -781,6 +847,117 @@ double Individu::distance(Individu *indiv2)
 	}
 
 	return ((double)note / (double)(params->nbClients));
+}
+
+void Individu::computeDepotAssignments(vector<vector<int>> &depotAssignments) const
+{
+	depotAssignments.assign(params->nbDays + 1, vector<int>(params->nbDepots + params->nbClients, -1));
+	for (int kk = 1; kk <= params->nbDays; kk++)
+	{
+		bool hasExplicitAssignments = false;
+		for (int client : chromT[kk])
+		{
+			int depot = getAssignedDepot(kk, client);
+			if (depot >= 0)
+			{
+				depotAssignments[kk][client] = depot;
+				hasExplicitAssignments = true;
+			}
+		}
+
+		if (hasExplicitAssignments)
+			continue;
+
+		int j = (int)chromT[kk].size();
+		for (int jj = 0; jj < params->nombreVehicules[kk]; jj++)
+		{
+			int vehicleIdx = params->nombreVehicules[kk] - jj - 1;
+			if (kk >= (int)pred.size() || vehicleIdx + 1 >= (int)pred[kk].size())
+				break;
+			int depot = params->ordreVehicules[kk][vehicleIdx].depotNumber;
+			int i = (int)pred[kk][vehicleIdx + 1][j];
+			for (int ci = i; ci < j; ci++)
+				depotAssignments[kk][chromT[kk][ci]] = depot;
+			j = i;
+		}
+	}
+}
+
+int Individu::getAssignedDepot(int day, int client) const
+{
+	if (day >= 0 && day < (int)chromD.size() && client >= 0 && client < (int)chromD[day].size() && chromD[day][client] >= 0)
+		return chromD[day][client];
+	if (params->multiDepot && client >= params->nbDepots && client < params->nbDepots + params->nbClients)
+		return params->cli[client].preferredDepot;
+	return 0;
+}
+
+void Individu::setAssignedDepot(int day, int client, int depot)
+{
+	if (day >= 0 && day < (int)chromD.size() && client >= 0 && client < (int)chromD[day].size())
+		chromD[day][client] = depot;
+}
+
+void Individu::reorderByAssignedDepot(int day, bool sortWithinDepotByTimeWindow)
+{
+	if (!params->multiDepot || day <= 0 || day >= (int)chromT.size() || chromT[day].size() <= 1)
+		return;
+
+	vector<vector<int>> buckets(params->nbDepots);
+	vector<int> depotOrder;
+	vector<bool> seenDepot(params->nbDepots, false);
+	for (int vehicleIdx = 0; vehicleIdx < params->nombreVehicules[day]; vehicleIdx++)
+	{
+		int depotIdx = params->ordreVehicules[day][vehicleIdx].depotNumber;
+		if (depotIdx >= 0 && depotIdx < params->nbDepots && !seenDepot[depotIdx])
+		{
+			seenDepot[depotIdx] = true;
+			depotOrder.push_back(depotIdx);
+		}
+	}
+
+	for (int client : chromT[day])
+	{
+		int depotIdx = getAssignedDepot(day, client);
+		if (depotIdx < 0 || depotIdx >= params->nbDepots)
+			depotIdx = params->cli[client].preferredDepot;
+		buckets[depotIdx].push_back(client);
+		chromD[day][client] = depotIdx;
+	}
+
+	if (sortWithinDepotByTimeWindow && params->hasTimeWindows)
+	{
+		for (int depotIdx = 0; depotIdx < params->nbDepots; depotIdx++)
+		{
+			auto &bucket = buckets[depotIdx];
+			std::stable_sort(bucket.begin(), bucket.end(), [&](int lhs, int rhs) {
+				return params->cli[lhs].earliestTime < params->cli[rhs].earliestTime;
+			});
+		}
+	}
+
+	vector<int> reordered;
+	reordered.reserve(chromT[day].size());
+	for (int depotIdx : depotOrder)
+		for (int client : buckets[depotIdx])
+			reordered.push_back(client);
+	for (int depotIdx = 0; depotIdx < params->nbDepots; depotIdx++)
+		if (!seenDepot[depotIdx])
+			for (int client : buckets[depotIdx])
+				reordered.push_back(client);
+	chromT[day] = reordered;
+}
+
+void Individu::refreshDepotAssignmentsFromSplit()
+{
+	vector<vector<int>> assignments;
+	computeDepotAssignments(assignments);
+	for (int day = 1; day <= params->nbDays; day++)
+	{
+		std::fill(chromD[day].begin(), chromD[day].end(), -1);
+		for (int client : chromT[day])
+			chromD[day][client] = assignments[day][client];
+	}
 }
 
 // calcul des suivants

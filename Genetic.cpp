@@ -92,15 +92,19 @@ void Genetic::muter()
 // eventuellement effectue une reparation de la solution
 void Genetic::reparer()
 {
-	double temp, temp2;
+	double temp, temp2, temp3, temp4;
 	bool continuer = false;
 
 	temp = params->penalityCapa;
 	temp2 = params->penalityLength;
+	temp3 = params->penalityTimeWindow;
+	temp4 = params->penalityInventory;
 
 	/*First tentative*/
 	params->penalityCapa *= 10;
 	params->penalityLength *= 10;
+	params->penalityTimeWindow *= 10;
+	params->penalityInventory *= 10;
 	if (params->rng->genrand64_real1() < params->pRep)
 	{
 		rejeton->updateLS();
@@ -112,6 +116,8 @@ void Genetic::reparer()
 		{
 			params->penalityCapa *= 500;
 			params->penalityLength *= 500;
+			params->penalityTimeWindow *= 500;
+			params->penalityInventory *= 500;
 			rejeton->generalSplit();
 			rejeton->updateLS();
 			rejeton->localSearch->runSearchTotal(true);
@@ -120,6 +126,8 @@ void Genetic::reparer()
 	}
 	params->penalityCapa = temp;
 	params->penalityLength = temp2;
+	params->penalityTimeWindow = temp3;
+	params->penalityInventory = temp4;
 }
 
 // gestion des penalites
@@ -229,13 +237,19 @@ int Genetic::crossPOX2()
 
 	// Keeping track of the chromL of the parent
 	vector<vector<double>> chromLParent1 = rejeton->chromL;
+	vector<vector<int>> chromDParent1 = rejeton->chromD;
 
 	// Reinitializing the chromL of the rejeton (will become the child)
 	// Keeping for each day and each customer the total sum of delivered load and initial inventory
 	// (when inserting a customer, need to make sure that we are not exceeding this)
 	for (int k = 1; k <= params->nbDays; k++)
+	{
 		for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
+		{
 			rejeton->chromL[k][i] = 0.;
+			rejeton->chromD[k][i] = -1;
+		}
+	}
 
 	// Keeping a vector to remember if a delivery has alrady been inserted for on day k for customer i
 	vector<vector<bool>> hasBeenInserted = vector<vector<bool>>(params->nbDays + 1, vector<bool>(params->nbClients + params->nbDepots, false));
@@ -277,6 +291,7 @@ int Genetic::crossPOX2()
 				int ii = rejeton->chromT[day][j]; // getting the index to be inherited
 				garder.push_back(ii);
 				rejeton->chromL[day][ii] = chromLParent1[day][ii];
+				rejeton->chromD[day][ii] = chromDParent1[day][ii] >= 0 ? chromDParent1[day][ii] : params->cli[ii].preferredDepot;
 				//rejeton->chromL[day][ii] = std::min<double>(rejeton->maxFeasibleDeliveryQuantity(day, ii),  chromLParent1[day][ii]);
 				hasBeenInserted[day][ii] = true;
 				j = (j + 1) % rejeton->chromT[day].size();
@@ -299,6 +314,7 @@ int Genetic::crossPOX2()
 				int ii = rejeton->chromT[day][j]; // getting the index to be inherited
 				garder.push_back(ii);
 				rejeton->chromL[day][ii] = chromLParent1[day][ii];
+				rejeton->chromD[day][ii] = chromDParent1[day][ii] >= 0 ? chromDParent1[day][ii] : params->cli[ii].preferredDepot;
 				hasBeenInserted[day][ii] = true;
 			}
 		}
@@ -322,6 +338,7 @@ int Genetic::crossPOX2()
 					{
 						rejeton->chromT[day].push_back(ii);
 						rejeton->chromL[day][ii] = quantity;
+						rejeton->chromD[day][ii] = rejeton2->chromD[day][ii] >= 0 ? rejeton2->chromD[day][ii] : params->cli[ii].preferredDepot;
 						hasBeenInserted[day][ii] = true;
 					}
 				}
@@ -330,8 +347,11 @@ int Genetic::crossPOX2()
 	}
 	
 	
-	// TW-aware: sort chromT by earliest time within each day
-	if (params->hasTimeWindows)
+	for (int k = 1; k <= params->nbDays; k++)
+		rejeton->reorderByAssignedDepot(k, params->hasTimeWindows);
+
+	// TW-aware: sort chromT by earliest time within each day when depot grouping is not used
+	if (params->hasTimeWindows && !params->multiDepot)
 	{
 		for (int k = 1; k <= params->nbDays; k++)
 		{

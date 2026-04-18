@@ -42,6 +42,9 @@ Noeud * depot ;
 // distance total de parcours sur la route
 double temps ;
 
+// travel distance only (without waiting/service)
+double distance ;
+
 // chargement total sur la route
 double charge ;
 

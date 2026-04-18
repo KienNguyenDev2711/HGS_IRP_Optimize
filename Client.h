@@ -109,6 +109,12 @@ public:
 	double earliestTime ;   // a_i: earliest allowed delivery time
 	double serviceTime ;    // s_i: service duration at this retailer
 	double latestTime ;     // b_i: latest allowed delivery time
+
+	// MULTI-DEPOT ASSIGNMENT DATA
+	int preferredDepot ;
+	bool isBorderline ;
+	vector<int> candidateDepots ;
+	vector<double> distanceToDepot ;
 	// ordre des sommets et depots, par proximit�
 	vector <int> ordreProximite ;
 

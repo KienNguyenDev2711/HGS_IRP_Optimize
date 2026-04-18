@@ -1,4 +1,65 @@
 #include "Params.h"
+#include <algorithm>
+
+namespace {
+
+bool coordLess(const couple &lhs, const couple &rhs)
+{
+	if (lhs.x != rhs.x)
+		return lhs.x < rhs.x;
+	return lhs.y < rhs.y;
+}
+
+double crossProduct(const couple &origin, const couple &pointA, const couple &pointB)
+{
+	return (pointA.x - origin.x) * (pointB.y - origin.y) - (pointA.y - origin.y) * (pointB.x - origin.x);
+}
+
+double squaredDistance(const couple &lhs, const couple &rhs)
+{
+	double dx = lhs.x - rhs.x;
+	double dy = lhs.y - rhs.y;
+	return dx * dx + dy * dy;
+}
+
+double computeClusterDiameter(const vector<couple> &points)
+{
+	if (points.size() <= 1)
+		return 0.;
+
+	vector<couple> sortedPoints = points;
+	std::sort(sortedPoints.begin(), sortedPoints.end(), coordLess);
+
+	vector<couple> hull;
+	hull.reserve(sortedPoints.size() * 2);
+	for (const couple &point : sortedPoints)
+	{
+		while (hull.size() >= 2 && crossProduct(hull[hull.size() - 2], hull[hull.size() - 1], point) <= 0.)
+			hull.pop_back();
+		hull.push_back(point);
+	}
+
+	size_t lowerHullSize = hull.size();
+	for (int idx = (int)sortedPoints.size() - 2; idx >= 0; idx--)
+	{
+		const couple &point = sortedPoints[idx];
+		while (hull.size() > lowerHullSize && crossProduct(hull[hull.size() - 2], hull[hull.size() - 1], point) <= 0.)
+			hull.pop_back();
+		hull.push_back(point);
+	}
+
+	if (hull.size() > 1)
+		hull.pop_back();
+
+	double bestSquaredDistance = 0.;
+	for (size_t i = 0; i < hull.size(); i++)
+		for (size_t j = i + 1; j < hull.size(); j++)
+			bestSquaredDistance = std::max(bestSquaredDistance, squaredDistance(hull[i], hull[j]));
+
+	return sqrt(bestSquaredDistance);
+}
+
+}
 
 // creating the parameters from the instance file
 Params::Params(string nomInstance, string nomSolution, int type, int nbVeh, string nomBKS, int seedRNG, int rou,bool stockout) : 
@@ -213,6 +274,7 @@ void Params::setMethodParams()
 	maxValides = 0.25;	// Target range for the number of feasible solutions // **
 	distMin = 0.01;		// Distance in terms of objective function under which the solutions are considered to be the same // o
 	borneSplit = 2.0;	// Split parameter (how far to search beyond the capacity limit) // o
+	borderlineFactor = 0.15;
 
 	// necessary adjustments for the CVRP (cf. OR2012)
 	if (!isInventoryRouting)
@@ -472,6 +534,56 @@ void Params::calculeStructures()
 			isCorrelated2[i][cli[i].ordreProximite[j]] = true;
 	}
 
+	if (multiDepot && nbDepots > 1)
+	{
+		vector<vector<couple>> clusterPoints(nbDepots);
+
+		for (int i = nbDepots; i < nbClients + nbDepots; i++)
+		{
+			vector<int> depotOrder;
+			for (int d = 0; d < nbDepots; d++)
+				depotOrder.push_back(d);
+			std::sort(depotOrder.begin(), depotOrder.end(), [&](int lhs, int rhs) {
+				return timeCost[i][lhs] < timeCost[i][rhs];
+			});
+
+			cli[i].distanceToDepot.assign(nbDepots, 0.);
+			cli[i].candidateDepots.clear();
+			for (int rank = 0; rank < nbDepots; rank++)
+				cli[i].distanceToDepot[depotOrder[rank]] = timeCost[i][depotOrder[rank]];
+
+			cli[i].preferredDepot = depotOrder.front();
+			cli[i].candidateDepots.push_back(cli[i].preferredDepot);
+			cli[i].isBorderline = false;
+			clusterPoints[cli[i].preferredDepot].push_back(cli[i].coord);
+		}
+
+		vector<double> hullDiagonal(nbDepots, 0.);
+		for (int d = 0; d < nbDepots; d++)
+			hullDiagonal[d] = computeClusterDiameter(clusterPoints[d]);
+
+		for (int i = nbDepots; i < nbClients + nbDepots; i++)
+		{
+			vector<int> depotOrder;
+			for (int d = 0; d < nbDepots; d++)
+				depotOrder.push_back(d);
+			std::sort(depotOrder.begin(), depotOrder.end(), [&](int lhs, int rhs) {
+				return cli[i].distanceToDepot[lhs] < cli[i].distanceToDepot[rhs];
+			});
+
+			double threshold = std::max(1.0, borderlineFactor * std::max(1.0, hullDiagonal[cli[i].preferredDepot]));
+			for (int rank = 1; rank < nbDepots; rank++)
+			{
+				int depotIdx = depotOrder[rank];
+				if (cli[i].distanceToDepot[depotIdx] - cli[i].distanceToDepot[cli[i].preferredDepot] <= threshold)
+				{
+					cli[i].candidateDepots.push_back(depotIdx);
+					cli[i].isBorderline = true;
+				}
+			}
+		}
+	}
+
 	// on melange les proches
 	shuffleProches();
 
@@ -490,6 +602,8 @@ Client Params::getClient(int i,int rou)
 	Client client;
 	int nbPattern;
 	pattern p;
+	client.preferredDepot = 0;
+	client.isBorderline = false;
 
 	// file format of Cordeau et al.
 	if (type == 0)

@@ -214,6 +214,9 @@ class Params {
   // Per-depot inventory cost
   vector<double> inventoryCostPerDepot;
 
+  // Borderline assignment threshold as a fraction of depot-cluster hull diagonal
+  double borderlineFactor;
+
   // Whether this instance has time windows
   bool hasTimeWindows;
 

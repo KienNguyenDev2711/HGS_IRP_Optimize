@@ -173,7 +173,11 @@ public:
   double evaluateCurrentCost_stockout (int client);
 
   // Evaluates the current objective function of the whole solution
-  double evaluateSolutionCost();
+  double evaluateSolutionCost(bool penalized = true);
+
+  int mutation10();
+  int mutation11Depot();
+  int mutation12();
 
   // Prints some useful information on the current solution
   void printInventoryLevels(std::ostream& file,bool add);
