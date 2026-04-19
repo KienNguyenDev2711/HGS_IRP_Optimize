@@ -413,30 +413,29 @@ void Population::ExportPop(string nomFichier,bool add)
 	LocalSearch *loc;
 	ofstream myfile;
 	double cost;
-	double temp, temp2;
 	Individu *bestValide = getIndividuBestValide();
 
 	if (bestValide != NULL)
 	{
 
-		// We will update the local search structure for paths.
-		// We are obliged to set very strong parameters so that the splitting does not produce a from the best valid solution
-		// so that the splitting does not produce a from the best valid solution
-		temp = params->penalityCapa;
-		temp2 = params->penalityLength;
-		double temp3 = params->penalityTimeWindow;
-		double temp4 = params->penalityInventory;
+		// Decode the best individual deterministically (no time-dependent local search).
+		// High penalties ensure the split DP finds the same feasible partition as during the GA.
+		double savedPenCap = params->penalityCapa;
+		double savedPenLen = params->penalityLength;
+		double savedPenTW = params->penalityTimeWindow;
+		double savedPenInv = params->penalityInventory;
 		params->penalityCapa = 10000;
 		params->penalityLength = 10000;
 		params->penalityTimeWindow = 10000;
 		params->penalityInventory = 10000;
-		education(bestValide);
-		// le trainer a gard� les infos des routes de bestValide
+		recopieIndividu(trainer, bestValide);
+		trainer->generalSplit();
+		trainer->updateLS();
 		loc = trainer->localSearch;
-		params->penalityCapa = temp;
-		params->penalityLength = temp2;
-		params->penalityTimeWindow = temp3;
-		params->penalityInventory = temp4;
+		params->penalityCapa = savedPenCap;
+		params->penalityLength = savedPenLen;
+		params->penalityTimeWindow = savedPenTW;
+		params->penalityInventory = savedPenInv;
 
 		myfile.precision(10);
 		cout.precision(10);
@@ -516,20 +515,24 @@ void Population::PrintDetailedSolution()
 	Individu *bestValide = getIndividuBestValide();
 	if (bestValide != NULL)
 	{
-		double temp = params->penalityCapa;
-		double temp2 = params->penalityLength;
-		double temp3 = params->penalityTimeWindow;
-		double temp4 = params->penalityInventory;
+		// Decode the best individual deterministically (no time-dependent local search).
+		// High penalties ensure the split DP finds the same feasible partition.
+		double savedPenCap = params->penalityCapa;
+		double savedPenLen = params->penalityLength;
+		double savedPenTW = params->penalityTimeWindow;
+		double savedPenInv = params->penalityInventory;
 		params->penalityCapa = 10000;
 		params->penalityLength = 10000;
 		params->penalityTimeWindow = 10000;
 		params->penalityInventory = 10000;
-		education(bestValide);
+		recopieIndividu(trainer, bestValide);
+		trainer->generalSplit();
+		trainer->updateLS();
 		LocalSearch *loc = trainer->localSearch;
-		params->penalityCapa = temp;
-		params->penalityLength = temp2;
-		params->penalityTimeWindow = temp3;
-		params->penalityInventory = temp4;
+		params->penalityCapa = savedPenCap;
+		params->penalityLength = savedPenLen;
+		params->penalityTimeWindow = savedPenTW;
+		params->penalityInventory = savedPenInv;
 
 		cout << endl << "========== DETAILED SOLUTION OUTPUT ==========" << endl;
 		loc->printInventoryLevels(cout, false);
@@ -575,7 +578,22 @@ void Population::ExportBKS(string nomFichier)
 		timeBest = clock();
 		if (getIndividuBestValide() != NULL)
 		{
-			education(getIndividuBestValide());
+			// Decode deterministically without re-running local search
+			double savedPenCap = params->penalityCapa;
+			double savedPenLen = params->penalityLength;
+			double savedPenTW = params->penalityTimeWindow;
+			double savedPenInv = params->penalityInventory;
+			params->penalityCapa = 10000;
+			params->penalityLength = 10000;
+			params->penalityTimeWindow = 10000;
+			params->penalityInventory = 10000;
+			recopieIndividu(trainer, getIndividuBestValide());
+			trainer->generalSplit();
+			trainer->updateLS();
+			params->penalityCapa = savedPenCap;
+			params->penalityLength = savedPenLen;
+			params->penalityTimeWindow = savedPenTW;
+			params->penalityInventory = savedPenInv;
 			double currentOperationalCost = trainer->localSearch->evaluateSolutionCost(false);
 			double currentBestTime = (double)(timeBest - params->debut) / CLOCKS_PER_SEC;
 			if (currentOperationalCost < fit - 0.01)

@@ -1,0 +1,106 @@
+﻿
+NEW BEST FEASIBLE 1557.4641 Cost : 1557.4641 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1550.0214 Cost : 1550.0214 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1545.9854 Cost : 1545.9854 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1526.0656 Cost : 1526.0656 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1525.5416 Cost : 1525.5416 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1515.1128 Cost : 1515.1128 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1514.271 Cost : 1514.271 capacity Violation 
+: 0 length Violation : 0
+NEW BEST FEASIBLE 1514.2167 Cost : 1514.2167 capacity 
+Violation : 0 length Violation : 0
+NEW BEST FEASIBLE 1513.2319 Cost : 1513.2319 capacity 
+Violation : 0 length Violation : 0
+========== DETAILED SOLUTION OUTPUT ==========
+day[1] route[0] depot[0]: distance = 0 duration = 0 depart = 
+0.000h load = 0 TW_viol = 0
+day[1] route[1] depot[0]: distance = 0 duration = 0 depart = 
+0.000h load = 0 TW_viol = 0
+day[1] route[2] depot[1]: distance = 0 duration = 0 depart = 
+0.000h load = 0 TW_viol = 0
+day[1] route[3] depot[1]: distance = 109.281 duration = 
+154.641 depart = 0.634h load = 1 TW_viol = 0
+day[2] route[0] depot[0]: distance = 65.351 duration = 184.97 
+depart = 1.490h load = 23 TW_viol = 0
+day[2] route[1] depot[0]: distance = 139.94 duration = 290.37 
+depart = 1.261h load = 45 TW_viol = 0
+day[2] route[2] depot[1]: distance = 0 duration = 0 depart = 
+0.000h load = 0 TW_viol = 0
+day[2] route[3] depot[1]: distance = 31.2108 duration = 
+115.605 depart = 1.610h load = 16 TW_viol = 0
+day[3] route[0] depot[0]: distance = 99.2371 duration = 
+218.856 depart = 1.490h load = 37 TW_viol = 0
+day[3] route[1] depot[0]: distance = 87.3283 duration = 
+191.766 depart = 1.611h load = 30 TW_viol = 0
+day[3] route[2] depot[1]: distance = 114.172 duration = 
+244.748 depart = 1.764h load = 40 TW_viol = 0
+day[3] route[3] depot[1]: distance = 31.2108 duration = 
+115.605 depart = 1.610h load = 19 TW_viol = 0
+CUSTOMER 2 bounds (0,100) [19,19,11] [11,11,3] [3,8,0] 
+CUSTOMER 3 bounds (0,100) [22,22,3] [3,19,0] [0,19,0] 
+CUSTOMER 4 bounds (0,100) [26,26,8] [8,18,0] [0,18,0] 
+CUSTOMER 5 bounds (0,100) [10,11,0] [0,11,0] [0,11,0] 
+CUSTOMER 6 bounds (0,100) [19,19,5] [5,14,0] [0,14,0] 
+CUSTOMER 7 bounds (0,100) [10,10,2] [2,8,0] [0,8,0] 
+CUSTOMER 8 bounds (0,100) [21,21,7] [7,14,0] [0,14,0] 
+CUSTOMER 9 bounds (0,100) [18,18,9] [9,18,9] [9,9,0] 
+CUSTOMER 10 bounds (0,100) [28,28,10] [10,18,0] [0,18,0] 
+CUSTOMER 11 bounds (0,100) [30,30,11] [11,19,0] [0,19,0] 
+DEPOT 0    [150,150] [200,132] [182,115] 
+DEPOT 1    [150,149] [199,183] [233,174] 
+ROUTING COST: 677.732
+ROUTE DURATION: 1516.56
+CAPACITY PENALTY: 0
+ROUTE LENGTH PENALTY: 0
+TIME WINDOW PENALTY: 0
+DEPOT HOLDING: 451.5
+RETAILER HOLDING: 384
+CLIENT STOCKOUT: 0
+CLIENT STOCKOUT Amount: 0
+COST SUMMARY : OVERALL 1513.23
+REFORMULATED COST : 1513.23
+=== CUSTOMER DEPOT ASSIGNMENT BY DAY ===
+Customer 2: day3->D0 
+Customer 3: day2->D1 day3->D1 
+Customer 4: day2->D0 day3->D1 
+Customer 5: day1->D1 day2->D0 day3->D0 
+Customer 6: day2->D0 day3->D1 
+Customer 7: day2->D0 day3->D1 [borderline]
+Customer 8: day2->D0 day3->D0 
+Customer 9: day2->D0 
+Customer 10: day2->D0 day3->D0 
+Customer 11: day2->D0 day3->D0 
+=== DELIVERY QUANTITY PER RETAILER PER DEPOT ===
+DEPOT 0:
+  Customer 2: day3=5 (total=5)
+  Customer 3: (none)
+  Customer 4: day2=10 (total=10)
+  Customer 5: day2=11 day3=11 (total=22)
+  Customer 6: day2=9 (total=9)
+  Customer 7: day2=6 (total=6)
+  Customer 8: day2=7 day3=14 (total=21)
+  Customer 9: day2=9 (total=9)
+  Customer 10: day2=8 day3=18 (total=26)
+  Customer 11: day2=8 day3=19 (total=27)
+DEPOT 1:
+  Customer 2: (none)
+  Customer 3: day2=16 day3=19 (total=35)
+  Customer 4: day3=18 (total=18)
+  Customer 5: day1=1 (total=1)
+  Customer 6: day3=14 (total=14)
+  Customer 7: day3=8 (total=8)
+  Customer 8: (none)
+  Customer 9: (none)
+  Customer 10: (none)
+  Customer 11: (none)
+Operational objective: 1513.23
+Reformulated objective: 1513.23
+===============================================
+
+
