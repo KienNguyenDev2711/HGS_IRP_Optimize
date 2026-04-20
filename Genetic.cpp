@@ -1,5 +1,6 @@
 #include "Genetic.h"
-#include <algorithm> 
+#include <algorithm>
+#include <iomanip>
 
 void Genetic::evolve(int maxIter, int maxIterNonProd, int nbRec)
 {
@@ -14,7 +15,7 @@ void Genetic::evolve(int maxIter, int maxIterNonProd, int nbRec)
 	string temp;
 
 	
-	while (nbIter < maxIter && nbIterNonProd < maxIterNonProd && clock() - params->debut <= ticks)
+	while (nbIter < maxIter && nbIterNonProd < maxIterNonProd && (ticks <= 0 || clock() - params->debut <= ticks))
 	{
 		// on demande deux individus à la population
 		population->recopieIndividu(rejeton, population->getIndividuBinT(rangRelatif));
@@ -73,8 +74,14 @@ void Genetic::evolve(int maxIter, int maxIterNonProd, int nbRec)
 	// fin de l'algorithme , diverses informations affich�es
 	if (traces)
 	{
-		cout << "time passes : " << clock() << endl;
-		cout << "number of iterations : " << nbIter << endl;
+		double elapsedSec = (double)(clock() - params->debut) / CLOCKS_PER_SEC;
+		cout << "Elapsed time: " << std::fixed << std::setprecision(3) << elapsedSec << " seconds" << endl;
+		cout << "Number of iterations: " << nbIter << endl;
+		cout << "Non-improving iterations at stop: " << nbIterNonProd << endl;
+		if (ticks <= 0)
+			cout << "Stopping mode: iteration-based (no time limit)" << endl;
+		else
+			cout << "Stopping mode: time-limited (" << (double)ticks / CLOCKS_PER_SEC << "s budget)" << endl;
 	}
 	
 }
@@ -411,7 +418,7 @@ void Genetic::improve_decompRoutes(int maxIter, int maxIterNonProd, Individu *in
 	}
 
 	double init = indiv->coutSol.evaluation;
-	if (clock() - params->debut > ticks)
+	if (ticks > 0 && clock() - params->debut > ticks)
 		return;
 	Params *sousProbleme;
 	Population *sousPopulation;

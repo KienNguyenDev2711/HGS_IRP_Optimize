@@ -354,6 +354,16 @@ void Individu::splitLF(int k)
 			while (j < (int)chromT[k].size() && load <= params->ordreVehicules[k][cam].vehicleCapacity * params->borneSplit)
 			{
 				s1 = chromT[k][j];
+
+				// BUG #11 FIX: Don't assign customer to incompatible depot's vehicle.
+				// If customer s1 can't go on vehicle cam's depot, stop extending this block.
+				if (params->multiDepot && params->nbDepots > 1) {
+					bool depotOk = false;
+					for (int d : params->cli[s1].candidateDepots)
+						if (d == s0) { depotOk = true; break; }
+					if (!depotOk) break;
+				}
+
 				load += chromL[k][s1];
 				if (i == j)
 				{
@@ -920,6 +930,11 @@ void Individu::reorderByAssignedDepot(int day, bool sortWithinDepotByTimeWindow)
 	{
 		int depotIdx = getAssignedDepot(day, client);
 		if (depotIdx < 0 || depotIdx >= params->nbDepots)
+			depotIdx = params->cli[client].preferredDepot;
+		// BUG #11 FIX: Non-borderline customers must always use their preferred depot.
+		// This clamp corrects any wrong depot from splitLF DP, updateIndiv route-read,
+		// or crossover inheritance.
+		if (!params->cli[client].isBorderline)
 			depotIdx = params->cli[client].preferredDepot;
 		buckets[depotIdx].push_back(client);
 		chromD[day][client] = depotIdx;

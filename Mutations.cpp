@@ -50,6 +50,11 @@ void LocalSearch::swapNoeud(Noeud * U, Noeud * V)
 // If noeudU is a client node, remove noeudU then insert it after noeudV
 int LocalSearch::mutation1 ()
 {
+	// BUG #11 FIX: Cross-depot guard — only borderline customers may change depot
+	if (routeU != routeV && routeU->depot->cour != routeV->depot->cour) {
+		if (!canMoveToDepot(noeudUCour, routeV->depot->cour)) return 0;
+	}
+
 	double costSuppU = params->timeCost[noeudUPredCour][xCour] 
 	- params->timeCost[noeudUPredCour][noeudUCour]  
 	- params->timeCost[noeudUCour][xCour]
@@ -89,7 +94,11 @@ int LocalSearch::mutation1 ()
 // If noeudU and x are clients, remove them then insert (noeudU,x) after noeudV
 // teste si x n'est pas un depot , et si x different de noeudV, et si noeudU pas d�ja apres noeudV
 int LocalSearch::mutation2 ()
-{
+{	// BUG #11 FIX: Cross-depot guard — both U and x must be valid for target depot
+	if (routeU != routeV && routeU->depot->cour != routeV->depot->cour) {
+		if (!canMoveToDepot(noeudUCour, routeV->depot->cour)) return 0;
+		if (!x->estUnDepot && !canMoveToDepot(xCour, routeV->depot->cour)) return 0;
+	}
 	double costSuppU = params->timeCost[noeudUPredCour][xSuivCour] 
 	- params->timeCost[noeudUPredCour][noeudUCour] 
 	- params->timeCost[noeudUCour][xCour] 
@@ -131,7 +140,11 @@ int LocalSearch::mutation2 ()
 // If noeudU and x are clients, remove them then insert (x,noeudU) after noeudV
 // teste si x n'est pas un depot , et si x different de noeudV, et si noeudU pas d�ja apres noeudV
 int LocalSearch::mutation3 ()
-{
+{	// BUG #11 FIX: Cross-depot guard — both U and x must be valid for target depot
+	if (routeU != routeV && routeU->depot->cour != routeV->depot->cour) {
+		if (!canMoveToDepot(noeudUCour, routeV->depot->cour)) return 0;
+		if (!x->estUnDepot && !canMoveToDepot(xCour, routeV->depot->cour)) return 0;
+	}
 	double costSuppU = params->timeCost[noeudUPredCour][xSuivCour] 
 	- params->timeCost[noeudUPredCour][noeudUCour] 
 	- params->timeCost[noeudUCour][xCour] 
@@ -174,6 +187,12 @@ int LocalSearch::mutation3 ()
 // sauf si noeudU et noeudV se succedent
 int LocalSearch::mutation4 ()
 {
+	// BUG #11 FIX: Cross-depot guard — both U and V must be valid for swapped depots
+	if (routeU != routeV && routeU->depot->cour != routeV->depot->cour) {
+		if (!canMoveToDepot(noeudUCour, routeV->depot->cour)) return 0;
+		if (!canMoveToDepot(noeudVCour, routeU->depot->cour)) return 0;
+	}
+
 	double costSuppU = params->timeCost[noeudUPredCour][noeudVCour] 
 	+ params->timeCost[noeudVCour][xCour]
 	- params->timeCost[noeudUPredCour][noeudUCour] 
@@ -217,6 +236,13 @@ int LocalSearch::mutation5 ()
 	// on ne fait pas le cas ou x et noeudVCour se suivent
 	// car il faut traiter autrement
 	// et la mutation 2 entre (noeudUCour,x) et noeudVCour fait le meme travail correctement
+
+	// BUG #11 FIX: Cross-depot guard — U,x must be valid for V's depot, V for U's depot
+	if (routeU != routeV && routeU->depot->cour != routeV->depot->cour) {
+		if (!canMoveToDepot(noeudUCour, routeV->depot->cour)) return 0;
+		if (!x->estUnDepot && !canMoveToDepot(xCour, routeV->depot->cour)) return 0;
+		if (!canMoveToDepot(noeudVCour, routeU->depot->cour)) return 0;
+	}
 
 	double costSuppU = params->timeCost[noeudUPredCour][noeudVCour] 
 	+ params->timeCost[noeudVCour][xSuivCour]
@@ -262,6 +288,14 @@ int LocalSearch::mutation5 ()
 // If (noeudU,x) and (noeudV,y) are clients, swap (noeudU,x) and (noeudV,y)
 int LocalSearch::mutation6 ()
 {
+	// BUG #11 FIX: Cross-depot guard — U,x must be valid for V's depot; V,y for U's depot
+	if (routeU != routeV && routeU->depot->cour != routeV->depot->cour) {
+		if (!canMoveToDepot(noeudUCour, routeV->depot->cour)) return 0;
+		if (!x->estUnDepot && !canMoveToDepot(xCour, routeV->depot->cour)) return 0;
+		if (!canMoveToDepot(noeudVCour, routeU->depot->cour)) return 0;
+		if (!y->estUnDepot && !canMoveToDepot(yCour, routeU->depot->cour)) return 0;
+	}
+
 	double costSuppU = params->timeCost[noeudUPredCour][noeudVCour]  
 	+ params->timeCost[noeudVCour][yCour]
 	+ params->timeCost[yCour][xSuivCour]
@@ -384,6 +418,38 @@ int LocalSearch::mutation8 ()
 
 	if ( cost > -0.0001 ) { return 0 ; } 
 
+	// BUG #11 FIX: Cross-depot 2-OPT* must verify ALL customers in
+	// swapped segments are borderline with the target depot in their
+	// candidateDepots, not just the endpoints.
+	if (routeU->depot->cour != routeV->depot->cour) {
+		int depotVIdx = routeV->depot->cour;
+		int depotUIdx = routeU->depot->cour;
+		// Segment from x forward moves to routeV's depot
+		Noeud *check = x;
+		int _cyc = 0;
+		while (!check->estUnDepot) {
+			if (!params->cli[check->cour].isBorderline) return 0;
+			bool ok = false;
+			for (int d : params->cli[check->cour].candidateDepots)
+				if (d == depotVIdx) { ok = true; break; }
+			if (!ok) return 0;
+			check = check->suiv;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		}
+		// Segment from V backward moves to routeU's depot
+		check = noeudV;
+		_cyc = 0;
+		while (!check->estUnDepot) {
+			if (!params->cli[check->cour].isBorderline) return 0;
+			bool ok = false;
+			for (int d : params->cli[check->cour].candidateDepots)
+				if (d == depotUIdx) { ok = true; break; }
+			if (!ok) return 0;
+			check = check->pred;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		}
+	}
+
 	/////////////////////////// ON EFFECTUE LA MUTATION ///////////////////////////////
 
 	Noeud * depotU = routeU->depot ;
@@ -496,6 +562,37 @@ int LocalSearch::mutation9 ()
 
 	if ( cost > -0.0001 ) { return 0 ; } 
 
+	// BUG #11 FIX: Cross-depot 2-OPT* must verify ALL customers in
+	// swapped segments are borderline with the target depot in their
+	// candidateDepots, not just the endpoints.
+	if (routeU->depot->cour != routeV->depot->cour) {
+		int depotUIdx = routeU->depot->cour;
+		int depotVIdx = routeV->depot->cour;
+		// Segment from y forward moves to routeU's depot
+		Noeud *check = y;
+		int _cyc = 0;
+		while (!check->estUnDepot) {
+			if (!params->cli[check->cour].isBorderline) return 0;
+			bool ok = false;
+			for (int d : params->cli[check->cour].candidateDepots)
+				if (d == depotUIdx) { ok = true; break; }
+			if (!ok) return 0;
+			check = check->suiv;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		}
+		// Segment from x forward moves to routeV's depot
+		check = x;
+		_cyc = 0;
+		while (!check->estUnDepot) {
+			if (!params->cli[check->cour].isBorderline) return 0;
+			bool ok = false;
+			for (int d : params->cli[check->cour].candidateDepots)
+				if (d == depotVIdx) { ok = true; break; }
+			if (!ok) return 0;
+			check = check->suiv;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		}
+	}
 
 	/////////////////////////// ON EFFECTUE LA MUTATION ///////////////////////////////
 	// on parcourt les noeuds pour les associer aux bonnes routes

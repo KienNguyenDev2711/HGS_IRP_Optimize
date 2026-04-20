@@ -182,6 +182,15 @@ public:
   // Cached cost for cross-depot mutations (avoids redundant evaluateSolutionCost calls)
   double crossDepotOldCost;
 
+  // BUG #11 FIX: Check if customer can be assigned to targetDepot.
+  // Returns true if single-depot, or if targetDepot is in the customer's candidateDepots.
+  inline bool canMoveToDepot(int customer, int targetDepot) {
+    if (!params->multiDepot || params->nbDepots <= 1) return true;
+    for (int d : params->cli[customer].candidateDepots)
+      if (d == targetDepot) return true;
+    return false;
+  }
+
   // Prints some useful information on the current solution
   void printInventoryLevels(std::ostream& file,bool add);
 
