@@ -20,24 +20,17 @@ void LocalSearch::runSearchTotal(bool isRepPhase)
 {
   this->isRepPhase = isRepPhase;
   updateMoves();
-  // DEBUG: identify hang location
-  static int dbgCallCount = 0;
-  int myCall = ++dbgCallCount;
-  if (myCall <= 5) { cerr << "[RST#" << myCall << " before mutSD]\n"; cerr.flush(); }
   for (int day = 1; day <= params->nbDays; day++)
     mutationSameDay(day);
 
-  if (myCall <= 5) { cerr << "[RST#" << myCall << " before mutDD]\n"; cerr.flush(); }
   // Time-limit check: skip expensive lot-sizing if time is almost up
   if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.95)
     return;
 
   mutationDifferentDay();
-  if (myCall <= 5) { cerr << "[RST#" << myCall << " before 2nd mutSD]\n"; cerr.flush(); }
   updateMoves();
   for (int day = 1; day <= params->nbDays; day++)
       mutationSameDay(day);
-  if (myCall <= 5) { cerr << "[RST#" << myCall << " done]\n"; cerr.flush(); }
 }
 
 
@@ -110,15 +103,21 @@ int LocalSearch::mutationSameDay(int day)
   // independently of wall-clock time so it works in both time-limited and iteration-limited modes.
   int crossDepotWorkDone = 0;
   const int MAX_CROSS_DEPOT_WORK = MAX_CROSS_DEPOT_RESTARTS * params->nbClients; // e.g. 3×25=75
-  // DEBUG
-  static int sdCallCnt = 0;
-  int mySD = ++sdCallCnt;
+  // Pass-count guard: prevents unbounded convergence loops in iteration-based mode (ticks==0).
+  // In time-limited mode the 0.90 time guard fires first. 200 is generous enough for good
+  // convergence while keeping each mutationSameDay call O(n * MAX_SAME_DAY_PASSES).
   int loopPass = 0;
+  const int MAX_SAME_DAY_PASSES = 50;
+  // Total-moves budget: caps combined moves across all passes in this call.
+  // Prevents the inner posU loop from running infinitely when a node keeps
+  // flipping between depots (each flip strictly improves but by <0.001).
+  // 10*nbClients gives ample budget for genuine convergence.
+  int totalMoves = 0;
+  const int MAX_TOTAL_MOVES = 10 * (params->nbClients + 1);
 
-  while (!rechercheTerminee)
+  while (!rechercheTerminee && loopPass < MAX_SAME_DAY_PASSES)
   {
     loopPass++;
-    if (mySD >= 21 && mySD <= 30 && (loopPass <= 5 || loopPass % 500 == 0)) { cerr << "[SD#" << mySD << " day=" << day << " pass=" << loopPass << "]\n"; cerr.flush(); }
     rechercheTerminee = true;
     moveEffectue = 0;
     // Time-limit check in same-day mutations
@@ -129,8 +128,12 @@ int LocalSearch::mutationSameDay(int day)
       // Granular time guard inside the inner posU loop
       if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
       { rechercheTerminee = true; break; }
+      // Total-moves budget guard: prevents infinite re-visits at same posU
+      if (totalMoves >= MAX_TOTAL_MOVES)
+      { rechercheTerminee = true; break; }
       posU -= moveEffectue; // on retourne sur le dernier noeud si on a modifi�
       nbMoves += moveEffectue;
+      totalMoves += moveEffectue;
       moveEffectue = 0;
       noeudU = clients[day][ordreParcours[day][posU]];
 
