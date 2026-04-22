@@ -1,0 +1,10 @@
+path: Data\Custom\sample_25cust_5days_fixed.dat
+isstockout 0
+Read file done
+It 0 | Sol NO-VALID 8696.7991 | Moy -nan(ind) 108918.89 | Div -nan(ind) 0.21515152 | Val 0.99 1 0.99 1 | Pen 42.5 8.5 850 85 | Pop 0 25
+NEW BEST FEASIBLE 8389.4069 Cost : 8389.4069 capacity Violation : 0 length Violation : 0
+
+NEW BEST FEASIBLE 8374.726 Cost : 8374.726 capacity Violation : 0 length Violation : 0
+
+NEW BEST FEASIBLE 8172.045 Cost : 8172.045 capacity Violation : 0 length Violation : 0
+

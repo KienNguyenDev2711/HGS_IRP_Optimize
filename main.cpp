@@ -47,7 +47,7 @@ int mainIRP(int argc, char *argv[])
     // on lance l'evolution   launch evolution
     
     int max_iter = 100000;
-    int maxIterNonProd = 10000;
+    int maxIterNonProd = 5000;
     solver.evolve(max_iter, maxIterNonProd, 1);
 
     population->ExportPop(c.get_path_to_solution(),true);

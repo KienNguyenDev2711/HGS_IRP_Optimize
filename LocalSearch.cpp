@@ -20,18 +20,26 @@ void LocalSearch::runSearchTotal(bool isRepPhase)
 {
   this->isRepPhase = isRepPhase;
   updateMoves();
+  // DEBUG: identify hang location
+  static int dbgCallCount = 0;
+  int myCall = ++dbgCallCount;
+  if (myCall <= 5) { cerr << "[RST#" << myCall << " before mutSD]\n"; cerr.flush(); }
   for (int day = 1; day <= params->nbDays; day++)
     mutationSameDay(day);
 
+  if (myCall <= 5) { cerr << "[RST#" << myCall << " before mutDD]\n"; cerr.flush(); }
   // Time-limit check: skip expensive lot-sizing if time is almost up
   if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.95)
     return;
 
   mutationDifferentDay();
+  if (myCall <= 5) { cerr << "[RST#" << myCall << " before 2nd mutSD]\n"; cerr.flush(); }
   updateMoves();
   for (int day = 1; day <= params->nbDays; day++)
       mutationSameDay(day);
+  if (myCall <= 5) { cerr << "[RST#" << myCall << " done]\n"; cerr.flush(); }
 }
+
 
 
 void LocalSearch::melangeParcours()
@@ -98,9 +106,19 @@ int LocalSearch::mutationSameDay(int day)
   firstLoop = true;
   int crossDepotRestarts = 0;
   const int MAX_CROSS_DEPOT_RESTARTS = 3;
+  // Work-budget counter: limits total cross-depot scan attempts per mutationSameDay call
+  // independently of wall-clock time so it works in both time-limited and iteration-limited modes.
+  int crossDepotWorkDone = 0;
+  const int MAX_CROSS_DEPOT_WORK = MAX_CROSS_DEPOT_RESTARTS * params->nbClients; // e.g. 3×25=75
+  // DEBUG
+  static int sdCallCnt = 0;
+  int mySD = ++sdCallCnt;
+  int loopPass = 0;
 
   while (!rechercheTerminee)
   {
+    loopPass++;
+    if (mySD >= 21 && mySD <= 30 && (loopPass <= 5 || loopPass % 500 == 0)) { cerr << "[SD#" << mySD << " day=" << day << " pass=" << loopPass << "]\n"; cerr.flush(); }
     rechercheTerminee = true;
     moveEffectue = 0;
     // Time-limit check in same-day mutations
@@ -180,7 +198,11 @@ int LocalSearch::mutationSameDay(int day)
       if (params->multiDepot && params->cli[noeudUCour].isBorderline && moveEffectue != 1
           && crossDepotRestarts < MAX_CROSS_DEPOT_RESTARTS)
       {
-        // Time guard: skip expensive exhaustive cross-depot scan if >80% budget used
+        // Work guard: cap total cross-depot scan attempts so this is O(n) per call
+        // regardless of time mode (fixes hang when ticks==0 / no time limit).
+        if (crossDepotWorkDone >= MAX_CROSS_DEPOT_WORK)
+          continue;
+        // Time guard: also bail early if >80% of global budget spent (time-limited mode only).
         if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.80)
           continue;
         // Cache the current solution cost ONCE for all cross-depot mutation attempts
@@ -189,7 +211,9 @@ int LocalSearch::mutationSameDay(int day)
         {
           if (otherClient == noeudUCour || !clients[day][otherClient]->estPresent)
             continue;
-          // Inner time guard to prevent exhaustive scan from consuming entire budget
+          // Increment work counter before each attempt; break if budget exhausted.
+          if (++crossDepotWorkDone >= MAX_CROSS_DEPOT_WORK) break;
+          // Time guard for time-limited mode.
           if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.80)
             break;
 
@@ -287,9 +311,13 @@ int LocalSearch::mutationDifferentDay()
   rechercheTerminee = false;
   int nbMoves = 0;
   int times = 0;
-  while(!rechercheTerminee){
+  // Cap convergence iterations: in time-limited mode the inner time-guard fires first;
+  // in iteration-based mode (ticks==0) this prevents the while-loop from running unbounded.
+  // 3 passes matches typical natural convergence; fresh crossover offspring capped at 3.
+  const int MAX_LOT_SIZING_LOOPS = 3;
+  while (!rechercheTerminee && times < MAX_LOT_SIZING_LOOPS) {
     rechercheTerminee = true;
-    
+    times++;
     for (int posU = 0; posU < params->nbClients; posU++){
       // Time-limit check inside lot-sizing loop
       if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
