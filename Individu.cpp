@@ -761,8 +761,11 @@ void Individu::updateIndiv()
 		{
 			int depotIdx = ordreRoutesAngle[r]->depot ? ordreRoutesAngle[r]->depot->cour : 0;
 			node = ordreRoutesAngle[r]->depot->suiv;
+			int _cyc = 0;
+			const int _maxCyc = params->nbClients + params->nbDepots + 5;
 			while (!node->estUnDepot)
 			{
+				if (++_cyc > _maxCyc) { node = ordreRoutesAngle[r]->depot; break; } // cycle detected — abort route
 				chromT[kk].push_back(node->cour);
 				chromD[kk][node->cour] = depotIdx;
 				node = node->suiv;

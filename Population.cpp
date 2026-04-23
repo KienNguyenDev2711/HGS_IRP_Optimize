@@ -43,7 +43,7 @@ Population::Population(Params *params) : params(params)
 			params->penalityInventory *= 50;
 			compter = false;
 		}
-		randomIndiv = new Individu(params, 1.0);  
+		randomIndiv = new Individu(params, 1.0);
 
 		education(randomIndiv);
 
@@ -482,13 +482,15 @@ void Population::ExportPop(string nomFichier,bool add)
 					rout.push_back(noeudActuel->cour);
 					routTime.push_back(cost);
 
-					while (!noeudActuel->estUnDepot)
-					{
-						cost += params->cli[noeudActuel->cour].serviceDuration + params->timeCost[noeudActuel->cour][noeudActuel->suiv->cour];
-						noeudActuel = noeudActuel->suiv;
-						rout.push_back(noeudActuel->cour);
-						routTime.push_back(cost);
-					}
+{ int _cyc = 0; const int _maxCyc = params->nbClients + params->nbDepots + 5;
+						while (!noeudActuel->estUnDepot)
+						{
+							if (++_cyc > _maxCyc) break; // cycle guard
+							cost += params->cli[noeudActuel->cour].serviceDuration + params->timeCost[noeudActuel->cour][noeudActuel->suiv->cour];
+							noeudActuel = noeudActuel->suiv;
+							rout.push_back(noeudActuel->cour);
+							routTime.push_back(cost);
+						} }
 
 					myfile << " " << (int)rout.size();
 

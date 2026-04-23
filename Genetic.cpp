@@ -91,11 +91,9 @@ void Genetic::muter()
 {
 	rejeton->updateLS();
 	rejeton->localSearch->runSearchTotal(false);
-	
 	rejeton->updateIndiv();
 	population->updateNbValides(rejeton);
 }
-
 // eventuellement effectue une reparation de la solution
 void Genetic::reparer()
 {

@@ -358,7 +358,17 @@ int LocalSearch::mutation7 ()
 
 	if ( cost > -0.0001 ) { return 0 ;}
 
-	// mettre a jour les noeuds
+	// Validate: check nodeNum can reach noeudV without cycle
+	{ int _cyc = 0;
+	Noeud *check = nodeNum;
+	while ( check != noeudV )
+	{
+		check = check->suiv;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
+	}
+	}
+
+	// mettre a jour les noeuds — only after validation
 	x->pred = nodeNum ;
 	x->suiv = y ;
 
@@ -434,7 +444,7 @@ int LocalSearch::mutation8 ()
 				if (d == depotVIdx) { ok = true; break; }
 			if (!ok) return 0;
 			check = check->suiv;
-			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
 		}
 		// Segment from V backward moves to routeU's depot
 		check = noeudV;
@@ -446,11 +456,24 @@ int LocalSearch::mutation8 ()
 				if (d == depotUIdx) { ok = true; break; }
 			if (!ok) return 0;
 			check = check->pred;
-			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
 		}
 	}
 
 	/////////////////////////// ON EFFECTUE LA MUTATION ///////////////////////////////
+
+	// Pre-validate: x's forward segment (suiv) must reach depot without cycle
+	{ int _cyc = 0; Noeud *check = x;
+	  while (!check->estUnDepot) { check = check->suiv;
+	    if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
+	  }
+	}
+	// Pre-validate: noeudV's backward segment (pred) must reach depot without cycle
+	{ int _cyc = 0; Noeud *check = noeudV;
+	  while (!check->estUnDepot) { check = check->pred;
+	    if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
+	  }
+	}
 
 	Noeud * depotU = routeU->depot ;
 	Noeud * depotV = routeV->depot ;
@@ -473,7 +496,7 @@ int LocalSearch::mutation8 ()
 		xx->pred = temp ;
 		xx->route = routeV ;
 		xx = temp ;
-		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break; // pre-validated, should not trigger
 	}
 	}
 
@@ -485,7 +508,7 @@ int LocalSearch::mutation8 ()
 		vv->suiv = temp ;
 		vv->route = routeU ;
 		vv = temp ;
-		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break; // pre-validated, should not trigger
 	}
 	}
 
@@ -578,7 +601,7 @@ int LocalSearch::mutation9 ()
 				if (d == depotUIdx) { ok = true; break; }
 			if (!ok) return 0;
 			check = check->suiv;
-			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
 		}
 		// Segment from x forward moves to routeV's depot
 		check = x;
@@ -590,12 +613,25 @@ int LocalSearch::mutation9 ()
 				if (d == depotVIdx) { ok = true; break; }
 			if (!ok) return 0;
 			check = check->suiv;
-			if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
 		}
 	}
 
 	/////////////////////////// ON EFFECTUE LA MUTATION ///////////////////////////////
 	// on parcourt les noeuds pour les associer aux bonnes routes
+
+	// Pre-validate: y's forward segment (suiv) must reach depot without cycle
+	{ int _cyc = 0; Noeud *check = y;
+	  while (!check->estUnDepot) { check = check->suiv;
+	    if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
+	  }
+	}
+	// Pre-validate: x's forward segment (suiv) must reach depot without cycle
+	{ int _cyc = 0; Noeud *check = x;
+	  while (!check->estUnDepot) { check = check->suiv;
+	    if (++_cyc > params->nbClients + params->nbDepots + 5) return 0;
+	  }
+	}
 
 	Noeud * depotU = routeU->depot ;
 	Noeud * depotV = routeV->depot ;
@@ -611,7 +647,7 @@ int LocalSearch::mutation9 ()
 	{
 		count->route = routeU ;
 		count = count->suiv ;
-		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break; // pre-validated, should not trigger
 	}
 	}
 
@@ -621,7 +657,7 @@ int LocalSearch::mutation9 ()
 	{
 		count->route = routeV ;
 		count = count->suiv ;
-		if (++_cyc > params->nbClients + params->nbDepots + 5) break;
+		if (++_cyc > params->nbClients + params->nbDepots + 5) break; // pre-validated, should not trigger
 	}
 	}
 

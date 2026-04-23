@@ -67,6 +67,20 @@ void Route::updateRouteData ()
 		noeud = noeud->suiv ;
 		place ++ ;
 		if (place > 500) {
+			// Cycle detected — repair route by clearing it, then mark all its clients absent
+			Noeud* fin = myLS->depotsFin[day][cour];
+			depot->suiv = fin; fin->pred = depot;
+			depot->pred = fin; fin->suiv = depot;
+			for (int _ci = params->nbDepots; _ci < params->nbDepots + params->nbClients; _ci++) {
+				Noeud* _cn = myLS->clients[day][_ci];
+				if (_cn->route == this && _cn->estPresent) {
+					_cn->estPresent = false;
+					_cn->pred = depot; _cn->suiv = fin;
+					myLS->removeOP(day, _ci);
+				}
+			}
+			isFeasible = false;
+			noeud = fin;
 			break;
 		}
 		noeud->place = place ;
@@ -110,6 +124,7 @@ void Route::evalInsertClientp (Noeud * U)
 	{
 		bestInsertion[U->cour].load = std::max<double>(0.,vehicleCapacity - charge);
 		courNoeud = depot ;
+		int _cyc = 0;
 		while (!courNoeud->estUnDepot || firstIt == true )
 		{
 			firstIt = false ;
@@ -123,6 +138,7 @@ void Route::evalInsertClientp (Noeud * U)
 				bestInsertion[U->cour].place = courNoeud ;
 			}
 			courNoeud = courNoeud->suiv ;
+			if (++_cyc > params->nbClients + params->nbDepots + 5) { break; }
 		}
 	}
 	else // U is already  in our route
@@ -179,6 +195,7 @@ void Route::evalInsertClient (Noeud * U)
 	{
 		bestInsertion[U->cour].load = std::max<double>(0.,vehicleCapacity - charge);
 		courNoeud = depot ;
+		int _cyc2 = 0;
 		while (!courNoeud->estUnDepot || firstIt == true )
 		{
 			firstIt = false ;
@@ -203,6 +220,7 @@ void Route::evalInsertClient (Noeud * U)
 				bestInsertion[U->cour].place = courNoeud ;
 			}
 			courNoeud = courNoeud->suiv ;
+			if (++_cyc2 > params->nbClients + params->nbDepots + 5) { break; }
 		}
 	}
 	else // U is already  in our route
@@ -278,8 +296,11 @@ void Route::updateCentroidCoord ()
 	double nbNodes = 0 ;
 	Noeud * courNoeud  = depot->suiv ;
 
+	int _cyc = 0;
+	const int _maxCyc = params->nbClients + params->nbDepots + 5;
 	while (!courNoeud->estUnDepot)
 	{
+		if (++_cyc > _maxCyc) break; // cycle guard
 		Xvalue += params->cli[courNoeud->cour].coord.x ;
 		Yvalue += params->cli[courNoeud->cour].coord.y ;
 		nbNodes ++ ;

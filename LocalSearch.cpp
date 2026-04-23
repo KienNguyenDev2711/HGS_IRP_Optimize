@@ -20,17 +20,18 @@ void LocalSearch::runSearchTotal(bool isRepPhase)
 {
   this->isRepPhase = isRepPhase;
   updateMoves();
-  for (int day = 1; day <= params->nbDays; day++)
+  for (int day = 1; day <= params->nbDays; day++) {
     mutationSameDay(day);
-
+  }
   // Time-limit check: skip expensive lot-sizing if time is almost up
   if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.95)
     return;
 
   mutationDifferentDay();
   updateMoves();
-  for (int day = 1; day <= params->nbDays; day++)
-      mutationSameDay(day);
+  for (int day = 1; day <= params->nbDays; day++) {
+    mutationSameDay(day);
+  }
 }
 
 
@@ -314,15 +315,11 @@ int LocalSearch::mutationDifferentDay()
   rechercheTerminee = false;
   int nbMoves = 0;
   int times = 0;
-  // Cap convergence iterations: in time-limited mode the inner time-guard fires first;
-  // in iteration-based mode (ticks==0) this prevents the while-loop from running unbounded.
-  // 3 passes matches typical natural convergence; fresh crossover offspring capped at 3.
   const int MAX_LOT_SIZING_LOOPS = 3;
   while (!rechercheTerminee && times < MAX_LOT_SIZING_LOOPS) {
     rechercheTerminee = true;
     times++;
     for (int posU = 0; posU < params->nbClients; posU++){
-      // Time-limit check inside lot-sizing loop
       if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
         return nbMoves;
       nbMoves += mutation11(ordreParcours[0][posU]);
@@ -364,7 +361,6 @@ int LocalSearch::mutation11(int client)
 {
   Noeud *noeudTravail;
   double currentCost;
-
   // Compute the current lot sizing solution cost (from the model point of view)
   if(params -> isstockout){
     currentCost=evaluateCurrentCost_stockout(client);
@@ -997,6 +993,7 @@ void LocalSearch::removeNoeud(Noeud *U)
 
 void LocalSearch::addNoeud(Noeud *U)
 {
+  if (U->placeInsertion == nullptr) return; // safety: no valid insertion point (e.g. route had a cycle)
   U->placeInsertion->suiv->pred = U;
   U->pred = U->placeInsertion;
   U->suiv = U->placeInsertion->suiv;

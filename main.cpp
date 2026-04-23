@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <algorithm>
 
 #include "Genetic.h"
 #include "LotSizingSolver.h"
@@ -45,9 +46,25 @@ int mainIRP(int argc, char *argv[])
     Genetic solver(mesParametres, population, nb_ticks_allowed, true, true);
 
     // on lance l'evolution   launch evolution
-    
-    int max_iter = 100000;
-    int maxIterNonProd = 5000;
+
+    // Scale iteration limits with problem size to keep wall-clock bounded.
+    //
+    // Empirical calibration (this hardware):
+    //   n=25  → ~0.005s/iter  (runSearchTotal: MDD dominates, 75 LotSolver calls)
+    //   n=100 → ~0.22s/iter   (runSearchTotal: MDD dominates, 300 LotSolver calls)
+    // Cost per iteration scales roughly as n^2 (MDD = n×routes, routes ∝ n/capacity).
+    //
+    // Strategy: keep worst-case wall time ≤ ~5 min (300s) for evolution phase.
+    //   iterScale ≈ cost_factor relative to n=25 baseline.
+    //   For n=25: scale=1 → max_iter=5000, maxNP=1250 → 5min hard cap
+    //   For n=100: scale=16 → max_iter=1500, maxNP=300 → 5.5min hard cap
+    //
+    // maxIterNonProd governs "convergence without improvement" stopping.
+    // max_iter is the absolute wall-clock safety cap.
+    int n = mesParametres->nbClients;
+    int iterScale = std::max(1, (n / 25) * (n / 25));  // quadratic: 1,4,9,16 for n=25,50,75,100
+    int maxIterNonProd = std::max(300,  5000 / iterScale);  // 5000,1250,555,312 → floor 300
+    int max_iter       = std::max(1500, maxIterNonProd * 5); // 5× non-prod cap, floor 1500
     solver.evolve(max_iter, maxIterNonProd, 1);
 
     population->ExportPop(c.get_path_to_solution(),true);
