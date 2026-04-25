@@ -47,24 +47,29 @@ int mainIRP(int argc, char *argv[])
 
     // on lance l'evolution   launch evolution
 
-    // Scale iteration limits with problem size to keep wall-clock bounded.
+    // Scale iteration limits with problem size to keep wall-clock bounded
+    // when running without a time limit (-t 0).
     //
-    // Empirical calibration (this hardware):
-    //   n=25  → ~0.005s/iter  (runSearchTotal: MDD dominates, 75 LotSolver calls)
-    //   n=100 → ~0.22s/iter   (runSearchTotal: MDD dominates, 300 LotSolver calls)
-    // Cost per iteration scales roughly as n^2 (MDD = n×routes, routes ∝ n/capacity).
+    // Empirical calibration (measured post-bugfix):
+    //   n=25  → ~0.006s/iter   (75 LotSolver calls / MDD pass)
+    //   n=100 → ~0.074s/iter   (300 LotSolver calls / MDD pass)
+    // Cost per iteration scales roughly linearly with n (dominated by MDD = n clients × 3 passes).
     //
-    // Strategy: keep worst-case wall time ≤ ~5 min (300s) for evolution phase.
-    //   iterScale ≈ cost_factor relative to n=25 baseline.
-    //   For n=25: scale=1 → max_iter=5000, maxNP=1250 → 5min hard cap
-    //   For n=100: scale=16 → max_iter=1500, maxNP=300 → 5.5min hard cap
+    // LINEAR scaling (iterScale = n/25):
+    //   n=25  → scale=1 → maxIterNonProd=5000 → worst-case ~30s  (w/o time limit)
+    //   n=50  → scale=2 → maxIterNonProd=2500 → worst-case ~50s
+    //   n=75  → scale=3 → maxIterNonProd=1666 → worst-case ~67s
+    //   n=100 → scale=4 → maxIterNonProd=1250 → worst-case ~93s
     //
-    // maxIterNonProd governs "convergence without improvement" stopping.
-    // max_iter is the absolute wall-clock safety cap.
-    int n = mesParametres->nbClients;
-    int iterScale = std::max(1, (n / 25) * (n / 25));  // quadratic: 1,4,9,16 for n=25,50,75,100
-    int maxIterNonProd = std::max(300,  5000 / iterScale);  // 5000,1250,555,312 → floor 300
-    int max_iter       = std::max(1500, maxIterNonProd * 5); // 5× non-prod cap, floor 1500
+    // When a time limit is set (-t N), the ticks check in evolve() governs
+    // stopping; maxIterNonProd is never the binding constraint.
+    //
+    // maxIterNonProd: "convergence without improvement" criterion.
+    // max_iter:       absolute safety cap (5× maxIterNonProd).
+    int n             = mesParametres->nbClients;
+    int iterScale     = std::max(1, n / 25);              // linear: 1,2,3,4 for n=25,50,75,100
+    int maxIterNonProd = std::max(200, 5000 / iterScale); // 5000→2500→1666→1250
+    int max_iter      = std::max(1000, maxIterNonProd * 5); // 5× non-prod cap
     solver.evolve(max_iter, maxIterNonProd, 1);
 
     population->ExportPop(c.get_path_to_solution(),true);

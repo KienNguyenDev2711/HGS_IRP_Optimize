@@ -8,8 +8,8 @@ day[1] route[2] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_
  depot[0](depart=0.000h) -> depot[0]
 day[1] route[3] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[0](depart=0.000h) -> depot[0]
-day[1] route[4] depot[0]: distance = 57.5823 duration = 164.799 depart = 0.286h load = 4 TW_viol = 0
- depot[0](depart=0.286h) -> c38(del=3.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,12.000]) -> c74(del=1.000,arr=1.606h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> depot[0]
+day[1] route[4] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
+ depot[0](depart=0.000h) -> depot[0]
 day[1] route[5] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[1](depart=0.000h) -> depot[1]
 day[1] route[6] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
@@ -28,70 +28,70 @@ day[1] route[12] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW
  depot[2](depart=0.000h) -> depot[2]
 day[1] route[13] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[2](depart=0.000h) -> depot[2]
-day[1] route[14] depot[2]: distance = 26.2552 duration = 97.8303 depart = 0.789h load = 3 TW_viol = 0
- depot[2](depart=0.789h) -> c68(del=1.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,13.000]) -> c45(del=2.000,arr=1.725h,start=1.725h,dep=2.225h,tw=[1.000,14.000]) -> depot[2]
+day[1] route[14] depot[2]: distance = 16.8498 duration = 68.4249 depart = 0.789h load = 1 TW_viol = 0
+ depot[2](depart=0.789h) -> c68(del=1.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,13.000]) -> depot[2]
 day[2] route[0] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[0](depart=0.000h) -> depot[0]
-day[2] route[1] depot[0]: distance = 24.8769 duration = 176.885 depart = 0.861h load = 70 TW_viol = 0
- depot[0](depart=0.861h) -> c37(del=11.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,12.000]) -> c42(del=5.000,arr=1.561h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c4(del=17.000,arr=2.531h,start=2.531h,dep=3.031h,tw=[2.000,12.000]) -> c28(del=17.000,arr=3.137h,start=3.137h,dep=3.637h,tw=[3.000,12.000]) -> c97(del=20.000,arr=3.740h,start=3.740h,dep=4.240h,tw=[2.000,13.000]) -> depot[0]
-day[2] route[2] depot[0]: distance = 64.5933 duration = 455.057 depart = 0.851h load = 119 TW_viol = 0
- depot[0](depart=0.851h) -> c32(del=3.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c56(del=20.000,arr=1.589h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c91(del=2.000,arr=3.516h,start=3.516h,dep=4.016h,tw=[2.000,14.000]) -> c70(del=5.000,arr=4.086h,start=4.086h,dep=4.586h,tw=[1.000,12.000]) -> c65(del=4.000,arr=4.809h,start=4.809h,dep=5.309h,tw=[2.000,14.000]) -> c26(del=2.000,arr=5.433h,start=5.433h,dep=5.933h,tw=[1.000,12.000]) -> c80(del=2.000,arr=6.003h,start=6.003h,dep=6.503h,tw=[3.000,12.000]) -> c25(del=8.000,arr=6.549h,start=6.549h,dep=7.049h,tw=[1.000,12.000]) -> c9(del=15.000,arr=7.122h,start=7.122h,dep=7.622h,tw=[2.000,14.000]) -> c16(del=20.000,arr=7.768h,start=7.768h,dep=8.268h,tw=[1.000,12.000]) -> c47(del=9.000,arr=8.330h,start=8.330h,dep=8.830h,tw=[1.000,14.000]) -> c87(del=10.000,arr=9.002h,start=9.002h,dep=9.502h,tw=[1.000,14.000]) -> c82(del=3.000,arr=9.614h,start=9.614h,dep=10.114h,tw=[1.000,13.000]) -> c24(del=15.000,arr=10.200h,start=10.200h,dep=10.700h,tw=[2.000,14.000]) -> c77(del=1.000,arr=10.741h,start=10.741h,dep=11.241h,tw=[2.000,13.000]) -> depot[0]
-day[2] route[3] depot[0]: distance = 21.0544 duration = 174.048 depart = 2.825h load = 5 TW_viol = 0
- depot[0](depart=2.825h) -> c92(del=3.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c20(del=2.000,arr=3.617h,start=3.617h,dep=4.117h,tw=[3.000,14.000]) -> depot[0]
-day[2] route[4] depot[0]: distance = 81.8963 duration = 491.236 depart = 1.733h load = 85 TW_viol = 0
- depot[0](depart=1.733h) -> c81(del=1.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c61(del=4.000,arr=2.577h,start=2.577h,dep=3.077h,tw=[1.000,14.000]) -> c86(del=20.000,arr=3.153h,start=3.153h,dep=3.653h,tw=[3.000,12.000]) -> c31(del=1.000,arr=3.757h,start=3.757h,dep=4.257h,tw=[2.000,13.000]) -> c74(del=2.000,arr=4.464h,start=4.464h,dep=4.964h,tw=[3.000,13.000]) -> c84(del=7.000,arr=5.021h,start=5.021h,dep=5.521h,tw=[2.000,12.000]) -> c98(del=3.000,arr=5.553h,start=5.553h,dep=6.053h,tw=[3.000,13.000]) -> c29(del=6.000,arr=6.078h,start=6.078h,dep=6.578h,tw=[3.000,12.000]) -> c38(del=4.000,arr=6.639h,start=6.639h,dep=7.139h,tw=[1.000,12.000]) -> c66(del=7.000,arr=7.349h,start=7.349h,dep=7.849h,tw=[3.000,13.000]) -> c71(del=4.000,arr=8.067h,start=8.067h,dep=8.567h,tw=[1.000,14.000]) -> c53(del=6.000,arr=8.647h,start=8.647h,dep=9.147h,tw=[3.000,14.000]) -> c83(del=5.000,arr=9.277h,start=9.277h,dep=9.777h,tw=[2.000,13.000]) -> c48(del=1.000,arr=9.819h,start=9.819h,dep=10.319h,tw=[1.000,14.000]) -> c11(del=6.000,arr=10.449h,start=10.449h,dep=10.949h,tw=[3.000,12.000]) -> c8(del=1.000,arr=11.054h,start=11.054h,dep=11.554h,tw=[1.000,14.000]) -> c96(del=7.000,arr=11.632h,start=11.632h,dep=12.132h,tw=[1.000,14.000]) -> depot[0]
+day[2] route[1] depot[0]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
+ depot[0](depart=0.000h) -> depot[0]
+day[2] route[2] depot[0]: distance = 23.8809 duration = 214.344 depart = 0.851h load = 37 TW_viol = 0
+ depot[0](depart=0.851h) -> c32(del=3.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c56(del=20.000,arr=1.589h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c91(del=2.000,arr=3.516h,start=3.516h,dep=4.016h,tw=[2.000,14.000]) -> c70(del=5.000,arr=4.086h,start=4.086h,dep=4.586h,tw=[1.000,12.000]) -> c96(del=7.000,arr=4.710h,start=4.710h,dep=5.210h,tw=[1.000,14.000]) -> depot[0]
+day[2] route[3] depot[0]: distance = 81.3789 duration = 509.872 depart = 0.817h load = 110 TW_viol = 0
+ depot[0](depart=0.817h) -> c8(del=1.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c11(del=6.000,arr=1.605h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c48(del=1.000,arr=3.630h,start=3.630h,dep=4.130h,tw=[1.000,14.000]) -> c83(del=5.000,arr=4.173h,start=4.173h,dep=4.673h,tw=[2.000,13.000]) -> c53(del=6.000,arr=4.802h,start=4.802h,dep=5.302h,tw=[3.000,14.000]) -> c71(del=4.000,arr=5.383h,start=5.383h,dep=5.883h,tw=[1.000,14.000]) -> c66(del=7.000,arr=6.100h,start=6.100h,dep=6.600h,tw=[3.000,13.000]) -> c38(del=17.000,arr=6.810h,start=6.810h,dep=7.310h,tw=[1.000,12.000]) -> c29(del=6.000,arr=7.371h,start=7.371h,dep=7.871h,tw=[3.000,12.000]) -> c98(del=3.000,arr=7.897h,start=7.897h,dep=8.397h,tw=[3.000,13.000]) -> c84(del=7.000,arr=8.429h,start=8.429h,dep=8.929h,tw=[2.000,12.000]) -> c74(del=19.000,arr=8.985h,start=8.985h,dep=9.485h,tw=[3.000,13.000]) -> c31(del=1.000,arr=9.692h,start=9.692h,dep=10.192h,tw=[2.000,13.000]) -> c86(del=20.000,arr=10.297h,start=10.297h,dep=10.797h,tw=[3.000,12.000]) -> c61(del=4.000,arr=10.873h,start=10.873h,dep=11.373h,tw=[1.000,14.000]) -> c81(del=1.000,arr=11.449h,start=11.449h,dep=11.949h,tw=[2.000,12.000]) -> c20(del=2.000,arr=12.013h,start=12.013h,dep=12.513h,tw=[3.000,14.000]) -> depot[0]
+day[2] route[4] depot[0]: distance = 74.7588 duration = 507.753 depart = 2.825h load = 105 TW_viol = 0
+ depot[0](depart=2.825h) -> c92(del=3.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c97(del=20.000,arr=3.736h,start=3.736h,dep=4.236h,tw=[2.000,13.000]) -> c37(del=11.000,arr=4.353h,start=4.353h,dep=4.853h,tw=[1.000,12.000]) -> c42(del=5.000,arr=4.914h,start=4.914h,dep=5.414h,tw=[2.000,12.000]) -> c4(del=5.000,arr=5.446h,start=5.446h,dep=5.946h,tw=[2.000,12.000]) -> c82(del=3.000,arr=5.995h,start=5.995h,dep=6.495h,tw=[1.000,13.000]) -> c87(del=4.000,arr=6.606h,start=6.606h,dep=7.106h,tw=[1.000,14.000]) -> c47(del=9.000,arr=7.278h,start=7.278h,dep=7.778h,tw=[1.000,14.000]) -> c16(del=6.000,arr=7.840h,start=7.840h,dep=8.340h,tw=[1.000,12.000]) -> c9(del=15.000,arr=8.487h,start=8.487h,dep=8.987h,tw=[2.000,14.000]) -> c65(del=4.000,arr=9.146h,start=9.146h,dep=9.646h,tw=[2.000,14.000]) -> c26(del=2.000,arr=9.770h,start=9.770h,dep=10.270h,tw=[1.000,12.000]) -> c25(del=8.000,arr=10.331h,start=10.331h,dep=10.831h,tw=[1.000,12.000]) -> c80(del=2.000,arr=10.878h,start=10.878h,dep=11.378h,tw=[3.000,12.000]) -> c77(del=1.000,arr=11.518h,start=11.518h,dep=12.018h,tw=[2.000,13.000]) -> c24(del=7.000,arr=12.058h,start=12.058h,dep=12.558h,tw=[2.000,14.000]) -> depot[0]
 day[2] route[5] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[1](depart=0.000h) -> depot[1]
 day[2] route[6] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[1](depart=0.000h) -> depot[1]
-day[2] route[7] depot[1]: distance = 86.5764 duration = 463.453 depart = 1.608h load = 112 TW_viol = 0
- depot[1](depart=1.608h) -> c35(del=10.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,13.000]) -> c101(del=6.000,arr=2.687h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c102(del=7.000,arr=3.500h,start=3.500h,dep=4.000h,tw=[1.000,13.000]) -> c52(del=12.000,arr=4.044h,start=4.044h,dep=4.544h,tw=[1.000,13.000]) -> c60(del=6.000,arr=4.609h,start=4.609h,dep=5.109h,tw=[3.000,12.000]) -> c69(del=11.000,arr=5.211h,start=5.211h,dep=5.711h,tw=[1.000,13.000]) -> c44(del=5.000,arr=6.038h,start=6.038h,dep=6.538h,tw=[3.000,12.000]) -> c19(del=11.000,arr=6.645h,start=6.645h,dep=7.145h,tw=[1.000,13.000]) -> c57(del=9.000,arr=7.239h,start=7.239h,dep=7.739h,tw=[1.000,14.000]) -> c99(del=1.000,arr=7.855h,start=7.855h,dep=8.355h,tw=[3.000,14.000]) -> c89(del=11.000,arr=8.456h,start=8.456h,dep=8.956h,tw=[2.000,13.000]) -> c76(del=3.000,arr=9.056h,start=9.056h,dep=9.556h,tw=[3.000,14.000]) -> c34(del=3.000,arr=9.616h,start=9.616h,dep=10.116h,tw=[1.000,13.000]) -> c73(del=6.000,arr=10.307h,start=10.307h,dep=10.807h,tw=[2.000,13.000]) -> c10(del=11.000,arr=10.998h,start=10.998h,dep=11.498h,tw=[3.000,12.000]) -> depot[1]
-day[2] route[8] depot[1]: distance = 77.6422 duration = 510.832 depart = 1.830h load = 119 TW_viol = 0
- depot[1](depart=1.830h) -> c27(del=8.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c49(del=1.000,arr=2.685h,start=2.685h,dep=3.185h,tw=[2.000,13.000]) -> c58(del=14.000,arr=3.404h,start=3.404h,dep=3.904h,tw=[1.000,12.000]) -> c15(del=15.000,arr=4.032h,start=4.032h,dep=4.532h,tw=[1.000,14.000]) -> c41(del=1.000,arr=4.692h,start=4.692h,dep=5.192h,tw=[3.000,13.000]) -> c46(del=16.000,arr=5.302h,start=5.302h,dep=5.802h,tw=[3.000,14.000]) -> c51(del=1.000,arr=5.827h,start=5.827h,dep=6.327h,tw=[3.000,14.000]) -> c78(del=2.000,arr=6.478h,start=6.478h,dep=6.978h,tw=[3.000,13.000]) -> c33(del=4.000,arr=6.991h,start=6.991h,dep=7.491h,tw=[2.000,14.000]) -> c88(del=4.000,arr=7.596h,start=7.596h,dep=8.096h,tw=[3.000,12.000]) -> c22(del=5.000,arr=8.177h,start=8.177h,dep=8.677h,tw=[1.000,14.000]) -> c17(del=3.000,arr=8.713h,start=8.713h,dep=9.213h,tw=[1.000,12.000]) -> c13(del=5.000,arr=9.340h,start=9.340h,dep=9.840h,tw=[1.000,13.000]) -> c18(del=10.000,arr=9.879h,start=9.879h,dep=10.379h,tw=[1.000,13.000]) -> c5(del=1.000,arr=10.481h,start=10.481h,dep=10.981h,tw=[2.000,13.000]) -> c93(del=11.000,arr=10.990h,start=10.990h,dep=11.490h,tw=[3.000,12.000]) -> c30(del=13.000,arr=11.610h,start=11.610h,dep=12.110h,tw=[3.000,14.000]) -> c54(del=5.000,arr=12.208h,start=12.208h,dep=12.708h,tw=[2.000,14.000]) -> depot[1]
-day[2] route[9] depot[1]: distance = 8.57494 duration = 164.556 depart = 2.900h load = 16 TW_viol = 0
- depot[1](depart=2.900h) -> c64(del=10.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c63(del=6.000,arr=3.521h,start=3.521h,dep=4.021h,tw=[1.000,12.000]) -> depot[1]
+day[2] route[7] depot[1]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
+ depot[1](depart=0.000h) -> depot[1]
+day[2] route[8] depot[1]: distance = 88.5392 duration = 498.261 depart = 1.743h load = 118 TW_viol = 0
+ depot[1](depart=1.743h) -> c73(del=6.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,13.000]) -> c34(del=3.000,arr=2.691h,start=2.691h,dep=3.191h,tw=[1.000,13.000]) -> c76(del=3.000,arr=3.251h,start=3.251h,dep=3.751h,tw=[3.000,14.000]) -> c89(del=11.000,arr=3.851h,start=3.851h,dep=4.351h,tw=[2.000,13.000]) -> c99(del=1.000,arr=4.452h,start=4.452h,dep=4.952h,tw=[3.000,14.000]) -> c57(del=9.000,arr=5.068h,start=5.068h,dep=5.568h,tw=[1.000,14.000]) -> c19(del=11.000,arr=5.661h,start=5.661h,dep=6.161h,tw=[1.000,13.000]) -> c44(del=5.000,arr=6.269h,start=6.269h,dep=6.769h,tw=[3.000,12.000]) -> c69(del=11.000,arr=7.095h,start=7.095h,dep=7.595h,tw=[1.000,13.000]) -> c60(del=6.000,arr=7.698h,start=7.698h,dep=8.198h,tw=[3.000,12.000]) -> c52(del=3.000,arr=8.263h,start=8.263h,dep=8.763h,tw=[1.000,13.000]) -> c101(del=6.000,arr=8.807h,start=8.807h,dep=9.307h,tw=[3.000,13.000]) -> c102(del=7.000,arr=9.307h,start=9.307h,dep=9.807h,tw=[1.000,13.000]) -> c35(del=10.000,arr=9.993h,start=9.993h,dep=10.493h,tw=[2.000,13.000]) -> c17(del=3.000,arr=10.709h,start=10.709h,dep=11.209h,tw=[1.000,12.000]) -> c22(del=5.000,arr=11.245h,start=11.245h,dep=11.745h,tw=[1.000,14.000]) -> c63(del=18.000,arr=11.864h,start=11.864h,dep=12.364h,tw=[1.000,12.000]) -> depot[1]
+day[2] route[9] depot[1]: distance = 79.9785 duration = 513.168 depart = 1.830h load = 119 TW_viol = 0
+ depot[1](depart=1.830h) -> c27(del=8.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c49(del=1.000,arr=2.685h,start=2.685h,dep=3.185h,tw=[2.000,13.000]) -> c58(del=6.000,arr=3.404h,start=3.404h,dep=3.904h,tw=[1.000,12.000]) -> c15(del=7.000,arr=4.032h,start=4.032h,dep=4.532h,tw=[1.000,14.000]) -> c41(del=1.000,arr=4.692h,start=4.692h,dep=5.192h,tw=[3.000,13.000]) -> c46(del=11.000,arr=5.302h,start=5.302h,dep=5.802h,tw=[3.000,14.000]) -> c51(del=1.000,arr=5.827h,start=5.827h,dep=6.327h,tw=[3.000,14.000]) -> c88(del=12.000,arr=6.411h,start=6.411h,dep=6.911h,tw=[3.000,12.000]) -> c33(del=4.000,arr=7.016h,start=7.016h,dep=7.516h,tw=[2.000,14.000]) -> c78(del=2.000,arr=7.529h,start=7.529h,dep=8.029h,tw=[3.000,13.000]) -> c18(del=10.000,arr=8.258h,start=8.258h,dep=8.758h,tw=[1.000,13.000]) -> c13(del=5.000,arr=8.797h,start=8.797h,dep=9.297h,tw=[1.000,13.000]) -> c5(del=1.000,arr=9.377h,start=9.377h,dep=9.877h,tw=[2.000,13.000]) -> c93(del=11.000,arr=9.887h,start=9.887h,dep=10.387h,tw=[3.000,12.000]) -> c30(del=13.000,arr=10.506h,start=10.506h,dep=11.006h,tw=[3.000,14.000]) -> c10(del=11.000,arr=11.086h,start=11.086h,dep=11.586h,tw=[3.000,12.000]) -> c54(del=5.000,arr=11.623h,start=11.623h,dep=12.123h,tw=[2.000,14.000]) -> c64(del=10.000,arr=12.229h,start=12.229h,dep=12.729h,tw=[3.000,14.000]) -> depot[1]
 day[2] route[10] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[2](depart=0.000h) -> depot[2]
 day[2] route[11] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[2](depart=0.000h) -> depot[2]
 day[2] route[12] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[2](depart=0.000h) -> depot[2]
-day[2] route[13] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
- depot[2](depart=0.000h) -> depot[2]
-day[2] route[14] depot[2]: distance = 82.1721 duration = 450.201 depart = 2.701h load = 112 TW_viol = 0
- depot[2](depart=2.701h) -> c36(del=8.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c14(del=5.000,arr=3.697h,start=3.697h,dep=4.197h,tw=[1.000,14.000]) -> c75(del=12.000,arr=4.311h,start=4.311h,dep=4.811h,tw=[2.000,13.000]) -> c59(del=10.000,arr=4.905h,start=4.905h,dep=5.405h,tw=[3.000,12.000]) -> c43(del=10.000,arr=5.530h,start=5.530h,dep=6.030h,tw=[3.000,13.000]) -> c62(del=5.000,arr=6.177h,start=6.177h,dep=6.677h,tw=[1.000,12.000]) -> c72(del=13.000,arr=6.851h,start=6.851h,dep=7.351h,tw=[2.000,14.000]) -> c90(del=6.000,arr=7.441h,start=7.441h,dep=7.941h,tw=[1.000,13.000]) -> c94(del=1.000,arr=8.165h,start=8.165h,dep=8.665h,tw=[3.000,14.000]) -> c6(del=8.000,arr=8.767h,start=8.767h,dep=9.267h,tw=[3.000,14.000]) -> c85(del=13.000,arr=9.308h,start=9.308h,dep=9.808h,tw=[2.000,12.000]) -> c12(del=10.000,arr=9.905h,start=9.905h,dep=10.405h,tw=[3.000,12.000]) -> c23(del=11.000,arr=10.530h,start=10.530h,dep=11.030h,tw=[3.000,12.000]) -> depot[2]
-day[3] route[0] depot[0]: distance = 61.8642 duration = 296.435 depart = 1.864h load = 118 TW_viol = 0
- depot[0](depart=1.864h) -> c24(del=15.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,14.000]) -> c77(del=13.000,arr=2.541h,start=2.541h,dep=3.041h,tw=[2.000,13.000]) -> c32(del=10.000,arr=3.135h,start=3.135h,dep=3.635h,tw=[1.000,14.000]) -> c11(del=12.000,arr=3.905h,start=3.905h,dep=4.405h,tw=[3.000,12.000]) -> c55(del=13.000,arr=4.486h,start=4.486h,dep=4.986h,tw=[3.000,12.000]) -> c86(del=20.000,arr=5.033h,start=5.033h,dep=5.533h,tw=[3.000,12.000]) -> c74(del=19.000,arr=5.790h,start=5.790h,dep=6.290h,tw=[3.000,13.000]) -> c61(del=16.000,arr=6.584h,start=6.584h,dep=7.084h,tw=[1.000,14.000]) -> depot[0]
-day[3] route[1] depot[0]: distance = 76.6224 duration = 286.268 depart = 0.817h load = 119 TW_viol = 0
- depot[0](depart=0.817h) -> c8(del=10.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c71(del=12.000,arr=1.859h,start=1.859h,dep=2.359h,tw=[1.000,14.000]) -> c66(del=18.000,arr=2.576h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c53(del=14.000,arr=3.761h,start=3.761h,dep=4.261h,tw=[3.000,14.000]) -> c56(del=20.000,arr=4.635h,start=4.635h,dep=5.135h,tw=[3.000,14.000]) -> c91(del=11.000,arr=5.151h,start=5.151h,dep=5.651h,tw=[2.000,14.000]) -> c50(del=16.000,arr=5.723h,start=5.723h,dep=6.223h,tw=[1.000,12.000]) -> c65(del=18.000,arr=6.323h,start=6.323h,dep=6.823h,tw=[2.000,14.000]) -> depot[0]
-day[3] route[2] depot[0]: distance = 41.3918 duration = 253.4 depart = 0.861h load = 115 TW_viol = 0
- depot[0](depart=0.861h) -> c37(del=16.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,12.000]) -> c42(del=10.000,arr=1.561h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c4(del=17.000,arr=2.531h,start=2.531h,dep=3.031h,tw=[2.000,12.000]) -> c82(del=10.000,arr=3.081h,start=3.081h,dep=3.581h,tw=[1.000,13.000]) -> c16(del=20.000,arr=3.796h,start=3.796h,dep=4.296h,tw=[1.000,12.000]) -> c9(del=15.000,arr=4.443h,start=4.443h,dep=4.943h,tw=[2.000,14.000]) -> c25(del=17.000,arr=5.015h,start=5.015h,dep=5.515h,tw=[1.000,12.000]) -> c80(del=10.000,arr=5.561h,start=5.561h,dep=6.061h,tw=[3.000,12.000]) -> depot[0]
-day[3] route[3] depot[0]: distance = 48.2072 duration = 242.632 depart = 0.851h load = 120 TW_viol = 0
- depot[0](depart=0.851h) -> c96(del=18.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c70(del=15.000,arr=1.623h,start=1.623h,dep=2.123h,tw=[1.000,12.000]) -> c81(del=11.000,arr=2.427h,start=2.427h,dep=2.927h,tw=[2.000,12.000]) -> c20(del=18.000,arr=2.990h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c79(del=12.000,arr=3.578h,start=3.578h,dep=4.078h,tw=[3.000,14.000]) -> c92(del=20.000,arr=4.143h,start=4.143h,dep=4.643h,tw=[3.000,12.000]) -> c95(del=11.000,arr=4.804h,start=4.804h,dep=5.304h,tw=[1.000,13.000]) -> c97(del=15.000,arr=5.384h,start=5.384h,dep=5.884h,tw=[2.000,13.000]) -> depot[0]
-day[3] route[4] depot[0]: distance = 77.257 duration = 329.871 depart = 2.315h load = 117 TW_viol = 0
- depot[0](depart=2.315h) -> c98(del=11.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c29(del=11.000,arr=3.525h,start=3.525h,dep=4.025h,tw=[3.000,12.000]) -> c38(del=17.000,arr=4.087h,start=4.087h,dep=4.587h,tw=[1.000,12.000]) -> c84(del=16.000,arr=4.638h,start=4.638h,dep=5.138h,tw=[2.000,12.000]) -> c31(del=12.000,arr=5.367h,start=5.367h,dep=5.867h,tw=[2.000,13.000]) -> c48(del=15.000,arr=6.011h,start=6.011h,dep=6.511h,tw=[1.000,14.000]) -> c83(del=15.000,arr=6.553h,start=6.553h,dep=7.053h,tw=[2.000,13.000]) -> c26(del=20.000,arr=7.496h,start=7.496h,dep=7.996h,tw=[1.000,12.000]) -> depot[0]
-day[3] route[5] depot[1]: distance = 61.4134 duration = 291.135 depart = 1.743h load = 120 TW_viol = 0
- depot[1](depart=1.743h) -> c73(del=17.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,13.000]) -> c89(del=19.000,arr=2.794h,start=2.794h,dep=3.294h,tw=[2.000,13.000]) -> c99(del=12.000,arr=3.395h,start=3.395h,dep=3.895h,tw=[3.000,14.000]) -> c57(del=19.000,arr=4.011h,start=4.011h,dep=4.511h,tw=[1.000,14.000]) -> c19(del=10.000,arr=4.604h,start=4.604h,dep=5.104h,tw=[1.000,13.000]) -> c44(del=15.000,arr=5.212h,start=5.212h,dep=5.712h,tw=[3.000,12.000]) -> c76(del=16.000,arr=5.928h,start=5.928h,dep=6.428h,tw=[3.000,14.000]) -> c34(del=12.000,arr=6.488h,start=6.488h,dep=6.988h,tw=[1.000,13.000]) -> depot[1]
-day[3] route[6] depot[1]: distance = 26.9933 duration = 211.968 depart = 0.714h load = 98 TW_viol = 0
- depot[1](depart=0.714h) -> c13(del=19.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,13.000]) -> c5(del=12.000,arr=1.580h,start=2.000h,dep=2.500h,tw=[2.000,13.000]) -> c93(del=11.000,arr=2.509h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c30(del=18.000,arr=3.619h,start=3.619h,dep=4.119h,tw=[3.000,14.000]) -> c10(del=18.000,arr=4.200h,start=4.200h,dep=4.700h,tw=[3.000,12.000]) -> c54(del=20.000,arr=4.736h,start=4.736h,dep=5.236h,tw=[2.000,14.000]) -> depot[1]
-day[3] route[7] depot[1]: distance = 54.871 duration = 313.135 depart = 2.457h load = 118 TW_viol = 0
- depot[1](depart=2.457h) -> c101(del=17.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c102(del=15.000,arr=3.500h,start=3.500h,dep=4.000h,tw=[1.000,13.000]) -> c52(del=12.000,arr=4.044h,start=4.044h,dep=4.544h,tw=[1.000,13.000]) -> c60(del=17.000,arr=4.609h,start=4.609h,dep=5.109h,tw=[3.000,12.000]) -> c69(del=17.000,arr=5.211h,start=5.211h,dep=5.711h,tw=[1.000,13.000]) -> c67(del=12.000,arr=5.856h,start=5.856h,dep=6.356h,tw=[1.000,14.000]) -> c35(del=10.000,arr=6.435h,start=6.435h,dep=6.935h,tw=[2.000,13.000]) -> c18(del=18.000,arr=7.005h,start=7.005h,dep=7.505h,tw=[1.000,13.000]) -> depot[1]
-day[3] route[8] depot[1]: distance = 40.0351 duration = 291.432 depart = 1.785h load = 119 TW_viol = 0
- depot[1](depart=1.785h) -> c21(del=10.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,14.000]) -> c17(del=17.000,arr=2.527h,start=2.527h,dep=3.027h,tw=[1.000,12.000]) -> c22(del=11.000,arr=3.063h,start=3.063h,dep=3.563h,tw=[1.000,14.000]) -> c88(del=12.000,arr=3.644h,start=3.644h,dep=4.144h,tw=[3.000,12.000]) -> c33(del=11.000,arr=4.249h,start=4.249h,dep=4.749h,tw=[2.000,14.000]) -> c78(del=10.000,arr=4.763h,start=4.763h,dep=5.263h,tw=[3.000,13.000]) -> c51(del=16.000,arr=5.413h,start=5.413h,dep=5.913h,tw=[3.000,14.000]) -> c46(del=16.000,arr=5.938h,start=5.938h,dep=6.438h,tw=[3.000,14.000]) -> c41(del=16.000,arr=6.549h,start=6.549h,dep=7.049h,tw=[3.000,13.000]) -> depot[1]
-day[3] route[9] depot[1]: distance = 43.1411 duration = 318.082 depart = 2.874h load = 114 TW_viol = 0
- depot[1](depart=2.874h) -> c40(del=11.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c27(del=15.000,arr=3.544h,start=3.544h,dep=4.044h,tw=[2.000,12.000]) -> c58(del=14.000,arr=4.335h,start=4.335h,dep=4.835h,tw=[1.000,12.000]) -> c39(del=10.000,arr=4.900h,start=4.900h,dep=5.400h,tw=[2.000,13.000]) -> c15(del=15.000,arr=5.492h,start=5.492h,dep=5.992h,tw=[1.000,14.000]) -> c49(del=14.000,arr=6.202h,start=6.202h,dep=6.702h,tw=[2.000,13.000]) -> c64(del=17.000,arr=6.838h,start=6.838h,dep=7.338h,tw=[3.000,14.000]) -> c63(del=18.000,arr=7.359h,start=7.359h,dep=7.859h,tw=[1.000,12.000]) -> depot[1]
+day[2] route[13] depot[2]: distance = 49.5645 duration = 320.565 depart = 2.775h load = 67 TW_viol = 0
+ depot[2](depart=2.775h) -> c23(del=11.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c12(del=10.000,arr=3.625h,start=3.625h,dep=4.125h,tw=[3.000,12.000]) -> c85(del=13.000,arr=4.222h,start=4.222h,dep=4.722h,tw=[2.000,12.000]) -> c6(del=8.000,arr=4.763h,start=4.763h,dep=5.263h,tw=[3.000,14.000]) -> c94(del=1.000,arr=5.365h,start=5.365h,dep=5.865h,tw=[3.000,14.000]) -> c90(del=6.000,arr=6.090h,start=6.090h,dep=6.590h,tw=[1.000,13.000]) -> c72(del=13.000,arr=6.679h,start=6.679h,dep=7.179h,tw=[2.000,14.000]) -> c62(del=5.000,arr=7.353h,start=7.353h,dep=7.853h,tw=[1.000,12.000]) -> depot[2]
+day[2] route[14] depot[2]: distance = 42.5575 duration = 316.953 depart = 2.860h load = 66 TW_viol = 0
+ depot[2](depart=2.860h) -> c59(del=10.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c43(del=10.000,arr=3.624h,start=3.624h,dep=4.124h,tw=[3.000,13.000]) -> c75(del=12.000,arr=4.288h,start=4.288h,dep=4.788h,tw=[2.000,13.000]) -> c45(del=16.000,arr=4.816h,start=4.816h,dep=5.316h,tw=[1.000,14.000]) -> c28(del=4.000,arr=5.350h,start=5.350h,dep=5.850h,tw=[3.000,12.000]) -> c14(del=5.000,arr=5.925h,start=5.925h,dep=6.425h,tw=[1.000,14.000]) -> c36(del=8.000,arr=6.621h,start=6.621h,dep=7.121h,tw=[3.000,12.000]) -> c68(del=1.000,arr=7.213h,start=7.213h,dep=7.713h,tw=[1.000,13.000]) -> depot[2]
+day[3] route[0] depot[0]: distance = 23.4077 duration = 169.537 depart = 0.742h load = 57 TW_viol = 0
+ depot[0](depart=0.742h) -> c50(del=16.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,12.000]) -> c91(del=11.000,arr=1.572h,start=2.000h,dep=2.500h,tw=[2.000,14.000]) -> c56(del=20.000,arr=2.516h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c32(del=10.000,arr=3.589h,start=3.589h,dep=4.089h,tw=[1.000,14.000]) -> depot[0]
+day[3] route[1] depot[0]: distance = 36.4135 duration = 289.407 depart = 2.825h load = 110 TW_viol = 0
+ depot[0](depart=2.825h) -> c92(del=20.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c79(del=12.000,arr=3.565h,start=3.565h,dep=4.065h,tw=[3.000,14.000]) -> c20(del=18.000,arr=4.143h,start=4.143h,dep=4.643h,tw=[3.000,14.000]) -> c81(del=11.000,arr=4.706h,start=4.706h,dep=5.206h,tw=[2.000,12.000]) -> c61(del=16.000,arr=5.283h,start=5.283h,dep=5.783h,tw=[1.000,14.000]) -> c55(del=13.000,arr=5.818h,start=5.818h,dep=6.318h,tw=[3.000,12.000]) -> c86(del=20.000,arr=6.365h,start=6.365h,dep=6.865h,tw=[3.000,12.000]) -> depot[0]
+day[3] route[2] depot[0]: distance = 69.5431 duration = 242.24 depart = 0.817h load = 99 TW_viol = 0
+ depot[0](depart=0.817h) -> c8(del=10.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c48(del=15.000,arr=1.694h,start=1.694h,dep=2.194h,tw=[1.000,14.000]) -> c71(del=12.000,arr=2.366h,start=2.366h,dep=2.866h,tw=[1.000,14.000]) -> c70(del=15.000,arr=3.210h,start=3.210h,dep=3.710h,tw=[1.000,12.000]) -> c53(del=14.000,arr=4.015h,start=4.015h,dep=4.515h,tw=[3.000,14.000]) -> c83(del=15.000,arr=4.644h,start=4.644h,dep=5.144h,tw=[2.000,13.000]) -> c96(del=18.000,arr=5.407h,start=5.407h,dep=5.907h,tw=[1.000,14.000]) -> depot[0]
+day[3] route[3] depot[0]: distance = 71.3092 duration = 300.85 depart = 1.539h load = 116 TW_viol = 0
+ depot[0](depart=1.539h) -> c31(del=12.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,13.000]) -> c66(del=18.000,arr=2.800h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c38(del=17.000,arr=3.710h,start=3.710h,dep=4.210h,tw=[1.000,12.000]) -> c29(del=11.000,arr=4.271h,start=4.271h,dep=4.771h,tw=[3.000,12.000]) -> c98(del=11.000,arr=4.796h,start=4.796h,dep=5.296h,tw=[3.000,13.000]) -> c84(del=16.000,arr=5.328h,start=5.328h,dep=5.828h,tw=[2.000,12.000]) -> c74(del=19.000,arr=5.885h,start=5.885h,dep=6.385h,tw=[3.000,13.000]) -> c11(del=12.000,arr=6.743h,start=6.743h,dep=7.243h,tw=[3.000,12.000]) -> depot[0]
+day[3] route[4] depot[0]: distance = 22.3014 duration = 107.816 depart = 0.774h load = 33 TW_viol = 0
+ depot[0](depart=0.774h) -> c45(del=16.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,14.000]) -> c4(del=17.000,arr=1.636h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> depot[0]
+day[3] route[5] depot[1]: distance = 50.1167 duration = 320.801 depart = 2.767h load = 116 TW_viol = 0
+ depot[1](depart=2.767h) -> c93(del=11.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c5(del=12.000,arr=3.509h,start=3.509h,dep=4.009h,tw=[2.000,13.000]) -> c69(del=17.000,arr=4.381h,start=4.381h,dep=4.881h,tw=[1.000,13.000]) -> c60(del=17.000,arr=4.984h,start=4.984h,dep=5.484h,tw=[3.000,12.000]) -> c67(del=12.000,arr=5.545h,start=5.545h,dep=6.045h,tw=[1.000,14.000]) -> c35(del=10.000,arr=6.125h,start=6.125h,dep=6.625h,tw=[2.000,13.000]) -> c18(del=18.000,arr=6.694h,start=6.694h,dep=7.194h,tw=[1.000,13.000]) -> c13(del=19.000,arr=7.234h,start=7.234h,dep=7.734h,tw=[1.000,13.000]) -> depot[1]
+day[3] route[6] depot[1]: distance = 45.6786 duration = 314.6 depart = 2.723h load = 113 TW_viol = 0
+ depot[1](depart=2.723h) -> c88(del=12.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c51(del=16.000,arr=3.584h,start=3.584h,dep=4.084h,tw=[3.000,14.000]) -> c46(del=16.000,arr=4.109h,start=4.109h,dep=4.609h,tw=[3.000,14.000]) -> c41(del=16.000,arr=4.720h,start=4.720h,dep=5.220h,tw=[3.000,13.000]) -> c15(del=15.000,arr=5.379h,start=5.379h,dep=5.879h,tw=[1.000,14.000]) -> c58(del=14.000,arr=6.007h,start=6.007h,dep=6.507h,tw=[1.000,12.000]) -> c39(del=10.000,arr=6.571h,start=6.571h,dep=7.071h,tw=[2.000,13.000]) -> c49(del=14.000,arr=7.234h,start=7.234h,dep=7.734h,tw=[2.000,13.000]) -> depot[1]
+day[3] route[7] depot[1]: distance = 55.8179 duration = 294.746 depart = 2.473h load = 104 TW_viol = 0
+ depot[1](depart=2.473h) -> c44(del=15.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c19(del=11.000,arr=3.608h,start=3.608h,dep=4.108h,tw=[1.000,13.000]) -> c57(del=19.000,arr=4.201h,start=4.201h,dep=4.701h,tw=[1.000,14.000]) -> c99(del=12.000,arr=4.817h,start=4.817h,dep=5.317h,tw=[3.000,14.000]) -> c89(del=19.000,arr=5.419h,start=5.419h,dep=5.919h,tw=[2.000,13.000]) -> c76(del=16.000,arr=6.018h,start=6.018h,dep=6.518h,tw=[3.000,14.000]) -> c34(del=12.000,arr=6.578h,start=6.578h,dep=7.078h,tw=[1.000,13.000]) -> depot[1]
+day[3] route[8] depot[1]: distance = 49.6835 duration = 345.664 depart = 2.900h load = 120 TW_viol = 0
+ depot[1](depart=2.900h) -> c64(del=17.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c22(del=11.000,arr=3.608h,start=3.608h,dep=4.108h,tw=[1.000,14.000]) -> c33(del=11.000,arr=4.268h,start=4.268h,dep=4.768h,tw=[2.000,14.000]) -> c78(del=10.000,arr=4.782h,start=4.782h,dep=5.282h,tw=[3.000,13.000]) -> c101(del=17.000,arr=5.515h,start=5.515h,dep=6.015h,tw=[3.000,13.000]) -> c102(del=15.000,arr=6.015h,start=6.015h,dep=6.515h,tw=[1.000,13.000]) -> c52(del=12.000,arr=6.559h,start=6.559h,dep=7.059h,tw=[1.000,13.000]) -> c21(del=10.000,arr=7.399h,start=7.399h,dep=7.899h,tw=[2.000,14.000]) -> c17(del=17.000,arr=7.926h,start=7.926h,dep=8.426h,tw=[1.000,12.000]) -> depot[1]
+day[3] route[9] depot[1]: distance = 38.4398 duration = 293.381 depart = 2.874h load = 117 TW_viol = 0
+ depot[1](depart=2.874h) -> c40(del=11.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,14.000]) -> c27(del=15.000,arr=3.544h,start=3.544h,dep=4.044h,tw=[2.000,12.000]) -> c73(del=17.000,arr=4.334h,start=4.334h,dep=4.834h,tw=[2.000,13.000]) -> c30(del=18.000,arr=5.037h,start=5.037h,dep=5.537h,tw=[3.000,14.000]) -> c10(del=18.000,arr=5.617h,start=5.617h,dep=6.117h,tw=[3.000,12.000]) -> c54(del=20.000,arr=6.153h,start=6.153h,dep=6.653h,tw=[2.000,14.000]) -> c63(del=18.000,arr=6.742h,start=6.742h,dep=7.242h,tw=[1.000,12.000]) -> depot[1]
 day[3] route[10] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[2](depart=0.000h) -> depot[2]
 day[3] route[11] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
  depot[2](depart=0.000h) -> depot[2]
-day[3] route[12] depot[2]: distance = 34.2673 duration = 291.93 depart = 2.942h load = 103 TW_viol = 0
- depot[2](depart=2.942h) -> c100(del=14.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c62(del=10.000,arr=3.643h,start=3.643h,dep=4.143h,tw=[1.000,12.000]) -> c43(del=19.000,arr=4.290h,start=4.290h,dep=4.790h,tw=[3.000,13.000]) -> c59(del=10.000,arr=4.914h,start=4.914h,dep=5.414h,tw=[3.000,12.000]) -> c75(del=17.000,arr=5.508h,start=5.508h,dep=6.008h,tw=[2.000,13.000]) -> c45(del=16.000,arr=6.036h,start=6.036h,dep=6.536h,tw=[1.000,14.000]) -> c28(del=17.000,arr=6.570h,start=6.570h,dep=7.070h,tw=[3.000,12.000]) -> depot[2]
-day[3] route[13] depot[2]: distance = 48.6642 duration = 299.198 depart = 0.839h load = 116 TW_viol = 0
- depot[2](depart=0.839h) -> c3(del=11.000,arr=1.000h,start=1.000h,dep=1.500h,tw=[1.000,13.000]) -> c23(del=18.000,arr=1.576h,start=3.000h,dep=3.500h,tw=[3.000,12.000]) -> c12(del=16.000,arr=3.625h,start=3.625h,dep=4.125h,tw=[3.000,12.000]) -> c85(del=18.000,arr=4.222h,start=4.222h,dep=4.722h,tw=[2.000,12.000]) -> c6(del=17.000,arr=4.763h,start=4.763h,dep=5.263h,tw=[3.000,14.000]) -> c94(del=11.000,arr=5.365h,start=5.365h,dep=5.865h,tw=[3.000,14.000]) -> c90(del=12.000,arr=6.090h,start=6.090h,dep=6.590h,tw=[1.000,13.000]) -> c72(del=13.000,arr=6.679h,start=6.679h,dep=7.179h,tw=[2.000,14.000]) -> depot[2]
-day[3] route[14] depot[2]: distance = 39.5996 duration = 235.723 depart = 1.903h load = 104 TW_viol = 0
- depot[2](depart=1.903h) -> c7(del=20.000,arr=2.000h,start=2.000h,dep=2.500h,tw=[2.000,12.000]) -> c68(del=14.000,arr=2.630h,start=2.630h,dep=3.130h,tw=[1.000,13.000]) -> c36(del=20.000,arr=3.222h,start=3.222h,dep=3.722h,tw=[3.000,12.000]) -> c47(del=20.000,arr=3.874h,start=3.874h,dep=4.374h,tw=[1.000,14.000]) -> c87(del=10.000,arr=4.545h,start=4.545h,dep=5.045h,tw=[1.000,14.000]) -> c14(del=20.000,arr=5.186h,start=5.186h,dep=5.686h,tw=[1.000,14.000]) -> depot[2]
+day[3] route[12] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
+ depot[2](depart=0.000h) -> depot[2]
+day[3] route[13] depot[2]: distance = 0 duration = 0 depart = 0.000h load = 0 TW_viol = 0
+ depot[2](depart=0.000h) -> depot[2]
+day[3] route[14] depot[2]: distance = 58.753 duration = 316.415 depart = 2.942h load = 118 TW_viol = 0
+ depot[2](depart=2.942h) -> c100(del=14.000,arr=3.000h,start=3.000h,dep=3.500h,tw=[3.000,13.000]) -> c36(del=20.000,arr=3.852h,start=3.852h,dep=4.352h,tw=[3.000,12.000]) -> c47(del=20.000,arr=4.504h,start=4.504h,dep=5.004h,tw=[1.000,14.000]) -> c14(del=20.000,arr=5.308h,start=5.308h,dep=5.808h,tw=[1.000,14.000]) -> c68(del=14.000,arr=5.935h,start=5.935h,dep=6.435h,tw=[1.000,13.000]) -> c7(del=20.000,arr=6.565h,start=6.565h,dep=7.065h,tw=[2.000,12.000]) -> c59(del=10.000,arr=7.270h,start=7.270h,dep=7.770h,tw=[3.000,12.000]) -> depot[2]
 CUSTOMER 3 bounds (0,120) [22,22,11] [11,11,0] [0,11,0] 
-CUSTOMER 4 bounds (0,120) [29,29,12] [12,29,12] [12,29,12] 
+CUSTOMER 4 bounds (0,120) [29,29,12] [12,17,0] [0,17,0] 
 CUSTOMER 5 bounds (0,120) [23,23,11] [11,12,0] [0,12,0] 
 CUSTOMER 6 bounds (0,120) [26,26,9] [9,17,0] [0,17,0] 
 CUSTOMER 7 bounds (0,120) [40,40,20] [20,20,0] [0,20,0] 
@@ -102,20 +102,20 @@ CUSTOMER 11 bounds (0,120) [18,18,6] [6,12,0] [0,12,0]
 CUSTOMER 12 bounds (0,120) [22,22,6] [6,16,0] [0,16,0] 
 CUSTOMER 13 bounds (0,120) [33,33,14] [14,19,0] [0,19,0] 
 CUSTOMER 14 bounds (0,120) [35,35,15] [15,20,0] [0,20,0] 
-CUSTOMER 15 bounds (0,120) [23,23,8] [8,23,8] [8,23,8] 
-CUSTOMER 16 bounds (0,120) [34,34,14] [14,34,14] [14,34,14] 
+CUSTOMER 15 bounds (0,120) [23,23,8] [8,15,0] [0,15,0] 
+CUSTOMER 16 bounds (0,120) [34,34,14] [14,20,0] [0,20,0] 
 CUSTOMER 17 bounds (0,120) [31,31,14] [14,17,0] [0,17,0] 
 CUSTOMER 18 bounds (0,120) [26,26,8] [8,18,0] [0,18,0] 
-CUSTOMER 19 bounds (0,120) [17,17,6] [6,17,6] [6,16,5] 
+CUSTOMER 19 bounds (0,120) [17,17,6] [6,17,6] [6,17,6] 
 CUSTOMER 20 bounds (0,120) [34,34,16] [16,18,0] [0,18,0] 
 CUSTOMER 21 bounds (0,120) [20,20,10] [10,10,0] [0,10,0] 
 CUSTOMER 22 bounds (0,120) [17,17,6] [6,11,0] [0,11,0] 
 CUSTOMER 23 bounds (0,120) [25,25,7] [7,18,0] [0,18,0] 
-CUSTOMER 24 bounds (0,120) [23,23,8] [8,23,8] [8,23,8] 
+CUSTOMER 24 bounds (0,120) [23,23,8] [8,15,0] [0,15,0] 
 CUSTOMER 25 bounds (0,120) [26,26,9] [9,17,0] [0,17,0] 
 CUSTOMER 26 bounds (0,120) [38,38,18] [18,20,0] [0,20,0] 
 CUSTOMER 27 bounds (0,120) [22,22,7] [7,15,0] [0,15,0] 
-CUSTOMER 28 bounds (0,120) [30,30,13] [13,30,13] [13,30,13] 
+CUSTOMER 28 bounds (0,120) [30,30,13] [13,17,0] [0,17,0] 
 CUSTOMER 29 bounds (0,120) [16,16,5] [5,11,0] [0,11,0] 
 CUSTOMER 30 bounds (0,120) [23,23,5] [5,18,0] [0,18,0] 
 CUSTOMER 31 bounds (0,120) [23,23,11] [11,12,0] [0,12,0] 
@@ -125,43 +125,43 @@ CUSTOMER 34 bounds (0,120) [20,21,9] [9,12,0] [0,12,0]
 CUSTOMER 35 bounds (0,120) [16,16,6] [6,16,6] [6,16,6] 
 CUSTOMER 36 bounds (0,120) [32,32,12] [12,20,0] [0,20,0] 
 CUSTOMER 37 bounds (0,120) [21,21,5] [5,16,0] [0,16,0] 
-CUSTOMER 38 bounds (0,120) [27,30,13] [13,17,0] [0,17,0] 
+CUSTOMER 38 bounds (0,120) [27,27,10] [10,27,10] [10,27,10] 
 CUSTOMER 39 bounds (0,120) [20,20,10] [10,10,0] [0,10,0] 
 CUSTOMER 40 bounds (0,120) [22,22,11] [11,11,0] [0,11,0] 
 CUSTOMER 41 bounds (0,120) [31,31,15] [15,16,0] [0,16,0] 
 CUSTOMER 42 bounds (0,120) [15,15,5] [5,10,0] [0,10,0] 
 CUSTOMER 43 bounds (0,120) [28,28,9] [9,19,0] [0,19,0] 
 CUSTOMER 44 bounds (0,120) [25,25,10] [10,15,0] [0,15,0] 
-CUSTOMER 45 bounds (0,120) [30,32,16] [16,16,0] [0,16,0] 
-CUSTOMER 46 bounds (0,120) [21,21,5] [5,21,5] [5,21,5] 
+CUSTOMER 45 bounds (0,120) [30,30,14] [14,30,14] [14,30,14] 
+CUSTOMER 46 bounds (0,120) [21,21,5] [5,16,0] [0,16,0] 
 CUSTOMER 47 bounds (0,120) [31,31,11] [11,20,0] [0,20,0] 
 CUSTOMER 48 bounds (0,120) [29,29,14] [14,15,0] [0,15,0] 
 CUSTOMER 49 bounds (0,120) [27,27,13] [13,14,0] [0,14,0] 
 CUSTOMER 50 bounds (0,120) [32,32,16] [16,16,0] [0,16,0] 
 CUSTOMER 51 bounds (0,120) [31,31,15] [15,16,0] [0,16,0] 
-CUSTOMER 52 bounds (0,120) [21,21,9] [9,21,9] [9,21,9] 
+CUSTOMER 52 bounds (0,120) [21,21,9] [9,12,0] [0,12,0] 
 CUSTOMER 53 bounds (0,120) [22,22,8] [8,14,0] [0,14,0] 
 CUSTOMER 54 bounds (0,120) [35,35,15] [15,20,0] [0,20,0] 
 CUSTOMER 55 bounds (0,120) [26,26,13] [13,13,0] [0,13,0] 
 CUSTOMER 56 bounds (0,120) [27,27,7] [7,27,7] [7,27,7] 
 CUSTOMER 57 bounds (0,120) [29,29,10] [10,19,0] [0,19,0] 
-CUSTOMER 58 bounds (0,120) [22,22,8] [8,22,8] [8,22,8] 
+CUSTOMER 58 bounds (0,120) [22,22,8] [8,14,0] [0,14,0] 
 CUSTOMER 59 bounds (0,120) [16,16,6] [6,16,6] [6,16,6] 
 CUSTOMER 60 bounds (0,120) [28,28,11] [11,17,0] [0,17,0] 
 CUSTOMER 61 bounds (0,120) [28,28,12] [12,16,0] [0,16,0] 
 CUSTOMER 62 bounds (0,120) [15,15,5] [5,10,0] [0,10,0] 
-CUSTOMER 63 bounds (0,120) [30,30,12] [12,18,0] [0,18,0] 
+CUSTOMER 63 bounds (0,120) [30,30,12] [12,30,12] [12,30,12] 
 CUSTOMER 64 bounds (0,120) [24,24,7] [7,17,0] [0,17,0] 
 CUSTOMER 65 bounds (0,120) [32,32,14] [14,18,0] [0,18,0] 
 CUSTOMER 66 bounds (0,120) [29,29,11] [11,18,0] [0,18,0] 
 CUSTOMER 67 bounds (0,120) [24,24,12] [12,12,0] [0,12,0] 
-CUSTOMER 68 bounds (0,120) [27,28,14] [14,14,0] [0,14,0] 
+CUSTOMER 68 bounds (0,120) [27,28,14] [14,15,1] [1,15,1] 
 CUSTOMER 69 bounds (0,120) [23,23,6] [6,17,0] [0,17,0] 
 CUSTOMER 70 bounds (0,120) [25,25,10] [10,15,0] [0,15,0] 
 CUSTOMER 71 bounds (0,120) [20,20,8] [8,12,0] [0,12,0] 
 CUSTOMER 72 bounds (0,120) [19,19,6] [6,19,6] [6,19,6] 
 CUSTOMER 73 bounds (0,120) [28,28,11] [11,17,0] [0,17,0] 
-CUSTOMER 74 bounds (0,120) [35,36,17] [17,19,0] [0,19,0] 
+CUSTOMER 74 bounds (0,120) [35,35,16] [16,35,16] [16,35,16] 
 CUSTOMER 75 bounds (0,120) [22,22,5] [5,17,0] [0,17,0] 
 CUSTOMER 76 bounds (0,120) [29,29,13] [13,16,0] [0,16,0] 
 CUSTOMER 77 bounds (0,120) [25,25,12] [12,13,0] [0,13,0] 
@@ -174,8 +174,8 @@ CUSTOMER 83 bounds (0,120) [25,25,10] [10,15,0] [0,15,0]
 CUSTOMER 84 bounds (0,120) [25,25,9] [9,16,0] [0,16,0] 
 CUSTOMER 85 bounds (0,120) [23,23,5] [5,18,0] [0,18,0] 
 CUSTOMER 86 bounds (0,120) [27,27,7] [7,27,7] [7,27,7] 
-CUSTOMER 87 bounds (0,120) [16,16,6] [6,16,6] [6,16,6] 
-CUSTOMER 88 bounds (0,120) [20,20,8] [8,12,0] [0,12,0] 
+CUSTOMER 87 bounds (0,120) [16,16,6] [6,10,0] [0,10,0] 
+CUSTOMER 88 bounds (0,120) [20,20,8] [8,20,8] [8,20,8] 
 CUSTOMER 89 bounds (0,120) [27,27,8] [8,19,0] [0,19,0] 
 CUSTOMER 90 bounds (0,120) [18,18,6] [6,12,0] [0,12,0] 
 CUSTOMER 91 bounds (0,120) [20,20,9] [9,11,0] [0,11,0] 
@@ -184,54 +184,54 @@ CUSTOMER 93 bounds (0,120) [20,20,9] [9,20,9] [9,20,9]
 CUSTOMER 94 bounds (0,120) [21,21,10] [10,11,0] [0,11,0] 
 CUSTOMER 95 bounds (0,120) [22,22,11] [11,11,0] [0,11,0] 
 CUSTOMER 96 bounds (0,120) [29,29,11] [11,18,0] [0,18,0] 
-CUSTOMER 97 bounds (0,120) [35,35,15] [15,35,15] [15,30,10] 
+CUSTOMER 97 bounds (0,120) [35,35,15] [15,35,15] [15,35,15] 
 CUSTOMER 98 bounds (0,120) [19,19,8] [8,11,0] [0,11,0] 
 CUSTOMER 99 bounds (0,120) [23,23,11] [11,12,0] [0,12,0] 
 CUSTOMER 100 bounds (0,120) [28,28,14] [14,14,0] [0,14,0] 
 CUSTOMER 101 bounds (0,120) [28,28,11] [11,17,0] [0,17,0] 
 CUSTOMER 102 bounds (0,120) [23,23,8] [8,15,0] [0,15,0] 
-DEPOT 0    [971,967] [1338,1059] [1430,841] 
-DEPOT 1    [971,970] [1341,1094] [1465,896] 
-DEPOT 2    [971,968] [1339,1227] [1598,1275] 
-ROUTING COST: 1208.79
-ROUTE DURATION: 6881.72
+DEPOT 0    [971,971] [1342,1090] [1461,1046] 
+DEPOT 1    [971,970] [1341,1104] [1475,905] 
+DEPOT 2    [971,970] [1341,1208] [1579,1461] 
+ROUTING COST: 1002.21
+ROUTE DURATION: 6016.42
 CAPACITY PENALTY: 0
 ROUTE LENGTH PENALTY: 0
 TIME WINDOW PENALTY: 0
-DEPOT HOLDING: 2789.1
-RETAILER HOLDING: 6431.1
+DEPOT HOLDING: 2917.5
+RETAILER HOLDING: 5961.3
 CLIENT STOCKOUT: 0
 CLIENT STOCKOUT Amount: 0
-COST SUMMARY : OVERALL 10429
-REFORMULATED COST : 10429
+COST SUMMARY : OVERALL 9881.01
+REFORMULATED COST : 9765.81
 
 === CUSTOMER DEPOT ASSIGNMENT BY DAY ===
-Customer 3: day3->D2 
+Customer 3: day3->D-1 
 Customer 4: day2->D0 day3->D0 
 Customer 5: day2->D1 day3->D1 
-Customer 6: day2->D2 day3->D2 
+Customer 6: day2->D2 day3->D-1 
 Customer 7: day3->D2 
 Customer 8: day2->D0 day3->D0 
-Customer 9: day2->D0 day3->D0 
+Customer 9: day2->D0 day3->D-1 
 Customer 10: day2->D1 day3->D1 
 Customer 11: day2->D0 day3->D0 
-Customer 12: day2->D2 day3->D2 
+Customer 12: day2->D2 day3->D-1 
 Customer 13: day2->D1 day3->D1 
 Customer 14: day2->D2 day3->D2 
 Customer 15: day2->D1 day3->D1 
-Customer 16: day2->D0 day3->D0 
+Customer 16: day2->D0 day3->D-1 
 Customer 17: day2->D1 day3->D1 
 Customer 18: day2->D1 day3->D1 
 Customer 19: day2->D1 day3->D1 
 Customer 20: day2->D0 day3->D0 
 Customer 21: day3->D1 
 Customer 22: day2->D1 day3->D1 
-Customer 23: day2->D2 day3->D2 
-Customer 24: day2->D0 day3->D0 
-Customer 25: day2->D0 day3->D0 
-Customer 26: day2->D0 day3->D0 
+Customer 23: day2->D2 day3->D-1 
+Customer 24: day2->D0 day3->D-1 
+Customer 25: day2->D0 day3->D-1 
+Customer 26: day2->D0 day3->D-1 
 Customer 27: day2->D1 day3->D1 
-Customer 28: day2->D0 day3->D2 [borderline]
+Customer 28: day2->D2 day3->D-1 [borderline]
 Customer 29: day2->D0 day3->D0 
 Customer 30: day2->D1 day3->D1 
 Customer 31: day2->D0 day3->D0 
@@ -240,15 +240,15 @@ Customer 33: day2->D1 day3->D1
 Customer 34: day1->D1 day2->D1 day3->D1 
 Customer 35: day2->D1 day3->D1 
 Customer 36: day2->D2 day3->D2 
-Customer 37: day2->D0 day3->D0 
-Customer 38: day1->D0 day2->D0 day3->D0 
+Customer 37: day2->D0 day3->D-1 
+Customer 38: day2->D0 day3->D0 
 Customer 39: day3->D1 
 Customer 40: day3->D1 
 Customer 41: day2->D1 day3->D1 
-Customer 42: day2->D0 day3->D0 
-Customer 43: day2->D2 day3->D2 
+Customer 42: day2->D0 day3->D-1 
+Customer 43: day2->D2 day3->D-1 
 Customer 44: day2->D1 day3->D1 
-Customer 45: day1->D2 day3->D2 [borderline]
+Customer 45: day2->D2 day3->D0 [borderline]
 Customer 46: day2->D1 day3->D1 
 Customer 47: day2->D0 day3->D2 [borderline]
 Customer 48: day2->D0 day3->D0 
@@ -265,42 +265,42 @@ Customer 58: day2->D1 day3->D1
 Customer 59: day2->D2 day3->D2 
 Customer 60: day2->D1 day3->D1 
 Customer 61: day2->D0 day3->D0 
-Customer 62: day2->D2 day3->D2 
+Customer 62: day2->D2 day3->D-1 
 Customer 63: day2->D1 day3->D1 
 Customer 64: day2->D1 day3->D1 
-Customer 65: day2->D0 day3->D0 
+Customer 65: day2->D0 day3->D-1 
 Customer 66: day2->D0 day3->D0 
 Customer 67: day3->D1 
-Customer 68: day1->D2 day3->D2 
+Customer 68: day1->D2 day2->D2 day3->D2 
 Customer 69: day2->D1 day3->D1 
 Customer 70: day2->D0 day3->D0 
 Customer 71: day2->D0 day3->D0 
-Customer 72: day2->D2 day3->D2 
+Customer 72: day2->D2 day3->D-1 
 Customer 73: day2->D1 day3->D1 
-Customer 74: day1->D0 day2->D0 day3->D0 
-Customer 75: day2->D2 day3->D2 
+Customer 74: day2->D0 day3->D0 
+Customer 75: day2->D2 day3->D-1 
 Customer 76: day2->D1 day3->D1 
-Customer 77: day2->D0 day3->D0 
+Customer 77: day2->D0 day3->D-1 
 Customer 78: day2->D1 day3->D1 
 Customer 79: day3->D0 
-Customer 80: day2->D0 day3->D0 
+Customer 80: day2->D0 day3->D-1 
 Customer 81: day2->D0 day3->D0 
-Customer 82: day2->D0 day3->D0 
+Customer 82: day2->D0 day3->D-1 
 Customer 83: day2->D0 day3->D0 
 Customer 84: day2->D0 day3->D0 
-Customer 85: day2->D2 day3->D2 
+Customer 85: day2->D2 day3->D-1 
 Customer 86: day2->D0 day3->D0 
-Customer 87: day2->D0 day3->D2 [borderline]
+Customer 87: day2->D0 day3->D-1 [borderline]
 Customer 88: day2->D1 day3->D1 
 Customer 89: day2->D1 day3->D1 
-Customer 90: day2->D2 day3->D2 [borderline]
+Customer 90: day2->D2 day3->D-1 [borderline]
 Customer 91: day2->D0 day3->D0 
 Customer 92: day2->D0 day3->D0 
 Customer 93: day2->D1 day3->D1 
-Customer 94: day2->D2 day3->D2 
-Customer 95: day3->D0 
+Customer 94: day2->D2 day3->D-1 
+Customer 95: day3->D-1 
 Customer 96: day2->D0 day3->D0 
-Customer 97: day2->D0 day3->D0 
+Customer 97: day2->D0 day3->D-1 
 Customer 98: day2->D0 day3->D0 
 Customer 99: day2->D1 day3->D1 
 Customer 100: day3->D2 
@@ -310,19 +310,19 @@ Customer 102: day2->D1 day3->D1
 === DELIVERY QUANTITY PER RETAILER PER DEPOT ===
 DEPOT 0:
   Customer 3: (none)
-  Customer 4: day2=17 day3=17 (total=34)
+  Customer 4: day2=5 day3=17 (total=22)
   Customer 5: (none)
   Customer 6: (none)
   Customer 7: (none)
   Customer 8: day2=1 day3=10 (total=11)
-  Customer 9: day2=15 day3=15 (total=30)
+  Customer 9: day2=15 (total=15)
   Customer 10: (none)
   Customer 11: day2=6 day3=12 (total=18)
   Customer 12: (none)
   Customer 13: (none)
   Customer 14: (none)
   Customer 15: (none)
-  Customer 16: day2=20 day3=20 (total=40)
+  Customer 16: day2=6 (total=6)
   Customer 17: (none)
   Customer 18: (none)
   Customer 19: (none)
@@ -330,11 +330,11 @@ DEPOT 0:
   Customer 21: (none)
   Customer 22: (none)
   Customer 23: (none)
-  Customer 24: day2=15 day3=15 (total=30)
-  Customer 25: day2=8 day3=17 (total=25)
-  Customer 26: day2=2 day3=20 (total=22)
+  Customer 24: day2=7 (total=7)
+  Customer 25: day2=8 (total=8)
+  Customer 26: day2=2 (total=2)
   Customer 27: (none)
-  Customer 28: day2=17 (total=17)
+  Customer 28: (none)
   Customer 29: day2=6 day3=11 (total=17)
   Customer 30: (none)
   Customer 31: day2=1 day3=12 (total=13)
@@ -343,15 +343,15 @@ DEPOT 0:
   Customer 34: (none)
   Customer 35: (none)
   Customer 36: (none)
-  Customer 37: day2=11 day3=16 (total=27)
-  Customer 38: day1=3 day2=4 day3=17 (total=24)
+  Customer 37: day2=11 (total=11)
+  Customer 38: day2=17 day3=17 (total=34)
   Customer 39: (none)
   Customer 40: (none)
   Customer 41: (none)
-  Customer 42: day2=5 day3=10 (total=15)
+  Customer 42: day2=5 (total=5)
   Customer 43: (none)
   Customer 44: (none)
-  Customer 45: (none)
+  Customer 45: day3=16 (total=16)
   Customer 46: (none)
   Customer 47: day2=9 (total=9)
   Customer 48: day2=1 day3=15 (total=16)
@@ -371,7 +371,7 @@ DEPOT 0:
   Customer 62: (none)
   Customer 63: (none)
   Customer 64: (none)
-  Customer 65: day2=4 day3=18 (total=22)
+  Customer 65: day2=4 (total=4)
   Customer 66: day2=7 day3=18 (total=25)
   Customer 67: (none)
   Customer 68: (none)
@@ -380,20 +380,20 @@ DEPOT 0:
   Customer 71: day2=4 day3=12 (total=16)
   Customer 72: (none)
   Customer 73: (none)
-  Customer 74: day1=1 day2=2 day3=19 (total=22)
+  Customer 74: day2=19 day3=19 (total=38)
   Customer 75: (none)
   Customer 76: (none)
-  Customer 77: day2=1 day3=13 (total=14)
+  Customer 77: day2=1 (total=1)
   Customer 78: (none)
   Customer 79: day3=12 (total=12)
-  Customer 80: day2=2 day3=10 (total=12)
+  Customer 80: day2=2 (total=2)
   Customer 81: day2=1 day3=11 (total=12)
-  Customer 82: day2=3 day3=10 (total=13)
+  Customer 82: day2=3 (total=3)
   Customer 83: day2=5 day3=15 (total=20)
   Customer 84: day2=7 day3=16 (total=23)
   Customer 85: (none)
   Customer 86: day2=20 day3=20 (total=40)
-  Customer 87: day2=10 (total=10)
+  Customer 87: day2=4 (total=4)
   Customer 88: (none)
   Customer 89: (none)
   Customer 90: (none)
@@ -401,9 +401,9 @@ DEPOT 0:
   Customer 92: day2=3 day3=20 (total=23)
   Customer 93: (none)
   Customer 94: (none)
-  Customer 95: day3=11 (total=11)
+  Customer 95: (none)
   Customer 96: day2=7 day3=18 (total=25)
-  Customer 97: day2=20 day3=15 (total=35)
+  Customer 97: day2=20 (total=20)
   Customer 98: day2=3 day3=11 (total=14)
   Customer 99: (none)
   Customer 100: (none)
@@ -422,11 +422,11 @@ DEPOT 1:
   Customer 12: (none)
   Customer 13: day2=5 day3=19 (total=24)
   Customer 14: (none)
-  Customer 15: day2=15 day3=15 (total=30)
+  Customer 15: day2=7 day3=15 (total=22)
   Customer 16: (none)
   Customer 17: day2=3 day3=17 (total=20)
   Customer 18: day2=10 day3=18 (total=28)
-  Customer 19: day2=11 day3=10 (total=21)
+  Customer 19: day2=11 day3=11 (total=22)
   Customer 20: (none)
   Customer 21: day3=10 (total=10)
   Customer 22: day2=5 day3=11 (total=16)
@@ -453,24 +453,24 @@ DEPOT 1:
   Customer 43: (none)
   Customer 44: day2=5 day3=15 (total=20)
   Customer 45: (none)
-  Customer 46: day2=16 day3=16 (total=32)
+  Customer 46: day2=11 day3=16 (total=27)
   Customer 47: (none)
   Customer 48: (none)
   Customer 49: day2=1 day3=14 (total=15)
   Customer 50: (none)
   Customer 51: day2=1 day3=16 (total=17)
-  Customer 52: day2=12 day3=12 (total=24)
+  Customer 52: day2=3 day3=12 (total=15)
   Customer 53: (none)
   Customer 54: day2=5 day3=20 (total=25)
   Customer 55: (none)
   Customer 56: (none)
   Customer 57: day2=9 day3=19 (total=28)
-  Customer 58: day2=14 day3=14 (total=28)
+  Customer 58: day2=6 day3=14 (total=20)
   Customer 59: (none)
   Customer 60: day2=6 day3=17 (total=23)
   Customer 61: (none)
   Customer 62: (none)
-  Customer 63: day2=6 day3=18 (total=24)
+  Customer 63: day2=18 day3=18 (total=36)
   Customer 64: day2=10 day3=17 (total=27)
   Customer 65: (none)
   Customer 66: (none)
@@ -495,7 +495,7 @@ DEPOT 1:
   Customer 85: (none)
   Customer 86: (none)
   Customer 87: (none)
-  Customer 88: day2=4 day3=12 (total=16)
+  Customer 88: day2=12 day3=12 (total=24)
   Customer 89: day2=11 day3=19 (total=30)
   Customer 90: (none)
   Customer 91: (none)
@@ -511,16 +511,16 @@ DEPOT 1:
   Customer 101: day2=6 day3=17 (total=23)
   Customer 102: day2=7 day3=15 (total=22)
 DEPOT 2:
-  Customer 3: day3=11 (total=11)
+  Customer 3: (none)
   Customer 4: (none)
   Customer 5: (none)
-  Customer 6: day2=8 day3=17 (total=25)
+  Customer 6: day2=8 (total=8)
   Customer 7: day3=20 (total=20)
   Customer 8: (none)
   Customer 9: (none)
   Customer 10: (none)
   Customer 11: (none)
-  Customer 12: day2=10 day3=16 (total=26)
+  Customer 12: day2=10 (total=10)
   Customer 13: (none)
   Customer 14: day2=5 day3=20 (total=25)
   Customer 15: (none)
@@ -531,12 +531,12 @@ DEPOT 2:
   Customer 20: (none)
   Customer 21: (none)
   Customer 22: (none)
-  Customer 23: day2=11 day3=18 (total=29)
+  Customer 23: day2=11 (total=11)
   Customer 24: (none)
   Customer 25: (none)
   Customer 26: (none)
   Customer 27: (none)
-  Customer 28: day3=17 (total=17)
+  Customer 28: day2=4 (total=4)
   Customer 29: (none)
   Customer 30: (none)
   Customer 31: (none)
@@ -551,9 +551,9 @@ DEPOT 2:
   Customer 40: (none)
   Customer 41: (none)
   Customer 42: (none)
-  Customer 43: day2=10 day3=19 (total=29)
+  Customer 43: day2=10 (total=10)
   Customer 44: (none)
-  Customer 45: day1=2 day3=16 (total=18)
+  Customer 45: day2=16 (total=16)
   Customer 46: (none)
   Customer 47: day3=20 (total=20)
   Customer 48: (none)
@@ -570,20 +570,20 @@ DEPOT 2:
   Customer 59: day2=10 day3=10 (total=20)
   Customer 60: (none)
   Customer 61: (none)
-  Customer 62: day2=5 day3=10 (total=15)
+  Customer 62: day2=5 (total=5)
   Customer 63: (none)
   Customer 64: (none)
   Customer 65: (none)
   Customer 66: (none)
   Customer 67: (none)
-  Customer 68: day1=1 day3=14 (total=15)
+  Customer 68: day1=1 day2=1 day3=14 (total=16)
   Customer 69: (none)
   Customer 70: (none)
   Customer 71: (none)
-  Customer 72: day2=13 day3=13 (total=26)
+  Customer 72: day2=13 (total=13)
   Customer 73: (none)
   Customer 74: (none)
-  Customer 75: day2=12 day3=17 (total=29)
+  Customer 75: day2=12 (total=12)
   Customer 76: (none)
   Customer 77: (none)
   Customer 78: (none)
@@ -593,16 +593,16 @@ DEPOT 2:
   Customer 82: (none)
   Customer 83: (none)
   Customer 84: (none)
-  Customer 85: day2=13 day3=18 (total=31)
+  Customer 85: day2=13 (total=13)
   Customer 86: (none)
-  Customer 87: day3=10 (total=10)
+  Customer 87: (none)
   Customer 88: (none)
   Customer 89: (none)
-  Customer 90: day2=6 day3=12 (total=18)
+  Customer 90: day2=6 (total=6)
   Customer 91: (none)
   Customer 92: (none)
   Customer 93: (none)
-  Customer 94: day2=1 day3=11 (total=12)
+  Customer 94: day2=1 (total=1)
   Customer 95: (none)
   Customer 96: (none)
   Customer 97: (none)
@@ -611,32 +611,28 @@ DEPOT 2:
   Customer 100: day3=14 (total=14)
   Customer 101: (none)
   Customer 102: (none)
-10429
-24
-Total Time: 27.772
+9765.81
+20
+Total Time: 267.573
 PITime: 0.000
-Best Solution Time: 14.417
- 0 1 1 164.799 4.000  4 0 38 74 0
+Best Solution Time: 267.560
  1 1 1 71.618 1.000  3 1 34 1
- 2 1 1 97.830 3.000  4 2 68 45 2
- 0 2 1 176.885 70.000  7 0 37 42 4 28 97 0
- 0 2 1 455.057 119.000  17 0 32 56 91 70 65 26 80 25 9 16 47 87 82 24 77 0
- 0 2 1 174.048 5.000  4 0 92 20 0
- 0 2 1 491.236 85.000  19 0 81 61 86 31 74 84 98 29 38 66 71 53 83 48 11 8 96 0
- 1 2 1 463.453 112.000  17 1 35 101 102 52 60 69 44 19 57 99 89 76 34 73 10 1
- 1 2 1 510.832 119.000  20 1 27 49 58 15 41 46 51 78 33 88 22 17 13 18 5 93 30 54 1
- 1 2 1 164.556 16.000  4 1 64 63 1
- 2 2 1 450.201 112.000  15 2 36 14 75 59 43 62 72 90 94 6 85 12 23 2
- 0 3 1 296.435 118.000  10 0 24 77 32 11 55 86 74 61 0
- 0 3 1 286.268 119.000  10 0 8 71 66 53 56 91 50 65 0
- 0 3 1 253.400 115.000  10 0 37 42 4 82 16 9 25 80 0
- 0 3 1 242.632 120.000  10 0 96 70 81 20 79 92 95 97 0
- 0 3 1 329.871 117.000  10 0 98 29 38 84 31 48 83 26 0
- 1 3 1 291.135 120.000  10 1 73 89 99 57 19 44 76 34 1
- 1 3 1 211.968 98.000  8 1 13 5 93 30 10 54 1
- 1 3 1 313.135 118.000  10 1 101 102 52 60 69 67 35 18 1
- 1 3 1 291.432 119.000  11 1 21 17 22 88 33 78 51 46 41 1
- 1 3 1 318.082 114.000  10 1 40 27 58 39 15 49 64 63 1
- 2 3 1 291.930 103.000  9 2 100 62 43 59 75 45 28 2
- 2 3 1 299.198 116.000  10 2 3 23 12 85 6 94 90 72 2
- 2 3 1 235.723 104.000  8 2 7 68 36 47 87 14 2
+ 2 1 1 68.425 1.000  3 2 68 2
+ 0 2 1 214.344 37.000  7 0 32 56 91 70 96 0
+ 0 2 1 509.872 110.000  19 0 8 11 48 83 53 71 66 38 29 98 84 74 31 86 61 81 20 0
+ 0 2 1 507.753 105.000  18 0 92 97 37 42 4 82 87 47 16 9 65 26 25 80 77 24 0
+ 1 2 1 498.261 118.000  19 1 73 34 76 89 99 57 19 44 69 60 52 101 102 35 17 22 63 1
+ 1 2 1 513.168 119.000  20 1 27 49 58 15 41 46 51 88 33 78 18 13 5 93 30 10 54 64 1
+ 2 2 1 320.565 67.000  10 2 23 12 85 6 94 90 72 62 2
+ 2 2 1 316.953 66.000  10 2 59 43 75 45 28 14 36 68 2
+ 0 3 1 169.537 57.000  6 0 50 91 56 32 0
+ 0 3 1 289.407 110.000  9 0 92 79 20 81 61 55 86 0
+ 0 3 1 242.240 99.000  9 0 8 48 71 70 53 83 96 0
+ 0 3 1 300.850 116.000  10 0 31 66 38 29 98 84 74 11 0
+ 0 3 1 107.816 33.000  4 0 45 4 0
+ 1 3 1 320.801 116.000  10 1 93 5 69 60 67 35 18 13 1
+ 1 3 1 314.600 113.000  10 1 88 51 46 41 15 58 39 49 1
+ 1 3 1 294.746 104.000  9 1 44 19 57 99 89 76 34 1
+ 1 3 1 345.664 120.000  11 1 64 22 33 78 101 102 52 21 17 1
+ 1 3 1 293.381 117.000  9 1 40 27 73 30 10 54 63 1
+ 2 3 1 316.415 118.000  9 2 100 36 47 14 68 7 59 2
