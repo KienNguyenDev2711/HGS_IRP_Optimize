@@ -60,6 +60,10 @@ double timeWindowViolation ;
 // valide ou non
 bool isFeasible ;
 
+// BUG #17 FIX: set by updateRouteData cycle-repair so addNoeud can detect and
+// abort when the route was reset (U's insertion was invalidated by the repair).
+bool cycleRepairHappened ;
+
 inline double excedentCharge(double charge)
 {
 	return std::max<double>(0,charge-vehicleCapacity);

@@ -7,6 +7,7 @@ Route::Route(int cour, int day, Noeud * depot, double temps, double charge, doub
 cour(cour), day(day), depot(depot), temps(temps), distance(temps), charge(charge), maxRouteTime(maxRouteTime), vehicleCapacity(vehicleCapacity), params(params), myLS(myLS)
 {
 	timeWindowViolation = 0;
+	cycleRepairHappened = false;
 	bestInsertion = vector <Insertion> (params->nbClients + params->nbDepots);
 
 	for (int i=0 ; i < params->nbClients + params->nbDepots ; i++ )
@@ -67,6 +68,7 @@ void Route::updateRouteData ()
 		noeud = noeud->suiv ;
 		place ++ ;
 		if (place > 500) {
+			cycleRepairHappened = true; // signal to addNoeud that repair occurred
 			// Cycle detected — repair route by clearing it, then mark all its clients absent
 			Noeud* fin = myLS->depotsFin[day][cour];
 			depot->suiv = fin; fin->pred = depot;

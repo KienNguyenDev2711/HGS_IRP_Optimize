@@ -332,12 +332,22 @@ int LocalSearch::mutationDifferentDay()
 void LocalSearch::removeOP(int day, int client)
 {
   int it = 0;
-  while (ordreParcours[day][it] != client)
+  int sz = (int)ordreParcours[day].size();
+  while (it < sz && ordreParcours[day][it] != client)
   {
     it++;
   }
+  // BUG #16 FIX: client not found → skip instead of running past vector end
+  // The original unbounded while loop wrote past the vector buffer when the
+  // client was absent from ordreParcours[day], silently corrupting heap
+  // metadata (STATUS_HEAP_CORRUPTION 0xC0000374, detected ~385 iters later).
+  // Trigger: updateRouteData cycle-repair calls removeOP for clients whose
+  // route pointer still matches after reset, but were already removed via
+  // a prior removeNoeud in the same mutation11 call.
+  if (it >= sz)
+    return;
   ordreParcours[day][it] =
-      ordreParcours[day][(int)ordreParcours[day].size() - 1];
+      ordreParcours[day][sz - 1];
   ordreParcours[day].pop_back();
 }
 
@@ -1001,9 +1011,19 @@ void LocalSearch::addNoeud(Noeud *U)
 
   // et mettre a jour les routes
   U->route = U->placeInsertion->route;
+  U->route->cycleRepairHappened = false; // reset before calling updateRouteData
   U->route->updateRouteData();
 
-  // on g�re les autres structures de donn�es
+  // BUG #17 FIX: if updateRouteData's cycle-repair fired, the route was reset
+  // (depot→fin) and U's insertion was undone.  U's pred/suiv are stale — do
+  // NOT mark U as present or add it to ordreParcours, or the next removeNoeud
+  // call will use the stale pointers to corrupt the chain of other clients.
+  if (U->route->cycleRepairHappened) {
+    U->estPresent = false;
+    return;
+  }
+
+  // on gère les autres structures de données
   addOP(U->jour, U->cour);
   U->estPresent = true;
 

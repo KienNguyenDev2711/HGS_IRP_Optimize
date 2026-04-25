@@ -329,10 +329,65 @@ if (place > 500) {
 
 | Metric | Trước fix | Sau fix |
 |--------|-----------|---------|
-| n=100, `-t 30` | Treo/crash | EXIT=0, 376 iterations |
-| n=100, tốc độ | ∞ (treo) | 0.074s/iteration |
-| n=25, `-t 30` | 4898 iterations | 4898 iterations (không regression) |
+| n=100, `-t 30` | Treo/crash | EXIT=0, 1249 iterations, 29.8s |
+| n=100, `-t 5`  | Crash (heap corruption) | EXIT=0, hoàn chỉnh |
+| n=100, `-t 0`  | Crash ở It ~410 (heap corruption) → sau Bug #16 fix: crash ở It ~1500 trong `diversify()` | EXIT=0 (chạy đủ 6250 iterations) |
+| n=25, `-t 30`  | 4898 iterations | 4898 iterations (không regression) |
 | Cycle hits điển hình | N/A | ~1 per 30s run (rare, handled gracefully) |
+
+---
+
+### Vấn Đề #16: `removeOP()` Unbounded Loop → Heap Corruption
+
+**Triệu chứng**: Với n=100, `-t 0`, chương trình crash ở ~It 410 với STATUS_HEAP_CORRUPTION (0xC0000374). `-t 30` không crash vì time guard dừng sớm trước khi trigger.
+
+**Nguyên nhân gốc**: `removeOP(day, client)` dùng vòng lặp `while (ordreParcours[day][it] != client)` không có giới hạn. Khi cycle-repair trong `updateRouteData` reset route và gọi `removeOP` cho client đã bị xóa khỏi `ordreParcours[day]` trước đó (bởi `removeNoeud` trong cùng một `mutation11` call), vòng lặp đi quá cuối vector, ghi đè heap metadata. Heap allocator phát hiện lỗi ~385 iterations sau.
+
+**Fix** (`LocalSearch.cpp`):
+```cpp
+void LocalSearch::removeOP(int day, int client)
+{
+  int it = 0;
+  int sz = (int)ordreParcours[day].size();
+  while (it < sz && ordreParcours[day][it] != client)
+    it++;
+  if (it >= sz)
+    return;  // client not in ordreParcours — skip safely
+  ordreParcours[day][it] = ordreParcours[day][sz - 1];
+  ordreParcours[day].pop_back();
+}
+```
+
+**File sửa**: `LocalSearch.cpp` (removeOP)
+
+---
+
+### Vấn Đề #17: `addNoeud()` Không Xử Lý Cycle-Repair → Stale Pointers → Crash Trong `diversify()`
+
+**Triệu chứng**: Sau fix Bug #16, n=100 `-t 0` reach It ~1500 rồi crash bên trong `diversify()` → `education()` → `runSearchTotal()` → `mutation11()` → `addNoeud()`. Output file kết thúc sau "Diversification", không có "Elapsed time:".
+
+**Nguyên nhân gốc**: `addNoeud(U)` luôn gọi `addOP(U->jour, U->cour)` và đặt `U->estPresent = true` sau `updateRouteData()`. Nhưng nếu cycle-repair bắn bên trong `updateRouteData()`, route bị reset về empty (depot↔depotFin) và U không thực sự được link vào chain. `U->pred`/`U->suiv` là stale. Khi `removeNoeud(U)` được gọi sau đó, nó dùng pointers stale này để "unlink" U, corrupt linked-list của các client khác còn đang valid. Sau nhiều lần corrupt như vậy, chain có cycle thực → `updateRouteData` walk không bao giờ kết thúc → crash.
+
+**Root cause path**: `mutation11` → `addNoeud(U)` → `updateRouteData()` fires cycle-repair, resets route, nhưng `addNoeud` tiếp tục như không có gì → `addOP` + `estPresent=true` với stale pointers → next `removeNoeud(U)` corrupt chain.
+
+**Fix** (`Route.h`, `Route.cpp`, `LocalSearch.cpp`):
+1. Thêm flag `bool cycleRepairHappened` vào `Route`
+2. `updateRouteData()` set `route->cycleRepairHappened = true` khi cycle-repair fires
+3. `addNoeud()` reset flag trước khi gọi `updateRouteData()`, và abort ngay (không mark present, không addOP) nếu flag được set sau:
+```cpp
+U->route->cycleRepairHappened = false;
+U->route->updateRouteData();
+if (U->route->cycleRepairHappened) {
+    U->estPresent = false;
+    return;  // U's pred/suiv are stale — do not corrupt the chain
+}
+addOP(U->jour, U->cour);
+U->estPresent = true;
+```
+
+**File sửa**: `Route.h` (thêm field), `Route.cpp` (set flag + init), `LocalSearch.cpp` (addNoeud)
+
+**Kết quả**: n=100 `-t 0` chạy đủ 6250 iterations, EXIT=0, in "Elapsed time:" và "Number of iterations:" bình thường.
 
 ---
 
