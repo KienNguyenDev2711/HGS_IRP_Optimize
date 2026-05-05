@@ -391,10 +391,142 @@ U->estPresent = true;
 
 ---
 
-## 7. Giới Hạn Đã Biết Còn Lại
+## 9. Phân Tích Bug Cho File Dữ Liệu Large (Type 39, Multi-Depot IRP)
 
-1. **n > 200**: Mỗi iteration có thể mất 0.5+ giây. Khuyến nghị dùng `-t N`.
-2. **Kết quả không tối ưu tuyệt đối**: HGS-IRP là metaheuristic; không đảm bảo tối ưu global. Chạy nhiều lần với seed khác nhau cho kết quả tốt hơn.
-3. **Multi-depot oscillation**: Với nhiều depot rất gần nhau (khoảng cách < threshold), nhiều khách hàng có thể bị đánh dấu "borderline" → cross-depot mutations chạy nhiều hơn → chậm hơn. Đây là đặc tính của dữ liệu test (3 depot trong bán kính 30km).
+### Vấn đề #13: File Large-12.dat thiếu depot thứ 4 (DATA FILE ERROR)
+
+**Triệu chứng**: Large-12.dat (100 khách, 6 ngày) chạy mãi không tìm được feasible solution. Cost ban đầu = 1.24×10¹¹ (124 tỷ) — phi lý hoàn toàn.
+
+**Nguyên nhân gốc**: Dòng đầu tiên khai báo `100 6 120 4` (4 depot), nhưng file chỉ có 3 dòng depot (IDs 1-3). Dòng thứ 4 (ID=4) thực ra là customer:
+```
+100 6 120 4                            ← nbDepots = 4
+1 106.62 10.82 600 250 0.3            ← depot 0
+2 106.7 10.68 600 250 0.4             ← depot 1
+3 107.84 10.2 600 250 0.2             ← depot 2
+4 106.7558 10.6613 22 120 0 11 ...    ← CUSTOMER, nhưng parser đọc như depot!
+```
+
+Parser đọc `custNum = 3 < 4 = nbDepots` → xử lý như depot. Chỉ đọc 6 fields (22, 120, 0), bỏ lại "11 7.1 1 0.5 13" trong stream → tất cả customer tiếp theo bị đọc sai hoàn toàn.
+
+**Kiểm tra**: So sánh với tất cả các file Large khác có nbDepots=4 (Large-5 đến Large-8, Large-13 đến Large-16) — tất cả đều có đúng 4 dòng depot. CHỈ Large-12 thiếu.
+
+**Fix**: Thêm dòng depot thứ 4 `4 106.05 11.02 600 250 0.5` (giống pattern của các file khác) và đánh lại số ID customer từ 5 đến 104. File backup: `Large-12.dat.bak`.
+
+**Kết quả**: Sau fix, Large-12 với `-veh 5 -t 120` tìm được feasible solution (cost = 33,321).
+
+### Vấn đề #14: Depot fallback thiếu trong `printInventoryLevels` (COST DISPLAY BUG)
+
+**Triệu chứng**: COST SUMMARY = 17753.3, nhưng Operational objective = 17084.6. Sai lệch 668.7.
+
+**Nguyên nhân gốc**: Hàm `printInventoryLevels()` trong `LocalSearch.cpp` xác định `depotOfCust[k][i]` bằng cách duyệt route. Nhưng customer có `demandPerDay[k][i] > 0` mà không nằm trong route nào → `depotOfCust[k][i] = -1`. Delivery quantity của customer đó không bị trừ từ bất kỳ depot nào → depot inventory phình to → depot holding cost sai.
+
+**Fix**: Thêm fallback sau khi duyệt route:
+```cpp
+for (int k = 1; k <= params->ancienNbDays; k++)
+    for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
+        if (depotOfCust[k][i] < 0 && demandPerDay[k][i] > 0.0001)
+            depotOfCust[k][i] = params->cli[i].preferredDepot;
+```
+
+Thêm fix REFORMULATED COST line (dùng `evaluateSolutionCost(false)` thay vì `true`).
+
+**Kết quả**: COST SUMMARY = 17061.5 = Operational objective = 17061.5. Nhất quán.
+
+### Vấn đề #15: Iteration limit quá thấp cho 6-period instances (STOPPING BUG)
+
+**Triệu chứng**: "6 periods thì run nó cứ dừng giữa chừng" — chương trình dừng sớm với 6-period data.
+
+**Nguyên nhân gốc**: Trong `main.cpp`, iteration limit tính theo:
+```cpp
+int iterScale = std::max(1, n / 25);  // n=100, 6 days → iterScale = n*days/25 ≈ 24
+int maxIterNonProd = std::max(1000, 5000 / iterScale);  // = max(1000, 208) = 1000
+```
+Nhưng với `iterScale` tính bằng `n/25` thì n=100 cho `iterScale=4`, `maxIterNonProd=1250`. Tuy nhiên 1250 iterations × 0.22s/iter = chỉ ~4.5 phút, sau đó dừng.
+
+Vấn đề chính: khi có `-t N` (time limit), iteration limit KHÔNG nên áp dụng cứng. Thời gian mới là giới hạn.
+
+**Fix**: Khi có time limit (`nb_ticks_allowed > 0`), đặt `maxIterNonProd = 1000000` và `max_iter = 1000000` để thời gian quyết định:
+```cpp
+if (nb_ticks_allowed > 0) {
+    maxIterNonProd = 1000000;
+    max_iter = 1000000;
+}
+```
+
+### Vấn đề #16: Population initialization chiếm hết time budget (INIT BUG)
+
+**Triệu chứng**: Với 6-period 100-customer data, toàn bộ 60 giây bị dùng hết cho khởi tạo population (24 individuals × education). Không còn thời gian cho evolution.
+
+**Fix**: Giới hạn init xuống 40% time budget:
+```cpp
+auto initTimeLimitReached = [&]() -> bool {
+    return nb_ticks_allowed > 0 && 
+           (clock() - mesParametres->debut) > (clock_t)(nb_ticks_allowed * 0.40);
+};
+```
+
+### Vấn đề #17: Bug trong JIT initial construction — sai `nextDayClientDemand` (INIT BUG)
+
+**Triệu chứng**: JIT policy không pre-deliver cho ngày cuối-1, gây peak demand ở ngày cuối.
+
+**Nguyên nhân**: Code dùng modular arithmetic:
+```cpp
+double nextDayClientDemand = params->cli[i].dailyDemand[(k + 1) % params->nbDays];
+```
+Với k = nbDays - 1 (ngày 5 trong 6 ngày): `(5+1) % 6 = 0` → `dailyDemand[0] = 0` (sai!). Đúng ra phải là `dailyDemand[6]`.
+
+**Fix**: 
+```cpp
+double nextDayClientDemand = (k < params->nbDays) ? params->cli[i].dailyDemand[k + 1] : 0.0;
+```
+
+Thêm cải thiện: tăng xác suất pre-delivery cho ngày sớm (70% ngày 1, giảm dần về 30% ngày cuối) để cân bằng demand across days.
+
+### Vấn đề #18: Fleet size không đủ cho 6-period large instances (CONFIGURATION ISSUE)
+
+**Triệu chứng**: Với `-veh 3` (3 xe/depot), các instance 6-period với 70+ customers không tìm được feasible solution.
+
+**Phân tích**:
+| Instance | Customers | Days | Depots | Daily demand | Capacity (veh 3) | Capacity (veh 5) | Kết quả (veh 3) | Kết quả (veh 5) |
+|----------|-----------|------|--------|-------------|-------------------|-------------------|------------------|------------------|
+| Large-9  | 50        | 6    | 3      | 743         | 900               | 1500              | ✅ Feasible      | ✅ Feasible      |
+| Large-10 | 70        | 6    | 3      | 1040        | 1080              | 1800              | ❌ Infeasible    | ✅ Feasible      |
+| Large-12 | 100       | 6    | 4      | 1487        | 1440              | 2400              | ❌ Infeasible    | ✅ Feasible      |
+| Large-4  | 100       | 3    | 3      | 1487        | 1080              | —                 | ✅ Feasible      | —                |
+| Large-5  | 120       | 3    | 4      | 1780        | 1440              | 2400              | ❌ Infeasible    | ✅ Feasible      |
+
+**Giải thích**: IRP không cần deliver cho tất cả customer mỗi ngày (inventory buffer). Nhưng cho 6-period instances, starting inventory hết sớm (day 2-3), nên từ day 3-6, hầu hết customer cần delivery → daily demand cao. Với -veh 3, daily demand ≈ fleet capacity → ZERO slack → thuật toán không tìm được feasible solution trong thời gian cho phép.
+
+**Khuyến nghị fleet size**:
+| Instance size | Days | Depots | `-veh` khuyến nghị |
+|---------------|------|--------|---------------------|
+| ≤50 customers | 3-6  | 3      | 3                   |
+| 70-100        | 3    | 3      | 3                   |
+| 70-100        | 6    | 3      | **5**               |
+| 100+          | 3    | 4      | **5**               |
+| 100+          | 6    | 4      | **5**               |
+| 120+          | 3-6  | 4      | **5-7**             |
+
+---
+
+## 10. Tóm Tắt Tất Cả Fix (Session Large Data Analysis)
+
+| # | File | Loại Fix | Mô tả |
+|---|------|----------|-------|
+| 13 | `Data/Large/Large-12.dat` | Data fix | Thêm depot thứ 4, đánh lại ID customers |
+| 14 | `LocalSearch.cpp` (~line 865) | Code fix | Depot fallback cho `depotOfCust` khi customer không trong route |
+| 14b | `LocalSearch.cpp` (~line 968) | Code fix | REFORMULATED COST dùng `evaluateSolutionCost(false)` |
+| 15 | `main.cpp` (~line 75) | Code fix | `maxIterNonProd=1000000` khi có time limit |
+| 16 | `Population.cpp` | Code fix | Init capped at 40% time budget |
+| 17 | `Individu.cpp` (~line 66) | Code fix | Fix `nextDayClientDemand` modular arithmetic bug |
+| 17b | `Individu.cpp` (~line 79) | Code fix | Tăng pre-delivery probability cho ngày sớm |
+
+### Kết quả test sau tất cả fix:
+- **Large-9** (50 cust, 6 days, -veh 3, -t 60): ✅ Cost = 19,718
+- **Large-4** (100 cust, 3 days, -veh 3, -t 60): ✅ Cost = 12,623
+- **Large-5** (120 cust, 3 days, -veh 5, -t 60): ✅ Cost = 16,875
+- **Large-12** (100 cust, 6 days, -veh 5, -t 120): ✅ Cost = 33,295
+- COST SUMMARY = Operational objective cho tất cả instances
+- Không còn D-1 depot assignment
 
 
