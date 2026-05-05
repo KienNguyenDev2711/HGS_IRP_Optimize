@@ -862,6 +862,13 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
     }
   }
 
+  // Fallback: for customers with deliveries but not found in any route on that day,
+  // assign preferredDepot so that depot inventory tracking is correct.
+  for (int k = 1; k <= params->ancienNbDays; k++)
+    for (int i = params->nbDepots; i < params->nbDepots + params->nbClients; i++)
+      if (depotOfCust[k][i] < 0 && demandPerDay[k][i] > 0.0001)
+        depotOfCust[k][i] = params->cli[i].preferredDepot;
+
   // Printing customer inventory and computing customer inventory cost
   if(params->isstockout){
 
@@ -962,7 +969,7 @@ void LocalSearch::printInventoryLevels(std::ostream& file,bool add)
   file  << "COST SUMMARY : OVERALL "
        << routeCosts + inventorySupplyCosts + inventoryClientCosts + stockClientCosts
        << endl;
-  file  << "REFORMULATED COST : " << evaluateSolutionCost(true) << endl;
+  file  << "REFORMULATED COST : " << evaluateSolutionCost(false) << endl;
 
   // Print delivery quantity per retailer per depot
   if(!add && params->multiDepot) {

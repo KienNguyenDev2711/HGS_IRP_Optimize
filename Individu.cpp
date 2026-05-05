@@ -62,8 +62,7 @@ Individu::Individu(Params *params, double facteurSurete) : params(params)
 		for (int k = 1; k <= params->nbDays; k++)
 		{
 			double currentDayClientDemand = params->cli[i].dailyDemand[k];
-			double nextDayClientDemand = params->cli[i].dailyDemand[(k + 1) % params->nbDays];
-			// startInventory += chromL[k][i];
+			double nextDayClientDemand = (k < params->nbDays) ? params->cli[i].dailyDemand[k + 1] : 0.0;
 
 			if (startInventory >= currentDayClientDemand)
 			{
@@ -72,11 +71,20 @@ Individu::Individu(Params *params, double facteurSurete) : params(params)
 
 				bool isInventoryEnoughForNextDay = startInventory - currentDayClientDemand >= nextDayClientDemand;
 				if (k < params->nbDays && !isInventoryEnoughForNextDay) {
-					bool shouldDeliveryForNextDay = params->rng->genrand64_real1() <= 0.3;
+					// Pre-deliver for next day with higher probability when more days remain
+					double preDelivProb = 0.3 + 0.4 * (1.0 - (double)k / params->nbDays);
+					bool shouldDeliveryForNextDay = params->rng->genrand64_real1() <= preDelivProb;
 					if (shouldDeliveryForNextDay) {
-						chromL[k][i] = nextDayClientDemand + startInventory - currentDayClientDemand;
-						chromT[k].push_back(i);
+						// Deliver enough for next day, capped by maxInventory
+						double deliveryAmt = nextDayClientDemand - (startInventory - currentDayClientDemand);
+						double invAfterDelivery = startInventory - currentDayClientDemand + deliveryAmt;
+						if (invAfterDelivery > params->cli[i].maxInventory)
+							deliveryAmt = params->cli[i].maxInventory - (startInventory - currentDayClientDemand);
+						if (deliveryAmt > 0) {
+							chromL[k][i] = deliveryAmt;
+							chromT[k].push_back(i);
 							chromD[k][i] = params->multiDepot ? params->cli[i].preferredDepot : 0;
+						}
 					}
 				}
 				startInventory = startInventory + chromL[k][i] - currentDayClientDemand;

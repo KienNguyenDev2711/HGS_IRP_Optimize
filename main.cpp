@@ -75,8 +75,18 @@ int mainIRP(int argc, char *argv[])
     // Baseline: n=25, T=3 → iterScale=1.  Formula: (n * T) / (25 * 3) = n*T/75
     // n=25,T=3 → 1 | n=100,T=3 → 4 | n=150,T=6 → 12
     int iterScale     = std::max(1, (n * T) / 75);
-    int maxIterNonProd = std::max(200, 5000 / iterScale); // 5000→1250→416 for above
-    int max_iter      = std::max(1000, maxIterNonProd * 5); // 5× non-prod cap
+    int maxIterNonProd, max_iter;
+    if (nb_ticks_allowed > 0) {
+      // Time-limited mode: rely on wall-clock; set very high iteration caps
+      // so the algorithm keeps searching until the time budget is exhausted.
+      // This prevents premature termination on hard instances (e.g. 6 periods).
+      maxIterNonProd = 1000000;
+      max_iter       = 1000000;
+    } else {
+      // Iteration-limited mode (no time limit): scale down to keep runtime bounded.
+      maxIterNonProd = std::max(200, 5000 / iterScale);
+      max_iter       = std::max(1000, maxIterNonProd * 5);
+    }
     solver.evolve(max_iter, maxIterNonProd, 1);
 
     population->ExportPop(c.get_path_to_solution(),true);

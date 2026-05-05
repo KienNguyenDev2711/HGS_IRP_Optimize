@@ -16,6 +16,14 @@ Population::Population(Params *params) : params(params)
 		return params->ticks > 0 && clock() - params->debut >= params->ticks;
 	};
 
+	// Reserve at most 40% of the time budget for population initialization.
+	// On large 6-period instances, each education() call is very expensive and
+	// the old code could spend the entire budget on initialization, leaving no
+	// time for the main evolution loop.
+	auto initTimeLimitReached = [&]() {
+		return params->ticks > 0 && clock() - params->debut >= (clock_t)(params->ticks * 0.40);
+	};
+
 	double temp = params->penalityCapa;
 	double temp2 = params->penalityLength;
 	double temp3 = params->penalityTimeWindow;
@@ -32,7 +40,7 @@ Population::Population(Params *params) : params(params)
 
 	for (int i = 0; i < params->mu * 2; i++)
 	{
-		if (timeLimitReached())
+		if (initTimeLimitReached())
 			break;
 
 		if (i == params->mu)
