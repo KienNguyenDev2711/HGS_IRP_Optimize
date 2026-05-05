@@ -35,6 +35,7 @@ void Route::printRouteData(std::ostream& file)
 		file <<" node[ "<<noeud->cour <<" ] ->";
 		noeud = noeud->suiv ;
 		place ++ ;
+		if (place > 500) { file << " [CYCLE]"; break; }
 		noeud->place = place ;
 		charge += myLS->demandPerDay[day][noeud->cour];
 		earlT += params->cli[noeud->pred->cour].serviceDuration + params->timeCost[noeud->pred->cour][noeud->cour] ;
@@ -149,7 +150,6 @@ void Route::evalInsertClientp (Noeud * U)
 		bestInsertion[U->cour].detour = params->timeCost[U->pred->cour][U->cour] - params->timeCost[U->pred->cour][U->suiv->cour]   
 										+ params->timeCost[U->cour][U->suiv->cour] ;
 		bestInsertion[U->cour].place = U->pred ;
-		std::cout << "else detour "<<bestInsertion[U->cour].detour<< " pre "<<U->pred->cour <<" next "<<U->suiv->cour<<endl;
 
 		// however, we'll see if there's a better insertion possible
 		// temporarily we'll remove the node from the chain�e list (in O(1))
@@ -158,6 +158,7 @@ void Route::evalInsertClientp (Noeud * U)
 		courNoeud = depot ;
 
 		// et parcourir la route � nouveau
+		int _cyc3 = 0;
 		while (!courNoeud->estUnDepot || firstIt == true )
 		{
 			firstIt = false ;
@@ -170,9 +171,9 @@ void Route::evalInsertClientp (Noeud * U)
 			{ 
 				bestInsertion[U->cour].detour = cout ;
 				bestInsertion[U->cour].place = courNoeud ;
-				std::cout << "better "<<bestInsertion[U->cour].detour;
 			}
 			courNoeud = courNoeud->suiv ;
+			if (++_cyc3 > params->nbClients + params->nbDepots + 5) { break; }
 		}
 		
 		// on replace le noeud
@@ -239,6 +240,7 @@ void Route::evalInsertClient (Noeud * U)
 		courNoeud = depot ;
 
 		// et parcourir la route � nouveau
+		int _cyc3 = 0;
 		while (!courNoeud->estUnDepot || firstIt == true )
 		{
 			firstIt = false ;
@@ -264,6 +266,7 @@ void Route::evalInsertClient (Noeud * U)
 				bestInsertion[U->cour].place = courNoeud ;
 			}
 			courNoeud = courNoeud->suiv ;
+			if (++_cyc3 > params->nbClients + params->nbDepots + 5) { break; }
 		}
 		
 		// on replace le noeud

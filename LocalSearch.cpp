@@ -443,6 +443,9 @@ int LocalSearch::mutation11(int client)
         demandPerDay[k][client] = oldDemand[k];
         clients[k][client]->placeInsertion = oldPred[k];
         addNoeud(clients[k][client]);
+        // BUG #19 FIX: if addNoeud failed, reset demandPerDay to avoid mismatch
+        if (!clients[k][client]->estPresent)
+          demandPerDay[k][client] = 0.;
       }
     }
     return 0;
@@ -458,6 +461,9 @@ int LocalSearch::mutation11(int client)
         demandPerDay[k][client] = oldDemand[k];
         clients[k][client]->placeInsertion = oldPred[k];
         addNoeud(clients[k][client]);
+        // BUG #19 FIX: if addNoeud failed, reset demandPerDay to avoid mismatch
+        if (!clients[k][client]->estPresent)
+          demandPerDay[k][client] = 0.;
       }
     }
     return 0;
@@ -471,6 +477,9 @@ int LocalSearch::mutation11(int client)
       demandPerDay[k][client] = round(quantities[k - 1]);
       clients[k][client]->placeInsertion = lotsizingSolver->breakpoints[k - 1]->place;
       addNoeud(clients[k][client]);
+      // BUG #19 FIX: if addNoeud failed, reset demandPerDay to avoid mismatch
+      if (!clients[k][client]->estPresent)
+        demandPerDay[k][client] = 0.;
     }
   }
 
@@ -520,6 +529,9 @@ int LocalSearch::mutation11(int client)
         demandPerDay[k][client] = oldDemand[k];
         clients[k][client]->placeInsertion = oldPred[k];
         addNoeud(clients[k][client]);
+        // BUG #19 FIX: if addNoeud failed, reset demandPerDay to avoid mismatch
+        if (!clients[k][client]->estPresent)
+          demandPerDay[k][client] = 0.;
       }
     }
     return 0;
@@ -1004,6 +1016,17 @@ void LocalSearch::removeNoeud(Noeud *U)
 void LocalSearch::addNoeud(Noeud *U)
 {
   if (U->placeInsertion == nullptr) return; // safety: no valid insertion point (e.g. route had a cycle)
+
+  // BUG #18 FIX: If placeInsertion is a client node that is NOT present
+  // (e.g. it was cleared by a previous cycle repair), it's orphaned — its
+  // pred/suiv no longer connect to the route's depot forward chain.
+  // Inserting after it would create a disconnected sub-chain, marking U
+  // as present when it's unreachable from depot, corrupting the linked list.
+  if (!U->placeInsertion->estUnDepot && !U->placeInsertion->estPresent) {
+    U->estPresent = false;
+    return;
+  }
+
   U->placeInsertion->suiv->pred = U;
   U->pred = U->placeInsertion;
   U->suiv = U->placeInsertion->suiv;
