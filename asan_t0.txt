@@ -1,0 +1,71 @@
+p0p0p0p0p0p0p0p3p1p4p1p7p0p2p8p2p4p0p1p2p7p2p12p11IT0 X M R p7P IT1 X M A p16IT2 X M A p4IT3 X M R p2IT4 X M R p8IT5 X M R p5A p17IT6 X M R p5IT7 X M R p13IT8 X =================================================================
+==27148==ERROR: AddressSanitizer: container-overflow on address 0x12a46383e26c at pc 0x7ff6ef5f888f bp 0x00bbb3d5e870 sp 0x00bbb3d5e870
+READ of size 4 at 0x12a46383e26c thread T0
+    #0 0x7ff6ef5f888e in LocalSearch::mutationSameDay d:\project\HGS-IRP-main\LocalSearch.cpp:139
+    #1 0x7ff6ef5f7d57 in LocalSearch::runSearchTotal d:\project\HGS-IRP-main\LocalSearch.cpp:24
+    #2 0x7ff6ef58341b in Genetic::muter d:\project\HGS-IRP-main\Genetic.cpp:101
+    #3 0x7ff6ef58af1d in Genetic::evolve d:\project\HGS-IRP-main\Genetic.cpp:30
+    #4 0x7ff6ef664125 in mainIRP d:\project\HGS-IRP-main\main.cpp:80
+    #5 0x7ff6ef67903c in main d:\project\HGS-IRP-main\main.cpp:986
+    #6 0x7ff6ef76c7e7 in __scrt_common_main_seh D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+    #7 0x7ffaf19ae8d6 in BaseThreadInitThunk+0x16 (C:\WINDOWS\System32\KERNEL32.DLL+0x18002e8d6)
+    #8 0x7ffaf2b8c3fb in RtlUserThreadStart+0x2b (C:\WINDOWS\SYSTEM32\ntdll.dll+0x18008c3fb)
+
+0x12a46383e26c is located 108 bytes inside of 252-byte region [0x12a46383e200,0x12a46383e2fc)
+allocated by thread T0 here:
+    #0 0x7ff6ef76b975 in operator new D:\a\_work\1\s\src\vctools\asan\llvm\compiler-rt\lib\asan\asan_win_new_scalar_thunk.cpp:40
+    #1 0x7ff6ef56a702 in std::_Default_allocate_traits::_Allocate C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:140
+    #2 0x7ff6ef562cf5 in std::_Allocate<16,std::_Default_allocate_traits> C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:260
+    #3 0x7ff6ef56d7af in std::allocator<int>::allocate C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:994
+    #4 0x7ff6ef562d76 in std::_Allocate_at_least_helper<std::allocator<int> > C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:2323
+    #5 0x7ff6ef564e6a in std::vector<int,std::allocator<int> >::_Emplace_reallocate<int const &> C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector:894
+    #6 0x7ff6ef5648d9 in std::vector<int,std::allocator<int> >::_Emplace_one_at_back<int const &> C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector:848
+    #7 0x7ff6ef56e67c in std::vector<int,std::allocator<int> >::push_back C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector:933
+    #8 0x7ff6ef5f6405 in LocalSearch::addOP d:\project\HGS-IRP-main\LocalSearch.cpp:363
+    #9 0x7ff6ef60acb5 in LocalSearch::addNoeud d:\project\HGS-IRP-main\LocalSearch.cpp:1050
+    #10 0x7ff6ef5fd9ad in LocalSearch::mutation11 d:\project\HGS-IRP-main\LocalSearch.cpp:479
+    #11 0x7ff6ef5fb7dd in LocalSearch::mutationDifferentDay d:\project\HGS-IRP-main\LocalSearch.cpp:325
+    #12 0x7ff6ef5f7fde in LocalSearch::runSearchTotal d:\project\HGS-IRP-main\LocalSearch.cpp:30
+    #13 0x7ff6ef583a7b in Genetic::reparer d:\project\HGS-IRP-main\Genetic.cpp:124
+    #14 0x7ff6ef58b027 in Genetic::evolve d:\project\HGS-IRP-main\Genetic.cpp:38
+    #15 0x7ff6ef664125 in mainIRP d:\project\HGS-IRP-main\main.cpp:80
+    #16 0x7ff6ef67903c in main d:\project\HGS-IRP-main\main.cpp:986
+    #17 0x7ff6ef76c7e7 in __scrt_common_main_seh D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+    #18 0x7ffaf19ae8d6 in BaseThreadInitThunk+0x16 (C:\WINDOWS\System32\KERNEL32.DLL+0x18002e8d6)
+    #19 0x7ffaf2b8c3fb in RtlUserThreadStart+0x2b (C:\WINDOWS\SYSTEM32\ntdll.dll+0x18008c3fb)
+
+HINT: if you don't care about these errors you may set ASAN_OPTIONS=detect_container_overflow=0.
+If you suspect a false positive see also: https://github.com/google/sanitizers/wiki/AddressSanitizerContainerOverflow.
+SUMMARY: AddressSanitizer: container-overflow d:\project\HGS-IRP-main\LocalSearch.cpp:139 in LocalSearch::mutationSameDay
+Shadow bytes around the buggy address:
+  0x12a46383df80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x12a46383e000: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x12a46383e080: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+  0x12a46383e100: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x12a46383e180: fd fd fd fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x12a46383e200: 00 00 00 00 00 00 00 00 00 00 00 00 00[04]fc fc
+  0x12a46383e280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  0x12a46383e300: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+  0x12a46383e380: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x12a46383e400: fd fd fd fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x12a46383e480: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==27148==ABORTING

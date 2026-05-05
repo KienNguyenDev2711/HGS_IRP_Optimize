@@ -300,7 +300,7 @@ int Individu::splitSimple(int k)
 			// time window penalty
 			cost += twViol * params->penalityTimeWindow;
 
-			if (potentiels[1][i] + cost < potentiels[1][j + 1]) // basic Bellman algorithm
+			if (j + 1 < (int)potentiels[1].size() && potentiels[1][i] + cost < potentiels[1][j + 1]) // basic Bellman algorithm
 			{
 				potentiels[1][j + 1] = potentiels[1][i] + cost;
 				pred[k][1][j + 1] = i;
@@ -331,14 +331,16 @@ void Individu::splitLF(int k)
 {
 	double load, distance, time, time2, cost;
 	int sb, s0, s1, i, j;
+	int potCols = (int)potentiels[0].size();
 
 	// pour chaque camion
 	double twViol, arrTime;
 	for (int cam = 0; cam < params->nombreVehicules[k]; cam++)
 	{
+		if (cam + 1 >= (int)potentiels.size()) break;
 		i = 0;
 		s0 = params->ordreVehicules[k][cam].depotNumber;
-		while (i < (int)chromT[k].size() && potentiels[cam][i] < 1.e29)
+		while (i < (int)chromT[k].size() && i < potCols && potentiels[cam][i] < 1.e29)
 		{
 			if (potentiels[cam][i] < potentiels[cam + 1][i])
 			{
@@ -400,7 +402,7 @@ void Individu::splitLF(int k)
 				// time window penalty
 				cost += twViol * params->penalityTimeWindow;
 
-				if (potentiels[cam][i] + cost < potentiels[cam + 1][j + 1]) // Basic Bellman iteration
+				if (j + 1 < potCols && potentiels[cam][i] + cost < potentiels[cam + 1][j + 1]) // Basic Bellman iteration
 				{
 					potentiels[cam + 1][j + 1] = potentiels[cam][i] + cost;
 					pred[k][cam + 1][j + 1] = i;
@@ -597,7 +599,8 @@ void Individu::initPot(int day)
 {
 	for (int i = 0; i < params->nombreVehicules[day] + 1; i++)
 	{
-		for (size_t j = 0; j <= chromT[day].size() + 1; j++)
+		int maxJ = std::min((int)chromT[day].size() + 1, (int)potentiels[i].size() - 1);
+		for (int j = 0; j <= maxJ; j++)
 		{
 			potentiels[i][j] = 1.e30;
 		}
@@ -761,11 +764,16 @@ void Individu::updateIndiv()
 		{
 			int depotIdx = ordreRoutesAngle[r]->depot ? ordreRoutesAngle[r]->depot->cour : 0;
 			node = ordreRoutesAngle[r]->depot->suiv;
-			int _cyc = 0;
-			const int _maxCyc = params->nbClients + params->nbDepots + 5;
+			// BUG #20 FIX: Track visited nodes to avoid pushing duplicates when
+			// a cycle exists in the route linked list.  Without this, a cycle
+			// causes the same client to be pushed many times, inflating
+			// chromT[kk] far beyond nbClients and causing out-of-bounds access
+			// in splitLF/measureSol (potentiels/pred arrays).
+			vector<bool> visited(params->nbClients + params->nbDepots, false);
 			while (!node->estUnDepot)
 			{
-				if (++_cyc > _maxCyc) { node = ordreRoutesAngle[r]->depot; break; } // cycle detected — abort route
+				if (node->cour < 0 || node->cour >= (int)visited.size() || visited[node->cour]) break;
+				visited[node->cour] = true;
 				chromT[kk].push_back(node->cour);
 				chromD[kk][node->cour] = depotIdx;
 				node = node->suiv;

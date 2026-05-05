@@ -120,7 +120,7 @@ int Population::addIndividu(Individu *indiv)
 		souspop = invalides;
 
 	result = placeIndividu(souspop, indiv);
-	// il faut �ventuellement enlever la moiti� de la pop
+	// il faut éventuellement enlever la moitié de la pop
 	if (result != -1 && souspop->nbIndiv > params->mu + params->lambda)
 	{
 

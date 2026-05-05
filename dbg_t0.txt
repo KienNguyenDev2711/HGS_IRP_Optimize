@@ -1,0 +1,15 @@
+DBG iter=0 nonProd=1
+DBG iter=10 nonProd=11
+DBG iter=20 nonProd=21
+DBG iter=30 nonProd=31
+DBG iter=40 nonProd=41
+DBG iter=50 nonProd=51
+DBG iter=60 nonProd=61
+DBG iter=70 nonProd=71
+DBG iter=80 nonProd=81
+DBG iter=90 nonProd=91
+DBG iter=100 nonProd=101
+DBG iter=110 nonProd=111
+DBG iter=120 nonProd=121
+DBG iter=130 nonProd=131
+DBG iter=140 nonProd=141

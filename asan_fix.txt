@@ -1,0 +1,67 @@
+=================================================================
+==3880==ERROR: AddressSanitizer: container-overflow on address 0x12dc6caa7030 at pc 0x7ff71e8577d8 bp 0x00b7d48fe4c0 sp 0x00b7d48fe4c0
+READ of size 8 at 0x12dc6caa7030 thread T0
+    #0 0x7ff71e8577d7 in Individu::splitLF d:\project\HGS-IRP-main\Individu.cpp:403
+    #1 0x7ff71e854d44 in Individu::generalSplit d:\project\HGS-IRP-main\Individu.cpp:212
+    #2 0x7ff71e85eff0 in Individu::updateIndiv d:\project\HGS-IRP-main\Individu.cpp:776
+    #3 0x7ff71e823aac in Genetic::reparer d:\project\HGS-IRP-main\Genetic.cpp:117
+    #4 0x7ff71e82af65 in Genetic::evolve d:\project\HGS-IRP-main\Genetic.cpp:35
+    #5 0x7ff71e904085 in mainIRP d:\project\HGS-IRP-main\main.cpp:80
+    #6 0x7ff71e918f9c in main d:\project\HGS-IRP-main\main.cpp:986
+    #7 0x7ff71ea0c6b7 in __scrt_common_main_seh D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+    #8 0x7ffaf19ae8d6 in BaseThreadInitThunk+0x16 (C:\WINDOWS\System32\KERNEL32.DLL+0x18002e8d6)
+    #9 0x7ffaf2b8c3fb in RtlUserThreadStart+0x2b (C:\WINDOWS\SYSTEM32\ntdll.dll+0x18008c3fb)
+
+0x12dc6caa7030 is located 432 bytes inside of 504-byte region [0x12dc6caa6e80,0x12dc6caa7078)
+allocated by thread T0 here:
+    #0 0x7ff71ea0b845 in operator new D:\a\_work\1\s\src\vctools\asan\llvm\compiler-rt\lib\asan\asan_win_new_scalar_thunk.cpp:40
+    #1 0x7ff71e80a702 in std::_Default_allocate_traits::_Allocate C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:140
+    #2 0x7ff71e802cf5 in std::_Allocate<16,std::_Default_allocate_traits> C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:260
+    #3 0x7ff71e84a6ef in std::allocator<double>::allocate C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:994
+    #4 0x7ff71e82d0c6 in std::_Allocate_at_least_helper<std::allocator<double> > C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\xmemory:2323
+    #5 0x7ff71e86d94a in std::vector<double,std::allocator<double> >::_Emplace_reallocate<double> C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector:894
+    #6 0x7ff71e86c989 in std::vector<double,std::allocator<double> >::_Emplace_one_at_back<double> C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector:848
+    #7 0x7ff71e8881b4 in std::vector<double,std::allocator<double> >::push_back C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717\include\vector:938
+    #8 0x7ff71e863325 in Individu::Individu d:\project\HGS-IRP-main\Individu.cpp:179
+    #9 0x7ff71e82c0f3 in Genetic::Genetic d:\project\HGS-IRP-main\Genetic.cpp:191
+    #10 0x7ff71e903aa4 in mainIRP d:\project\HGS-IRP-main\main.cpp:47
+    #11 0x7ff71e918f9c in main d:\project\HGS-IRP-main\main.cpp:986
+    #12 0x7ff71ea0c6b7 in __scrt_common_main_seh D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+    #13 0x7ffaf19ae8d6 in BaseThreadInitThunk+0x16 (C:\WINDOWS\System32\KERNEL32.DLL+0x18002e8d6)
+    #14 0x7ffaf2b8c3fb in RtlUserThreadStart+0x2b (C:\WINDOWS\SYSTEM32\ntdll.dll+0x18008c3fb)
+
+HINT: if you don't care about these errors you may set ASAN_OPTIONS=detect_container_overflow=0.
+If you suspect a false positive see also: https://github.com/google/sanitizers/wiki/AddressSanitizerContainerOverflow.
+SUMMARY: AddressSanitizer: container-overflow d:\project\HGS-IRP-main\Individu.cpp:403 in Individu::splitLF
+Shadow bytes around the buggy address:
+  0x12dc6caa6d80: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fa
+  0x12dc6caa6e00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x12dc6caa6e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x12dc6caa6f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x12dc6caa6f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x12dc6caa7000: 00 00 00 00 00 00[fc]fc fc fc fc fc fc fc fc fa
+  0x12dc6caa7080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x12dc6caa7100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x12dc6caa7180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x12dc6caa7200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x12dc6caa7280: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==3880==ABORTING

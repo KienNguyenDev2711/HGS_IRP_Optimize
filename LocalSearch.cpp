@@ -124,6 +124,9 @@ int LocalSearch::mutationSameDay(int day)
     // Time-limit check in same-day mutations
     if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
       return nbMoves;
+    // Re-read size each pass: cycle-repair in updateRouteData may have
+    // called removeOP, shrinking ordreParcours[day] since last pass.
+    size = (int)ordreParcours[day].size();
     for (int posU = 0; posU < size; posU++)
     {
       // Granular time guard inside the inner posU loop
@@ -136,6 +139,12 @@ int LocalSearch::mutationSameDay(int day)
       nbMoves += moveEffectue;
       totalMoves += moveEffectue;
       moveEffectue = 0;
+      // BUG #19 FIX: cycle-repair inside updateRouteData (called by insertNoeud /
+      // swapNoeud) may call removeOP, shrinking ordreParcours[day] while we
+      // iterate.  Re-check bounds after every move to avoid container-overflow.
+      size = (int)ordreParcours[day].size();
+      if (posU < 0) posU = 0;
+      if (posU >= size) break;
       noeudU = clients[day][ordreParcours[day][posU]];
 
       noeudUPred = noeudU->pred;

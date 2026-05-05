@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 #include "Genetic.h"
 #include "LotSizingSolver.h"
@@ -981,5 +982,16 @@ int mainTest4(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-  mainIRP(argc, argv);
+  try {
+    return mainIRP(argc, argv);
+  } catch (const std::exception &e) {
+    cerr << "EXCEPTION: " << e.what() << endl;
+    return 1;
+  } catch (const string &s) {
+    cerr << "EXCEPTION(string): " << s << endl;
+    return 1;
+  } catch (...) {
+    cerr << "UNKNOWN EXCEPTION" << endl;
+    return 1;
+  }
 }
