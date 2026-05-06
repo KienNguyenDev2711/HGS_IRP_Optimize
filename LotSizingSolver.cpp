@@ -562,6 +562,12 @@ bool LotSizingSolver::backtracking()
 
   while (tmp != nullptr)
   {
+    // Safety guard: day must never go below 0. This prevents I[day-1]
+    // out-of-bounds access in the fromF==nullptr branch if the DP trace
+    // runs one period past the start due to an edge-case piece linkage.
+    if (day < 0)
+      break;
+
     if (day == 0 && (tmp->fromC != nullptr || tmp->fromF == nullptr))
       break;
 

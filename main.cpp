@@ -48,19 +48,11 @@ int mainIRP(int argc, char *argv[])
 
     // on lance l'evolution   launch evolution
 
-    // STOPPING RULE: stop after 2000 consecutive non-improving iterations.
-    // This is the standard academic criterion for HGS (Vidal et al. 2012).
-    // If a time limit is also specified (-t N), both conditions apply and the
-    // algorithm stops at whichever fires first.
-    //
-    // Rationale for 2000:
-    //   - Small instances (≤25 cust):  ~0.002s/iter → 2000 iters ≈ 4s
-    //   - Medium instances (≤50 cust): ~0.01s/iter  → 2000 iters ≈ 20s
-    //   - Large instances (100 cust):  ~0.1s/iter   → 2000 iters ≈ 200s (~3.3 min)
-    //   - Large 6-period (100 cust):   ~0.3s/iter   → 2000 iters ≈ 600s (~10 min)
-    //
-    // max_iter is a safety absolute cap (never the binding constraint in practice).
-    int maxIterNonProd = 2000;
+    // Stopping rule:
+    // - iteration-based mode (-t 0): use the classic 2000 non-improving iterations
+    // - time-limited mode (-t N>0): let time be the primary stopper, so use a very
+    //   large non-improving cap to avoid premature stop at ~2000 iterations.
+    int maxIterNonProd = (nb_ticks_allowed > 0) ? 100000000 : 2000;
     int max_iter       = 10000000;
     solver.evolve(max_iter, maxIterNonProd, 1);
 

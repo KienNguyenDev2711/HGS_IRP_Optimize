@@ -8,7 +8,7 @@ void LocalSearch::runILS(bool isRepPhase, int maxIterations)
   for (int it = 0; it < maxIterations; it++)
   {
     // Time-limit check between ILS iterations
-    if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.85)
+    if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.98)
       return;
     if (it > 0)
       shaking();
@@ -24,7 +24,7 @@ void LocalSearch::runSearchTotal(bool isRepPhase)
     mutationSameDay(day);
   }
   // Time-limit check: skip expensive lot-sizing if time is almost up
-  if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.95)
+  if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.99)
     return;
 
   mutationDifferentDay();
@@ -108,13 +108,13 @@ int LocalSearch::mutationSameDay(int day)
   // In time-limited mode the 0.90 time guard fires first. 200 is generous enough for good
   // convergence while keeping each mutationSameDay call O(n * MAX_SAME_DAY_PASSES).
   int loopPass = 0;
-  const int MAX_SAME_DAY_PASSES = 50;
+  const int MAX_SAME_DAY_PASSES = (params->ticks > 0) ? 200 : 80;
   // Total-moves budget: caps combined moves across all passes in this call.
   // Prevents the inner posU loop from running infinitely when a node keeps
   // flipping between depots (each flip strictly improves but by <0.001).
   // 10*nbClients gives ample budget for genuine convergence.
   int totalMoves = 0;
-  const int MAX_TOTAL_MOVES = 10 * (params->nbClients + 1);
+  const int MAX_TOTAL_MOVES = ((params->ticks > 0) ? 40 : 20) * (params->nbClients + 1);
 
   while (!rechercheTerminee && loopPass < MAX_SAME_DAY_PASSES)
   {
@@ -122,7 +122,7 @@ int LocalSearch::mutationSameDay(int day)
     rechercheTerminee = true;
     moveEffectue = 0;
     // Time-limit check in same-day mutations
-    if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
+    if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.98)
       return nbMoves;
     // Re-read size each pass: cycle-repair in updateRouteData may have
     // called removeOP, shrinking ordreParcours[day] since last pass.
@@ -130,7 +130,7 @@ int LocalSearch::mutationSameDay(int day)
     for (int posU = 0; posU < size; posU++)
     {
       // Granular time guard inside the inner posU loop
-      if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
+      if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.98)
       { rechercheTerminee = true; break; }
       // Total-moves budget guard: prevents infinite re-visits at same posU
       if (totalMoves >= MAX_TOTAL_MOVES)
@@ -215,8 +215,8 @@ int LocalSearch::mutationSameDay(int day)
         // regardless of time mode (fixes hang when ticks==0 / no time limit).
         if (crossDepotWorkDone >= MAX_CROSS_DEPOT_WORK)
           continue;
-        // Time guard: also bail early if >80% of global budget spent (time-limited mode only).
-        if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.80)
+        // Time guard: also bail early if >98% of global budget spent (time-limited mode only).
+        if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.98)
           continue;
         // Cache the current solution cost ONCE for all cross-depot mutation attempts
         crossDepotOldCost = evaluateSolutionCost(true);
@@ -227,7 +227,7 @@ int LocalSearch::mutationSameDay(int day)
           // Increment work counter before each attempt; break if budget exhausted.
           if (++crossDepotWorkDone >= MAX_CROSS_DEPOT_WORK) break;
           // Time guard for time-limited mode.
-          if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.80)
+          if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.98)
             break;
 
           noeudV = clients[day][otherClient];
@@ -324,12 +324,26 @@ int LocalSearch::mutationDifferentDay()
   rechercheTerminee = false;
   int nbMoves = 0;
   int times = 0;
-  const int MAX_LOT_SIZING_LOOPS = 3;
+  // Adaptive lot-sizing loop cap:
+  // - small instances need more passes for solution quality
+  // - large instances need tighter bounds to avoid over-intensifying lot-sizing
+  //   at the expense of routing feasibility.
+  int MAX_LOT_SIZING_LOOPS = 4;
+  if (params->nbClients <= 15)
+    MAX_LOT_SIZING_LOOPS = 20;
+  else if (params->nbClients <= 30)
+    MAX_LOT_SIZING_LOOPS = 12;
+  else if (params->nbClients <= 50)
+    MAX_LOT_SIZING_LOOPS = 8;
+  else if (params->nbClients <= 80)
+    MAX_LOT_SIZING_LOOPS = 4;
+  else
+    MAX_LOT_SIZING_LOOPS = 3;
   while (!rechercheTerminee && times < MAX_LOT_SIZING_LOOPS) {
     rechercheTerminee = true;
     times++;
     for (int posU = 0; posU < params->nbClients; posU++){
-      if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.90)
+      if (params->ticks > 0 && clock() - params->debut > params->ticks * 0.98)
         return nbMoves;
       nbMoves += mutation11(ordreParcours[0][posU]);
     }
@@ -380,6 +394,7 @@ int LocalSearch::mutation11(int client)
 {
   Noeud *noeudTravail;
   double currentCost;
+  const bool strictLotSizingAcceptance = (params->multiDepot || params->nbClients > 40);
   // Compute the current lot sizing solution cost (from the model point of view)
   if(params -> isstockout){
     currentCost=evaluateCurrentCost_stockout(client);
@@ -387,15 +402,17 @@ int LocalSearch::mutation11(int client)
   else
     currentCost = evaluateCurrentCost(client);
 
-  // Check if the current delivery plan violates inventory bounds
-  bool inventoryFeasible = true;
+  bool oldPlanFeasible = true;
+  if (strictLotSizingAcceptance)
   {
     double inv = params->cli[client].startingInventory;
-    for (int k = 1; k <= params->ancienNbDays; k++) {
+    for (int k = 1; k <= params->ancienNbDays; k++)
+    {
       inv += demandPerDay[k][client] - params->cli[client].dailyDemand[k];
       if (inv < params->cli[client].minInventory - 0.001 ||
-          inv > params->cli[client].maxInventory + 0.001) {
-        inventoryFeasible = false;
+          inv > params->cli[client].maxInventory + 0.001)
+      {
+        oldPlanFeasible = false;
         break;
       }
     }
@@ -463,8 +480,8 @@ int LocalSearch::mutation11(int client)
   objective = lotsizingSolver->objective;
   quantities = lotsizingSolver->quantities;
 
-  if(inventoryFeasible && lt(currentCost,objective-0.01)) {
-    // Current solution is cheaper and inventory-feasible, revert
+  if(lt(currentCost,objective-0.01)) {
+    // Current solution is cheaper by DP estimate, revert
     for (int k = 1; k <= params->ancienNbDays; k++){
       if (oldPresent[k]) {
         demandPerDay[k][client] = oldDemand[k];
@@ -492,60 +509,69 @@ int LocalSearch::mutation11(int client)
     }
   }
 
-  double tmpCost = 0.0;
-  if(params -> isstockout)
-     tmpCost = evaluateCurrentCost_stockout(client);
-  else
-    tmpCost = evaluateCurrentCost(client);
-
-  // Check if the NEW delivery plan achieves inventory feasibility
-  bool newPlanFeasible = true;
+  if (strictLotSizingAcceptance)
   {
+    double tmpCost = 0.0;
+    if (params->isstockout)
+      tmpCost = evaluateCurrentCost_stockout(client);
+    else
+      tmpCost = evaluateCurrentCost(client);
+
+    bool newPlanFeasible = true;
     double inv = params->cli[client].startingInventory;
-    for (int k = 1; k <= params->ancienNbDays; k++) {
+    for (int k = 1; k <= params->ancienNbDays; k++)
+    {
       inv += demandPerDay[k][client] - params->cli[client].dailyDemand[k];
       if (inv < params->cli[client].minInventory - 0.001 ||
-          inv > params->cli[client].maxInventory + 0.001) {
+          inv > params->cli[client].maxInventory + 0.001)
+      {
         newPlanFeasible = false;
         break;
       }
     }
-  }
 
-  // Decide whether to keep or revert based on actual costs and inventory feasibility
-  bool shouldKeep = false;
-  if (!inventoryFeasible && newPlanFeasible) {
-    // Old plan violated inventory bounds, new plan doesn't → always keep
-    shouldKeep = true;
-  } else if (lt(tmpCost, currentCost - 0.01)) {
-    // New plan is actually cheaper than old plan → keep
-    shouldKeep = true;
-  } else if (fabs(tmpCost - objective) <= 0.01 && lt(objective, currentCost - 0.01)) {
-    // DP estimate matches reality and predicts improvement → keep (original logic)
-    shouldKeep = true;
-  }
+    bool shouldKeep = false;
+    if (!oldPlanFeasible && newPlanFeasible)
+      shouldKeep = true;
+    else if (oldPlanFeasible && !newPlanFeasible)
+      shouldKeep = false;
+    else if (lt(tmpCost, currentCost - 0.01))
+      shouldKeep = true;
+    else if (newPlanFeasible && fabs(tmpCost - objective) <= 0.05 && lt(objective, currentCost - 0.01))
+      shouldKeep = true;
 
-  if (!shouldKeep)
-  {
-    // Revert to old state
-    for (int k = 1; k <= params->ancienNbDays; k++){
-      noeudTravail = clients[k][client];
-      if (noeudTravail->estPresent) removeNoeud(noeudTravail);
-      demandPerDay[k][client] = 0.;
-    }
-    for (int k = 1; k <= params->ancienNbDays; k++){
-      if (oldPresent[k]) {
-        demandPerDay[k][client] = oldDemand[k];
-        clients[k][client]->placeInsertion = oldPred[k];
-        addNoeud(clients[k][client]);
-        // BUG #19 FIX: if addNoeud failed, reset demandPerDay to avoid mismatch
-        if (!clients[k][client]->estPresent)
-          demandPerDay[k][client] = 0.;
+    if (!shouldKeep)
+    {
+      for (int k = 1; k <= params->ancienNbDays; k++)
+      {
+        noeudTravail = clients[k][client];
+        if (noeudTravail->estPresent)
+          removeNoeud(noeudTravail);
+        demandPerDay[k][client] = 0.;
       }
+      for (int k = 1; k <= params->ancienNbDays; k++)
+      {
+        if (oldPresent[k])
+        {
+          demandPerDay[k][client] = oldDemand[k];
+          clients[k][client]->placeInsertion = oldPred[k];
+          addNoeud(clients[k][client]);
+          if (!clients[k][client]->estPresent)
+            demandPerDay[k][client] = 0.;
+        }
+      }
+      return 0;
+    }
+
+    if (currentCost - tmpCost >= 0.01)
+    {
+      rechercheTerminee = false;
+      return 1;
     }
     return 0;
   }
-  if ( currentCost - tmpCost >=0.01 )// An improving move has been found,
+
+  if ( currentCost - objective >=0.01 )// An improving move has been found,
                                         // the search is not finished.
   {
     rechercheTerminee = false;
@@ -1122,6 +1148,29 @@ void LocalSearch::computeCoutInsertion(Noeud *client)
 
   // eliminate dominated insertions
   client->removeDominatedInsertions(params->penalityCapa);
+
+  // PERF FIX [Large-10 / sparse-route instances]:
+  // With multi-depot and T≥6, borderline clients can accumulate up to
+  // nbDepots×nbVeh non-dominated insertions per day. Each insertion becomes
+  // a piece in the PLFunction passed to LotSizingSolver::solve(). The
+  // supperposition() inner loop is O(|C[t-1]| × |F[t]|) and accumulates its
+  // result in-place, making the total cost O(m² × T) where m grows with each
+  // period. For Large-10 (n=70, T=6, 3 depots, 5 veh): up to 15 pieces per
+  // PLFunction → C[5] can reach hundreds of pieces → each solve() call takes
+  // seconds instead of milliseconds → only 416 iterations in 300 s CPU.
+  //
+  // FIX: cap at 2×nbVehiculesPerDep (e.g. 10 for 5 veh/depot). Insertions
+  // are already sorted cheapest-first by removeDominatedInsertions, so we
+  // keep the most routing-efficient options and discard high-detour ones.
+  // This bounds PLFunction complexity to O((2k)² × T) per solve() call.
+  {
+    int maxIns = 2 * params->nbVehiculesPerDep;
+    if (params->multiDepot)
+      maxIns = std::max(maxIns, 12);
+    if (maxIns < 4) maxIns = 4;  // safety floor for small fleets
+    if ((int)client->allInsertions.size() > maxIns)
+      client->allInsertions.resize(maxIns);
+  }
 }
 
 double LocalSearch::evaluateCurrentCost_stockout(int client)
