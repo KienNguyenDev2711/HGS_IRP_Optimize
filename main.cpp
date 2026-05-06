@@ -48,45 +48,20 @@ int mainIRP(int argc, char *argv[])
 
     // on lance l'evolution   launch evolution
 
-    // Scale iteration limits with problem size to keep wall-clock bounded
-    // when running without a time limit (-t 0).
+    // STOPPING RULE: stop after 2000 consecutive non-improving iterations.
+    // This is the standard academic criterion for HGS (Vidal et al. 2012).
+    // If a time limit is also specified (-t N), both conditions apply and the
+    // algorithm stops at whichever fires first.
     //
-    // Empirical calibration (measured post-bugfix):
-    //   n=25  → ~0.006s/iter   (75 LotSolver calls / MDD pass)
-    //   n=100 → ~0.074s/iter   (300 LotSolver calls / MDD pass)
-    // Cost per iteration scales roughly linearly with n (dominated by MDD = n clients × 3 passes).
+    // Rationale for 2000:
+    //   - Small instances (≤25 cust):  ~0.002s/iter → 2000 iters ≈ 4s
+    //   - Medium instances (≤50 cust): ~0.01s/iter  → 2000 iters ≈ 20s
+    //   - Large instances (100 cust):  ~0.1s/iter   → 2000 iters ≈ 200s (~3.3 min)
+    //   - Large 6-period (100 cust):   ~0.3s/iter   → 2000 iters ≈ 600s (~10 min)
     //
-    // LINEAR scaling (iterScale = n/25):
-    //   n=25  → scale=1 → maxIterNonProd=5000 → worst-case ~30s  (w/o time limit)
-    //   n=50  → scale=2 → maxIterNonProd=2500 → worst-case ~50s
-    //   n=75  → scale=3 → maxIterNonProd=1666 → worst-case ~67s
-    //   n=100 → scale=4 → maxIterNonProd=1250 → worst-case ~93s
-    //
-    // When a time limit is set (-t N), the ticks check in evolve() governs
-    // stopping; maxIterNonProd is never the binding constraint.
-    //
-    // maxIterNonProd: "convergence without improvement" criterion.
-    // max_iter:       absolute safety cap (5× maxIterNonProd).
-    int n             = mesParametres->nbClients;
-    int T             = mesParametres->nbDays;
-    // Cost per iteration scales as O(n × T):
-    //   - mutationDifferentDay: 3 × n mutation11 calls, each running a T-day DP
-    //   - mutationSameDay: n × neighbors per day, repeated T days
-    // Baseline: n=25, T=3 → iterScale=1.  Formula: (n * T) / (25 * 3) = n*T/75
-    // n=25,T=3 → 1 | n=100,T=3 → 4 | n=150,T=6 → 12
-    int iterScale     = std::max(1, (n * T) / 75);
-    int maxIterNonProd, max_iter;
-    if (nb_ticks_allowed > 0) {
-      // Time-limited mode: rely on wall-clock; set very high iteration caps
-      // so the algorithm keeps searching until the time budget is exhausted.
-      // This prevents premature termination on hard instances (e.g. 6 periods).
-      maxIterNonProd = 1000000;
-      max_iter       = 1000000;
-    } else {
-      // Iteration-limited mode (no time limit): scale down to keep runtime bounded.
-      maxIterNonProd = std::max(200, 5000 / iterScale);
-      max_iter       = std::max(1000, maxIterNonProd * 5);
-    }
+    // max_iter is a safety absolute cap (never the binding constraint in practice).
+    int maxIterNonProd = 2000;
+    int max_iter       = 10000000;
     solver.evolve(max_iter, maxIterNonProd, 1);
 
     population->ExportPop(c.get_path_to_solution(),true);
